@@ -76,7 +76,7 @@
                 </tr>
                 <tr class="menu-row">
                     <td class="menu-btn menu-icon-doctor menu-active menu-icon-doctor-active">
-                        <a href="doctors.php" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">All Doctors</p></a></div>
+                        <a href="doctors.php" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">All Faculties</p></a></div>
                     </td>
                 </tr>
                 
@@ -154,7 +154,7 @@
                 
                 <tr>
                     <td colspan="4" style="padding-top:10px;">
-                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">All Doctors (<?php echo $list11->num_rows; ?>)</p>
+                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">All Faculties (<?php echo $list11->num_rows; ?>)</p>
                     </td>
                     
                 </tr>
