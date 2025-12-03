@@ -74,8 +74,8 @@
                     </td>
                 </tr>
                 <tr class="menu-row">
-                    <td class="menu-btn menu-icon-doctor ">
-                        <a href="doctors.php" class="non-style-link-menu "><div><p class="menu-text">Doctors</p></a></div>
+                    <td class="menu-btn menu-icon-faculty ">
+                        <a href="faculty.php" class="non-style-link-menu "><div><p class="menu-text">Faculty</p></a></div>
                     </td>
                 </tr>
                 <tr class="menu-row" >
@@ -102,18 +102,18 @@
                             
                             <td colspan="2" class="nav-bar" >
                                 
-                                <form action="doctors.php" method="post" class="header-search">
-        
-                                    <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Doctor name or Email" list="doctors">&nbsp;&nbsp;
-                                    
+                                <form action="faculty.php" method="post" class="header-search">
+
+                                    <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Faculty name or Email" list="faculty">&nbsp;&nbsp;
+
                                     <?php
-                                        echo '<datalist id="doctors">';
-                                        $list11 = $database->query("select  docname,docemail from  doctor;");
+                                        echo '<datalist id="faculty">';
+                                        $list11 = $database->query("select  facname,facemail from  faculty;");
         
                                         for ($y=0;$y<$list11->num_rows;$y++){
                                             $row00=$list11->fetch_assoc();
-                                            $d=$row00["docname"];
-                                            $c=$row00["docemail"];
+                                            $d=$row00["facname"];
+                                            $c=$row00["facemail"];
                                             echo "<option value='$d'><br/>";
                                             echo "<option value='$c'><br/>";
                                         };
@@ -140,7 +140,7 @@
 
 
                                 $patientrow = $database->query("select  * from  patient;");
-                                $doctorrow = $database->query("select  * from  doctor;");
+                                $facultyrow = $database->query("select  * from  faculty;");
                                 $appointmentrow = $database->query("select  * from  appointment where appodate>='$today';");
                                 $schedulerow = $database->query("select  * from  schedule where scheduledate='$today';");
 
@@ -169,13 +169,13 @@
                                     <div  class="dashboard-items"  style="padding:20px;margin:auto;width:95%;display: flex">
                                         <div>
                                                 <div class="h1-dashboard">
-                                                    <?php    echo $doctorrow->num_rows  ?>
+                                                    <?php    echo $facultyrow->num_rows  ?>
                                                 </div><br>
                                                 <div class="h3-dashboard">
-                                                    Doctors &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    Faculty &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                 </div>
                                         </div>
-                                                <div class="btn-icon-back dashboard-icons" style="background-image: url('../img/icons/doctors-hover.svg');"></div>
+                                                <div class="btn-icon-back dashboard-icons" style="background-image: url('../img/icons/faculty-hover.svg');"></div>
                                     </div>
                                 </td>
                                 <td style="width: 25%;">
@@ -273,10 +273,10 @@
                                                     Patient name
                                                 </th>
                                                 <th class="table-headin">
-                                                    
-                                                
-                                                    Doctor
-                                                    
+
+
+                                                    Faculty
+
                                                 </th>
                                                 <th class="table-headin">
                                                     
@@ -290,7 +290,7 @@
                                         
                                             <?php
                                             $nextweek=date("Y-m-d",strtotime("+1 week"));
-                                            $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,doctor.docname,patient.pname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join patient on patient.pid=appointment.pid inner join doctor on schedule.docid=doctor.docid  where schedule.scheduledate>='$today'  and schedule.scheduledate<='$nextweek' order by schedule.scheduledate desc";
+                                            $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,faculty.facname,patient.pname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join patient on patient.pid=appointment.pid inner join faculty on schedule.facid=faculty.facid  where schedule.scheduledate>='$today'  and schedule.scheduledate<='$nextweek' order by schedule.scheduledate desc";
 
                                                 $result= $database->query($sqlmain);
                 
@@ -317,7 +317,7 @@
                                                     $appoid=$row["appoid"];
                                                     $scheduleid=$row["scheduleid"];
                                                     $title=$row["title"];
-                                                    $docname=$row["docname"];
+                                                    $facname=$row["facname"];
                                                     $scheduledate=$row["scheduledate"];
                                                     $scheduletime=$row["scheduletime"];
                                                     $pname=$row["pname"];
@@ -336,8 +336,8 @@
                                                         substr($pname,0,25)
                                                         .'</td >
                                                         <td style="font-weight:600;"> &nbsp;'.
-                                                        
-                                                            substr($docname,0,25)
+
+                                                            substr($facname,0,25)
                                                             .'</td >
                                                            
                                                         
@@ -372,7 +372,7 @@
                                                 </th>
                                                 
                                                 <th class="table-headin">
-                                                    Doctor
+                                                    Faculty
                                                 </th>
                                                 <th class="table-headin">
                                                     
@@ -386,7 +386,7 @@
                                         
                                             <?php
                                             $nextweek=date("Y-m-d",strtotime("+1 week"));
-                                            $sqlmain= "select schedule.scheduleid,schedule.title,doctor.docname,schedule.scheduledate,schedule.scheduletime,schedule.nop from schedule inner join doctor on schedule.docid=doctor.docid  where schedule.scheduledate>='$today' and schedule.scheduledate<='$nextweek' order by schedule.scheduledate desc"; 
+                                            $sqlmain= "select schedule.scheduleid,schedule.title,faculty.facname,schedule.scheduledate,schedule.scheduletime,schedule.nop from schedule inner join faculty on schedule.facid=faculty.facid  where schedule.scheduledate>='$today' and schedule.scheduledate<='$nextweek' order by schedule.scheduledate desc";
                                                 $result= $database->query($sqlmain);
                 
                                                 if($result->num_rows==0){
@@ -411,7 +411,7 @@
                                                     $row=$result->fetch_assoc();
                                                     $scheduleid=$row["scheduleid"];
                                                     $title=$row["title"];
-                                                    $docname=$row["docname"];
+                                                    $facname=$row["facname"];
                                                     $scheduledate=$row["scheduledate"];
                                                     $scheduletime=$row["scheduletime"];
                                                     $nop=$row["nop"];
@@ -420,7 +420,7 @@
                                                         substr($title,0,30)
                                                         .'</td>
                                                         <td>
-                                                        '.substr($docname,0,20).'
+                                                        '.substr($facname,0,20).'
                                                         </td>
                                                         <td style="text-align:center;">
                                                             '.substr($scheduledate,0,10).' '.substr($scheduletime,0,5).'

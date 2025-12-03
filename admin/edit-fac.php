@@ -23,25 +23,24 @@
         
         if ($password==$cpassword){
             $error='3';
-            $result= $database->query("select doctor.docid from doctor inner join webuser on doctor.docemail=webuser.email where webuser.email='$email';");
-            //$resultqq= $database->query("select * from doctor where docid='$id';");
+            $result= $database->query("select faculty.facid from faculty inner join webuser on faculty.facemail=webuser.email where webuser.email='$email';");
+            //$resultqq= $database->query("select * from faculty where facid='$id';");
             if($result->num_rows==1){
-                $id2=$result->fetch_assoc()["docid"];
+                $id2=$result->fetch_assoc()["facid"];
             }else{
                 $id2=$id;
             }
-            
-            echo $id2."jdfjdfdh";
+
             if($id2!=$id){
                 $error='1';
-                //$resultqq1= $database->query("select * from doctor where docemail='$email';");
-                //$did= $resultqq1->fetch_assoc()["docid"];
+                //$resultqq1= $database->query("select * from faculty where facemail='$email';");
+                //$did= $resultqq1->fetch_assoc()["facid"];
                 //if($resultqq1->num_rows==1){
-                    
+
             }else{
 
-                //$sql1="insert into doctor(docemail,docname,docpassword,docnic,doctel,specialties) values('$email','$name','$password','$nic','$tele',$spec);";
-                $sql1="update doctor set docemail='$email',docname='$name',docpassword='$password',docnic='$nic',doctel='$tele',specialties=$spec where docid=$id ;";
+                //$sql1="insert into faculty(facemail,facname,facpassword,facnic,factel,specialties) values('$email','$name','$password','$nic','$tele',$spec);";
+                $sql1="update faculty set facemail='$email',facname='$name',facpassword='$password',facnic='$nic',factel='$tele',specialties=$spec where facid=$id ;";
                 $database->query($sql1);
                 
                 $sql1="update webuser set email='$email' where email='$oldemail' ;";
@@ -65,7 +64,7 @@
     }
     
 
-    header("location: doctors.php?action=edit&error=".$error."&id=".$id);
+    header("location: faculty.php?action=edit&error=".$error."&id=".$id);
     ?>
     
    

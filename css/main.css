@@ -370,8 +370,8 @@ input[type=search]:focus {
 }
 
 
-.menu-icon-doctor{
-  background-image: url('../img/icons/doctors.svg');
+.menu-icon-faculty{
+  background-image: url('../img/icons/faculty.svg');
 }
 .menu-icon-schedule{
   background-image: url('../img/icons/schedule.svg');
@@ -402,9 +402,9 @@ input[type=search]:focus {
 }
 
 
-.menu-icon-doctor:hover,.menu-icon-doctor-active{
+.menu-icon-faculty:hover,.menu-icon-faculty-active{
   color: var(--primarycolor);
-  background-image: url('../img/icons/doctors-hover.svg');
+  background-image: url('../img/icons/faculty-hover.svg');
 }
 .menu-icon-schedule:hover,.menu-icon-schedule-active{
   color: var(--primarycolor);
@@ -539,7 +539,7 @@ input[type=search]:focus {
 }
 
 
-.doctor-header{
+.faculty-header{
   background-image: url(../img/b8.jpg);
   color: rgba(0, 0, 0, 0.87);
   background-size: 100%;

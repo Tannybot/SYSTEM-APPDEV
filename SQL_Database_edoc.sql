@@ -70,28 +70,28 @@ INSERT INTO `appointment` (`appoid`, `pid`, `apponum`, `scheduleid`, `appodate`)
 -- --------------------------------------------------------
 
 --
--- Table structure for table `doctor`
+-- Table structure for table `faculty`
 --
 
-DROP TABLE IF EXISTS `doctor`;
-CREATE TABLE IF NOT EXISTS `doctor` (
-  `docid` int(11) NOT NULL AUTO_INCREMENT,
-  `docemail` varchar(255) DEFAULT NULL,
-  `docname` varchar(255) DEFAULT NULL,
-  `docpassword` varchar(255) DEFAULT NULL,
-  `docnic` varchar(15) DEFAULT NULL,
-  `doctel` varchar(15) DEFAULT NULL,
+DROP TABLE IF EXISTS `faculty`;
+CREATE TABLE IF NOT EXISTS `faculty` (
+  `facid` int(11) NOT NULL AUTO_INCREMENT,
+  `facemail` varchar(255) DEFAULT NULL,
+  `facname` varchar(255) DEFAULT NULL,
+  `facpassword` varchar(255) DEFAULT NULL,
+  `facnic` varchar(15) DEFAULT NULL,
+  `factel` varchar(15) DEFAULT NULL,
   `specialties` int(2) DEFAULT NULL,
-  PRIMARY KEY (`docid`),
+  PRIMARY KEY (`facid`),
   KEY `specialties` (`specialties`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `doctor`
+-- Dumping data for table `faculty`
 --
 
-INSERT INTO `doctor` (`docid`, `docemail`, `docname`, `docpassword`, `docnic`, `doctel`, `specialties`) VALUES
-(1, 'doctor@edoc.com', 'Test Doctor', '123', '000000000', '0110000000', 1);
+INSERT INTO `faculty` (`facid`, `facemail`, `facname`, `facpassword`, `facnic`, `factel`, `specialties`) VALUES
+(1, 'faculty@edoc.com', 'Test Faculty', '123', '000000000', '0110000000', 1);
 
 -- --------------------------------------------------------
 
@@ -129,20 +129,20 @@ INSERT INTO `patient` (`pid`, `pemail`, `pname`, `ppassword`, `paddress`, `pnic`
 DROP TABLE IF EXISTS `schedule`;
 CREATE TABLE IF NOT EXISTS `schedule` (
   `scheduleid` int(11) NOT NULL AUTO_INCREMENT,
-  `docid` varchar(255) DEFAULT NULL,
+  `facid` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `scheduledate` date DEFAULT NULL,
   `scheduletime` time DEFAULT NULL,
   `nop` int(4) DEFAULT NULL,
   PRIMARY KEY (`scheduleid`),
-  KEY `docid` (`docid`)
+  KEY `facid` (`facid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `schedule`
 --
 
-INSERT INTO `schedule` (`scheduleid`, `docid`, `title`, `scheduledate`, `scheduletime`, `nop`) VALUES
+INSERT INTO `schedule` (`scheduleid`, `facid`, `title`, `scheduledate`, `scheduletime`, `nop`) VALUES
 (1, '1', 'Test Session', '2050-01-01', '18:00:00', 50),
 (2, '1', '1', '2022-06-10', '20:36:00', 1),
 (3, '1', '12', '2022-06-10', '20:33:00', 1),
@@ -247,7 +247,7 @@ START TRANSACTION;
 
 INSERT INTO `webuser` (`email`, `usertype`) VALUES
 ('admin@edoc.com', 'a'),
-('doctor@edoc.com', 'd'),
+('faculty@edoc.com', 'f'),
 ('patient@edoc.com', 'p'),
 ('emhashenudara@gmail.com', 'p');
 COMMIT;

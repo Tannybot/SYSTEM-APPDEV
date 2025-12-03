@@ -81,16 +81,16 @@
                 }
 
 
-            }elseif($utype=='d'){
+            }elseif($utype=='f'){
                 //TODO
-                $checker = $database->query("select * from doctor where docemail='$email' and docpassword='$password'");
+                $checker = $database->query("select * from faculty where facemail='$email' and facpassword='$password'");
                 if ($checker->num_rows==1){
 
 
-                    //   doctor dashbord
+                    //   faculty dashbord
                     $_SESSION['user']=$email;
-                    $_SESSION['usertype']='d';
-                    header('location: doctor/index.php');
+                    $_SESSION['usertype']='f';
+                    header('location: faculty/index.php');
 
                 }else{
                     $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Wrong credentials: Invalid email or password</label>';
