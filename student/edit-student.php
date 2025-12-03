@@ -24,14 +24,14 @@
         if ($password==$cpassword){
             $error='3';
 
-            $sqlmain= "select patient.pid from patient inner join webuser on patient.pemail=webuser.email where webuser.email=?;";
+            $sqlmain= "select student.sid from student inner join webuser on student.semail=webuser.email where webuser.email=?;";
             $stmt = $database->prepare($sqlmain);
             $stmt->bind_param("s",$email);
             $stmt->execute();
             $result = $stmt->get_result();
             //$resultqq= $database->query("select * from doctor where docid='$id';");
             if($result->num_rows==1){
-                $id2=$result->fetch_assoc()["pid"];
+                $id2=$result->fetch_assoc()["sid"];
             }else{
                 $id2=$id;
             }
@@ -46,7 +46,7 @@
             }else{
 
                 //$sql1="insert into doctor(docemail,docname,docpassword,docnic,doctel,specialties) values('$email','$name','$password','$nic','$tele',$spec);";
-                $sql1="update patient set pemail='$email',pname='$name',ppassword='$password',pnic='$nic',ptel='$tele',paddress='$address' where pid=$id ;";
+                $sql1="update student set semail='$email',sname='$name',spassword='$password',snic='$nic',stel='$tele',saddress='$address' where sid=$id ;";
                 $database->query($sql1);
                 echo $sql1;
                 $sql1="update webuser set email='$email' where email='$oldemail' ;";

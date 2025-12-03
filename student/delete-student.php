@@ -3,7 +3,7 @@
     session_start();
 
     if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='p'){
+        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='s'){
             header("location: ../login.php");
         }else{
             $useremail=$_SESSION["user"];
@@ -16,26 +16,26 @@
 
     //import database
     include("../connection.php");
-    $sqlmain= "select * from patient where pemail=?";
+    $sqlmain= "select * from student where semail=?";
     $stmt = $database->prepare($sqlmain);
     $stmt->bind_param("s",$useremail);
     $stmt->execute();
     $userrow = $stmt->get_result();
     $userfetch=$userrow->fetch_assoc();
-    $userid= $userfetch["pid"];
-    $username=$userfetch["pname"];
+    $userid= $userfetch["sid"];
+    $username=$userfetch["sname"];
 
     
     if($_GET){
         //import database
         include("../connection.php");
         $id=$_GET["id"];
-        $sqlmain= "select * from patient where pid=?";
+        $sqlmain= "select * from student where sid=?";
         $stmt = $database->prepare($sqlmain);
         $stmt->bind_param("i",$id);
         $stmt->execute();
         $result001 = $stmt->get_result();
-        $email=($result001->fetch_assoc())["pemail"];
+        $email=($result001->fetch_assoc())["semail"];
 
         $sqlmain= "delete from webuser where email=?;";
         $stmt = $database->prepare($sqlmain);
@@ -44,7 +44,7 @@
         $result = $stmt->get_result();
 
 
-        $sqlmain= "delete from patient where pemail=?";
+        $sqlmain= "delete from student where semail=?";
         $stmt = $database->prepare($sqlmain);
         $stmt->bind_param("s",$email);
         $stmt->execute();

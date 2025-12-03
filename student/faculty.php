@@ -26,7 +26,7 @@
     session_start();
 
     if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='p'){
+        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='s'){
             header("location: ../login.php");
         }else{
             $useremail=$_SESSION["user"];
@@ -39,10 +39,10 @@
 
     //import database
     include("../connection.php");
-    $userrow = $database->query("select * from patient where pemail='$useremail'");
+    $userrow = $database->query("select * from student where semail='$useremail'");
     $userfetch=$userrow->fetch_assoc();
-    $userid= $userfetch["pid"];
-    $username=$userfetch["pname"];
+    $userid= $userfetch["sid"];
+    $username=$userfetch["sname"];
 
     ?>
     <div class="container">
@@ -284,14 +284,14 @@
                     <div class="popup">
                     <center>
                         <h2>Are you sure?</h2>
-                        <a class="close" href="doctors.php">&times;</a>
+                        <a class="close" href="faculty.php">&times;</a>
                         <div class="content">
                             You want to delete this record<br>('.substr($nameget,0,40).').
-                            
+
                         </div>
                         <div style="display: flex;justify-content: center;">
-                        <a href="delete-doctor.php?id='.$id.'" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"<font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
-                        <a href="doctors.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No&nbsp;&nbsp;</font></button></a>
+                        <a href="delete-faculty.php?id='.$id.'" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"<font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
+                        <a href="faculty.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No&nbsp;&nbsp;</font></button></a>
 
                         </div>
                     </center>
@@ -299,31 +299,31 @@
             </div>
             ';
         }elseif($action=='view'){
-            $sqlmain = "SELECT * FROM doctor WHERE docid=?";
+            $sqlmain = "SELECT * FROM faculty WHERE facid=?";
             $stmt = $database->prepare($sqlmain);
             $stmt->bind_param("i",$id);
             $stmt->execute();
             $result = $stmt->get_result();
             $row = $result->fetch_assoc();
 
-            $name=$row["docname"];
-            $email=$row["docemail"];
+            $name=$row["facname"];
+            $email=$row["facemail"];
             $spe=$row["specialties"];
-            
+
             $stmt = $database->prepare("select sname from specialties where id=?");
             $stmt->bind_param("s",$spe);
             $stmt->execute();
             $spcil_res = $stmt->get_result();
-            $spcil_array= $spcil_res->fetch_assoc();
+            $spcil_array= $result->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
-            $nic=$row['docnic'];
-            $tele=$row['doctel'];
+            $nic=$row['facnic'];
+            $tele=$row['factel'];
             echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
                         <h2></h2>
-                        <a class="close" href="doctors.php">&times;</a>
+                        <a class="close" href="faculty.php">&times;</a>
                         <div class="content">
                             eDoc Web App<br>
                             
@@ -392,7 +392,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <a href="doctors.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
+                                    <a href="faculty.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
                                 
                                     
                                 </td>
@@ -413,22 +413,22 @@
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
-                        <h2>Redirect to Doctors sessions?</h2>
-                        <a class="close" href="doctors.php">&times;</a>
+                        <h2>Redirect to Faculty sessions?</h2>
+                        <a class="close" href="faculty.php">&times;</a>
                         <div class="content">
                             You want to view All sessions by <br>('.substr($name,0,40).').
-                            
+
                         </div>
                         <form action="schedule.php" method="post" style="display: flex">
 
                                 <input type="hidden" name="search" value="'.$name.'">
 
-                                
+
                         <div style="display: flex;justify-content:center;margin-left:45%;margin-top:6%;;margin-bottom:6%;">
-                        
+
                         <input type="submit"  value="Yes" class="btn-primary btn"   >
-                        
-                        
+
+
                         </div>
                     </center>
             </div>
@@ -436,18 +436,18 @@
             ';
         }
         }elseif($action=='edit'){
-            $sqlmain= "select * from doctor where docid=?";
+            $sqlmain= "select * from faculty where facid=?";
             $stmt = $database->prepare($sqlmain);
             $stmt->bind_param("i",$id);
             $stmt->execute();
             $result = $stmt->get_result();
             $row=$result->fetch_assoc();
        
-            $name=$row["docname"];
-            $email=$row["docemail"];
+            $name=$row["facname"];
+            $email=$row["facemail"];
             $spe=$row["specialties"];
             
-            $sqlmain= "select sname from specialties where id='?";
+            $sqlmain= "select sname from specialties where id=?";
             $stmt = $database->prepare($sqlmain);
             $stmt->bind_param("s",$spe);
             $stmt->execute();
@@ -455,8 +455,8 @@
 
             $spcil_array= $spcil_res->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
-            $nic=$row['docnic'];
-            $tele=$row['doctel'];
+            $nic=$row['facnic'];
+            $tele=$row['factel'];
 
             $error_1=$_GET["error"];
                 $errorlist= array(
@@ -474,7 +474,7 @@
                             <div class="popup">
                             <center>
                             
-                                <a class="close" href="doctors.php">&times;</a> 
+                                <a class="close" href="faculty.php">&times;</a>
                                 <div style="display: flex;justify-content: center;">
                                 <div class="abc">
                                 <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
@@ -485,13 +485,13 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Edit Doctor Details.</p>
-                                        Doctor ID : '.$id.' (Auto Generated)<br><br>
+                                            <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Edit Faculty Details.</p>
+                                        Faculty ID : '.$id.' (Auto Generated)<br><br>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <form action="edit-doc.php" method="POST" class="add-new-form">
+                                            <form action="edit-fac.php" method="POST" class="add-new-form">
                                             <label for="Email" class="form-label">Email: </label>
                                             <input type="hidden" value="'.$id.'" name="id00">
                                         </td>
@@ -509,7 +509,7 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <input type="text" name="name" class="input-text" placeholder="Doctor Name" value="'.$name.'" required><br>
+                                            <input type="text" name="name" class="input-text" placeholder="Faculty Name" value="'.$name.'" required><br>
                                         </td>
                                         
                                     </tr>
@@ -607,14 +607,14 @@
                         <center>
                         <br><br><br><br>
                             <h2>Edit Successfully!</h2>
-                            <a class="close" href="doctors.php">&times;</a>
+                            <a class="close" href="faculty.php">&times;</a>
                             <div class="content">
                                 
                                 
                             </div>
                             <div style="display: flex;justify-content: center;">
                             
-                            <a href="doctors.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;OK&nbsp;&nbsp;</font></button></a>
+                            <a href="faculty.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;OK&nbsp;&nbsp;</font></button></a>
 
                             </div>
                             <br><br>
