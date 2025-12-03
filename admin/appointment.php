@@ -71,8 +71,8 @@
                     </td>
                 </tr>
                 <tr class="menu-row">
-                    <td class="menu-btn menu-icon-doctor ">
-                        <a href="doctors.php" class="non-style-link-menu "><div><p class="menu-text">Faculty</p></a></div>
+                    <td class="menu-btn menu-icon-faculty ">
+                        <a href="faculty.php" class="non-style-link-menu "><div><p class="menu-text">Faculty</p></a></div>
                     </td>
                 </tr>
                 <tr class="menu-row" >
@@ -86,8 +86,8 @@
                     </td>
                 </tr>
                 <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-patient">
-                        <a href="patient.php" class="non-style-link-menu"><div><p class="menu-text">Student</p></a></div>
+                    <td class="menu-btn menu-icon-student">
+                        <a href="student.php" class="non-style-link-menu"><div><p class="menu-text">Student</p></a></div>
                     </td>
                 </tr>
 
@@ -167,14 +167,14 @@
                         <select name="docid" id="" class="box filter-container-items" style="width:90% ;height: 37px;margin: 0;" >
                             <option value="" disabled selected hidden>Choose Faculty Name from the list</option><br/>
                                 
-                            <?php 
-                             
-                                $list11 = $database->query("select  * from  doctor order by docname asc;");
+                            <?php
+
+                                $list11 = $database->query("select  * from  faculty order by facname asc;");
 
                                 for ($y=0;$y<$list11->num_rows;$y++){
                                     $row00=$list11->fetch_assoc();
-                                    $sn=$row00["docname"];
-                                    $id00=$row00["docid"];
+                                    $sn=$row00["facname"];
+                                    $id00=$row00["facid"];
                                     echo "<option value=".$id00.">$sn</option><br/>";
                                 };
 
@@ -213,7 +213,7 @@
                         }
                         //echo $sqlpt2;
                         //echo $sqlpt1;
-                        $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,doctor.docname,patient.pname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join patient on patient.pid=appointment.pid inner join doctor on schedule.docid=doctor.docid";
+                        $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,faculty.facname,student.sname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid";
                         $sqllist=array($sqlpt1,$sqlpt2);
                         $sqlkeywords=array(" where "," and ");
                         $key2=0;
@@ -230,7 +230,7 @@
                         
                         //
                     }else{
-                        $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,doctor.docname,patient.pname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join patient on patient.pid=appointment.pid inner join doctor on schedule.docid=doctor.docid  order by schedule.scheduledate desc";
+                        $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,faculty.facname,student.sname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid  order by schedule.scheduledate desc";
 
                     }
 
@@ -316,13 +316,13 @@
                                     $docname=$row["docname"];
                                     $scheduledate=$row["scheduledate"];
                                     $scheduletime=$row["scheduletime"];
-                                    $pname=$row["pname"];
+                                    $sname=$row["sname"];
                                     $apponum=$row["apponum"];
                                     $appodate=$row["appodate"];
                                     echo '<tr >
                                         <td style="font-weight:600;"> &nbsp;'.
                                         
-                                        substr($pname,0,25)
+                                        substr($sname,0,25)
                                         .'</td >
                                         <td style="text-align:center;font-size:23px;font-weight:500; color: var(--btnnicetext);">
                                         '.$apponum.'
@@ -347,7 +347,7 @@
                                         
                                         <!--<a href="?action=view&id='.$appoid.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
                                        &nbsp;&nbsp;&nbsp;-->
-                                       <a href="?action=drop&id='.$appoid.'&name='.$pname.'&session='.$title.'&apponum='.$apponum.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-delete"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Cancel</font></button></a>
+                                       <a href="?action=drop&id='.$appoid.'&name='.$sname.'&session='.$title.'&apponum='.$apponum.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-delete"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Cancel</font></button></a>
                                        &nbsp;&nbsp;&nbsp;</div>
                                         </td>
                                     </tr>';
@@ -422,12 +422,12 @@
                                     <option value="" disabled selected hidden>Choose Doctor Name from the list</option><br/>';
                                         
         
-                                        $list11 = $database->query("select  * from  doctor;");
-        
+                                        $list11 = $database->query("select  * from  faculty;");
+
                                         for ($y=0;$y<$list11->num_rows;$y++){
                                             $row00=$list11->fetch_assoc();
-                                            $sn=$row00["docname"];
-                                            $id00=$row00["docid"];
+                                            $sn=$row00["facname"];
+                                            $id00=$row00["facid"];
                                             echo "<option value=".$id00.">$sn</option><br/>";
                                         };
         
@@ -535,24 +535,24 @@
             </div>
             '; 
         }elseif($action=='view'){
-            $sqlmain= "select * from doctor where docid='$id'";
+            $sqlmain= "select * from faculty where facid='$id'";
             $result= $database->query($sqlmain);
             $row=$result->fetch_assoc();
-            $name=$row["docname"];
-            $email=$row["docemail"];
+            $name=$row["facname"];
+            $email=$row["facemail"];
             $spe=$row["specialties"];
-            
+
             $spcil_res= $database->query("select sname from specialties where id='$spe'");
             $spcil_array= $spcil_res->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
-            $nic=$row['docnic'];
-            $tele=$row['doctel'];
+            $nic=$row['facnic'];
+            $tele=$row['factel'];
             echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
                         <h2></h2>
-                        <a class="close" href="doctors.php">&times;</a>
+                        <a class="close" href="faculty.php">&times;</a>
                         <div class="content">
                             eDoc Web App<br>
                             
@@ -621,7 +621,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <a href="doctors.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
+                                    <a href="faculty.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
                                 
                                     
                                 </td>

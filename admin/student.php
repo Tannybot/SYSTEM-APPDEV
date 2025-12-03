@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
         
-    <title>Patients</title>
+    <title>Students</title>
     <style>
         .popup{
             animation: transitionIn-Y-bottom 0.5s;
@@ -70,8 +70,8 @@
                     </td>
                 </tr>
                 <tr class="menu-row">
-                    <td class="menu-btn menu-icon-doctor ">
-                        <a href="doctors.php" class="non-style-link-menu "><div><p class="menu-text">Doctors</p></a></div>
+                    <td class="menu-btn menu-icon-faculty ">
+                        <a href="faculty.php" class="non-style-link-menu "><div><p class="menu-text">Faculty</p></a></div>
                     </td>
                 </tr>
                 <tr class="menu-row" >
@@ -85,8 +85,8 @@
                     </td>
                 </tr>
                 <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-patient  menu-active menu-icon-patient-active">
-                        <a href="patient.php" class="non-style-link-menu  non-style-link-menu-active"><div><p class="menu-text">Patients</p></a></div>
+                    <td class="menu-btn menu-icon-student  menu-active menu-icon-student-active">
+                        <a href="student.php" class="non-style-link-menu  non-style-link-menu-active"><div><p class="menu-text">Students</p></a></div>
                     </td>
                 </tr>
 
@@ -97,23 +97,23 @@
                 <tr >
                     <td width="13%">
 
-                    <a href="patient.php" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
+                    <a href="student.php" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
                         
                     </td>
                     <td>
                         
                         <form action="" method="post" class="header-search">
 
-                            <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Patient name or Email" list="patient">&nbsp;&nbsp;
+                            <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Student name or Email" list="student">&nbsp;&nbsp;
                             
                             <?php
-                                echo '<datalist id="patient">';
-                                $list11 = $database->query("select  pname,pemail from patient;");
+                                echo '<datalist id="student">';
+                                $list11 = $database->query("select  sname,semail from student;");
 
                                 for ($y=0;$y<$list11->num_rows;$y++){
                                     $row00=$list11->fetch_assoc();
-                                    $d=$row00["pname"];
-                                    $c=$row00["pemail"];
+                                    $d=$row00["sname"];
+                                    $c=$row00["semail"];
                                     echo "<option value='$d'><br/>";
                                     echo "<option value='$c'><br/>";
                                 };
@@ -150,7 +150,7 @@
                 
                 <tr>
                     <td colspan="4" style="padding-top:10px;">
-                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">All Patients (<?php echo $list11->num_rows; ?>)</p>
+                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">All Students (<?php echo $list11->num_rows; ?>)</p>
                     </td>
                     
                 </tr>
@@ -158,9 +158,9 @@
                     if($_POST){
                         $keyword=$_POST["search"];
                         
-                        $sqlmain= "select * from patient where pemail='$keyword' or pname='$keyword' or pname like '$keyword%' or pname like '%$keyword' or pname like '%$keyword%' ";
+                        $sqlmain= "select * from student where semail='$keyword' or sname='$keyword' or sname like '$keyword%' or sname like '%$keyword' or sname like '%$keyword%' ";
                     }else{
-                        $sqlmain= "select * from patient order by pid desc";
+                        $sqlmain= "select * from student order by sid desc";
 
                     }
 
@@ -223,7 +223,7 @@
                                     
                                     <br>
                                     <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We  couldnt find anything related to your keywords !</p>
-                                    <a class="non-style-link" href="patient.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Patients &nbsp;</font></button>
+                                    <a class="non-style-link" href="student.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Students &nbsp;</font></button>
                                     </a>
                                     </center>
                                     <br><br><br><br>
@@ -234,12 +234,12 @@
                                 else{
                                 for ( $x=0; $x<$result->num_rows;$x++){
                                     $row=$result->fetch_assoc();
-                                    $pid=$row["pid"];
-                                    $name=$row["pname"];
-                                    $email=$row["pemail"];
-                                    $nic=$row["pnic"];
-                                    $dob=$row["pdob"];
-                                    $tel=$row["ptel"];
+                                    $sid=$row["sid"];
+                                    $name=$row["sname"];
+                                    $email=$row["semail"];
+                                    $nic=$row["snic"];
+                                    $dob=$row["sdob"];
+                                    $tel=$row["stel"];
                                     
                                     echo '<tr>
                                         <td> &nbsp;'.
@@ -260,7 +260,7 @@
                                         <td >
                                         <div style="display:flex;justify-content: center;">
                                         
-                                        <a href="?action=view&id='.$pid.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
+                                        <a href="?action=view&id='.$sid.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
                                        
                                         </div>
                                         </td>
@@ -289,20 +289,20 @@
         
         $id=$_GET["id"];
         $action=$_GET["action"];
-            $sqlmain= "select * from patient where pid='$id'";
+            $sqlmain= "select * from student where sid='$id'";
             $result= $database->query($sqlmain);
             $row=$result->fetch_assoc();
-            $name=$row["pname"];
-            $email=$row["pemail"];
-            $nic=$row["pnic"];
-            $dob=$row["pdob"];
-            $tele=$row["ptel"];
-            $address=$row["paddress"];
+            $name=$row["sname"];
+            $email=$row["semail"];
+            $nic=$row["snic"];
+            $dob=$row["sdob"];
+            $tele=$row["stel"];
+            $address=$row["saddress"];
             echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
-                        <a class="close" href="patient.php">&times;</a>
+                        <a class="close" href="student.php">&times;</a>
                         <div class="content">
 
                         </div>
@@ -394,7 +394,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <a href="patient.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
+                                    <a href="student.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
                                 
                                     
                                 </td>
