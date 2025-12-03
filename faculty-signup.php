@@ -46,7 +46,7 @@ if($_POST){
     $tele=$_POST['tele'];
     $newpassword=$_POST['newpassword'];
     $cpassword=$_POST['cpassword'];
-    $nic=$_POST['nic'];
+    $nic=''; // Removed NIC
     $specialties=$_POST['specialties'];
 
     if ($newpassword==$cpassword){
@@ -106,16 +106,6 @@ if($_POST){
             </tr>
             <tr>
                 <td class="label-td" colspan="2">
-                    <label for="nic" class="form-label">NIC: </label>
-                </td>
-            </tr>
-            <tr>
-                <td class="label-td" colspan="2">
-                    <input type="text" name="nic" class="input-text" placeholder="NIC" required>
-                </td>
-            </tr>
-            <tr>
-                <td class="label-td" colspan="2">
                     <label for="newemail" class="form-label">Email: </label>
                 </td>
             </tr>
@@ -132,7 +122,7 @@ if($_POST){
             </tr>
             <tr>
                 <td class="label-td" colspan="2">
-                <input type="tel" name="tele" class="input-text"  placeholder="ex. 0712345678" required>
+                <input type="tel" name="tele" class="input-text" pattern="^\d{10}$" placeholder="ex. 0712345678" required>
                 </td>
             </tr>
             <tr>
