@@ -97,8 +97,8 @@
                     </td>
                 </tr>
                 <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-patient">
-                        <a href="patient.php" class="non-style-link-menu"><div><p class="menu-text">My Patients</p></a></div>
+                    <td class="menu-btn menu-icon-student">
+                        <a href="student.php" class="non-style-link-menu"><div><p class="menu-text">My Students</p></a></div>
                     </td>
                 </tr>
                 <tr class="menu-row" >
@@ -133,7 +133,7 @@
                                 echo $today;
 
 
-                                $patientrow = $database->query("select  * from  patient;");
+                                $studentrow = $database->query("select  * from  student;");
                                 $facultyrow = $database->query("select  * from  faculty;");
                                 $appointmentrow = $database->query("select  * from  appointment where appodate>='$today';");
                                 $schedulerow = $database->query("select  * from  schedule where scheduledate='$today';");
@@ -206,13 +206,13 @@
                                                     <div  class="dashboard-items"  style="padding:20px;margin:auto;width:95%;display: flex;">
                                                         <div>
                                                                 <div class="h1-dashboard">
-                                                                    <?php    echo $patientrow->num_rows  ?>
+                                                                    <?php    echo $studentrow->num_rows  ?>
                                                                 </div><br>
                                                                 <div class="h3-dashboard">
                                                                     All Patients &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                 </div>
                                                         </div>
-                                                                <div class="btn-icon-back dashboard-icons" style="background-image: url('../img/icons/patients-hover.svg');"></div>
+                                                                <div class="btn-icon-back dashboard-icons" style="background-image: url('../img/icons/students-hover.svg');"></div>
                                                     </div>
                                                 </td>
                                                 </tr>
