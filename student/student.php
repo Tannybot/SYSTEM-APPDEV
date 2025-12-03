@@ -46,7 +46,7 @@
     $userrow = $stmt->get_result();
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["facid"];
-    $username=$userfetch["docname"];
+    $username=$userfetch["facname"];
 
 
     //echo $userid;
@@ -157,8 +157,8 @@
 
                                 for ($y=0;$y<$list11->num_rows;$y++){
                                     $row00=$list11->fetch_assoc();
-                                    $d=$row00["pname"];
-                                    $c=$row00["pemail"];
+                                    $d=$row00["sname"];
+                                    $c=$row00["semail"];
                                     echo "<option value='$d'><br/>";
                                     echo "<option value='$c'><br/>";
                                 };
@@ -195,7 +195,7 @@
                 
                 <tr>
                     <td colspan="4" style="padding-top:10px;">
-                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)"><?php echo $selecttype." Patients (".$list11->num_rows.")"; ?></p>
+                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)"><?php echo $selecttype." Students (".$list11->num_rows.")"; ?></p>
                     </td>
                     
                 </tr>
@@ -212,8 +212,8 @@
                         <td width="30%">
                         <select name="showonly" id="" class="box filter-container-items" style="width:90% ;height: 37px;margin: 0;" >
                                     <option value="" disabled selected hidden><?php echo $current   ?></option><br/>
-                                    <option value="my">My Patients Only</option><br/>
-                                    <option value="all">All Patients</option><br/>
+                                    <option value="my">My Students Only</option><br/>
+                                    <option value="all">All Students</option><br/>
                                     
 
                         </select>
@@ -297,12 +297,12 @@
                                 else{
                                 for ( $x=0; $x<$result->num_rows;$x++){
                                     $row=$result->fetch_assoc();
-                                    $pid=$row["pid"];
-                                    $name=$row["pname"];
-                                    $email=$row["pemail"];
-                                    $nic=$row["pnic"];
-                                    $dob=$row["pdob"];
-                                    $tel=$row["ptel"];
+                                    $sid=$row["sid"];
+                                    $name=$row["sname"];
+                                    $email=$row["semail"];
+                                    $nic=$row["snic"];
+                                    $dob=$row["sdob"];
+                                    $tel=$row["stel"];
                                     
                                     echo '<tr>
                                         <td> &nbsp;'.
@@ -358,12 +358,12 @@
             $stmt->execute();
             $result = $stmt->get_result();
             $row=$result->fetch_assoc();
-            $name=$row["pname"];
-            $email=$row["pemail"];
-            $nic=$row["pnic"];
-            $dob=$row["pdob"];
-            $tele=$row["ptel"];
-            $address=$row["paddress"];
+            $name=$row["sname"];
+            $email=$row["semail"];
+            $nic=$row["snic"];
+            $dob=$row["sdob"];
+            $tele=$row["stel"];
+            $address=$row["saddress"];
             echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
@@ -383,12 +383,12 @@
                             <tr>
                                 
                                 <td class="label-td" colspan="2">
-                                    <label for="name" class="form-label">Patient ID: </label>
+                                    <label for="name" class="form-label">Student ID: </label>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    P-'.$id.'<br><br>
+                                    S-'.$id.'<br><br>
                                 </td>
                                 
                             </tr>

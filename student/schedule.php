@@ -26,7 +26,7 @@
     session_start();
 
     if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='p'){
+        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='s'){
             header("location: ../login.php");
         }else{
             $useremail=$_SESSION["user"];
@@ -39,14 +39,14 @@
 
     //import database
     include("../connection.php");
-    $sqlmain= "select * from patient where pemail=?";
+    $sqlmain= "select * from student where semail=?";
     $stmt = $database->prepare($sqlmain);
     $stmt->bind_param("s",$useremail);
     $stmt->execute();
     $result = $stmt->get_result();
     $userfetch=$result->fetch_assoc();
-    $userid= $userfetch["pid"];
-    $username=$userfetch["pname"];
+    $userid= $userfetch["sid"];
+    $username=$userfetch["sname"];
 
 
     //echo $userid;
@@ -88,8 +88,8 @@
                     </td>
                 </tr>
                 <tr class="menu-row">
-                    <td class="menu-btn menu-icon-doctor">
-                        <a href="doctors.php" class="non-style-link-menu"><div><p class="menu-text">All Doctors</p></a></div>
+                    <td class="menu-btn menu-icon-faculty">
+                        <a href="faculty.php" class="non-style-link-menu"><div><p class="menu-text">All Faculty</p></a></div>
                     </td>
                 </tr>
                 
@@ -113,7 +113,7 @@
         </div>
         <?php
 
-                $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduledate>='$today'  order by schedule.scheduledate asc";
+                $sqlmain= "select * from schedule inner join faculty on schedule.facid=faculty.facid where schedule.scheduledate>='$today'  order by schedule.scheduledate asc";
                 $sqlpt1="";
                 $insertkey="";
                 $q='';
@@ -124,7 +124,7 @@
                         if(!empty($_POST["search"])){
                             /*TODO: make and understand */
                             $keyword=$_POST["search"];
-                            $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduledate>='$today' and (doctor.docname='$keyword' or doctor.docname like '$keyword%' or doctor.docname like '%$keyword' or doctor.docname like '%$keyword%' or schedule.title='$keyword' or schedule.title like '$keyword%' or schedule.title like '%$keyword' or schedule.title like '%$keyword%' or schedule.scheduledate like '$keyword%' or schedule.scheduledate like '%$keyword' or schedule.scheduledate like '%$keyword%' or schedule.scheduledate='$keyword' )  order by schedule.scheduledate asc";
+                            $sqlmain= "select * from schedule inner join faculty on schedule.facid=faculty.facid where schedule.scheduledate>='$today' and (faculty.facname='$keyword' or faculty.facname like '$keyword%' or faculty.facname like '%$keyword' or faculty.facname like '%$keyword%' or schedule.title='$keyword' or schedule.title like '$keyword%' or schedule.title like '%$keyword' or schedule.title like '%$keyword%' or schedule.scheduledate like '$keyword%' or schedule.scheduledate like '%$keyword' or schedule.scheduledate like '%$keyword%' or schedule.scheduledate='$keyword' )  order by schedule.scheduledate asc";
                             //echo $sqlmain;
                             $insertkey=$keyword;
                             $searchtype="Search Result : ";
@@ -148,11 +148,11 @@
                     <td >
                             <form action="" method="post" class="header-search">
 
-                                        <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Doctor name or Email or Date (YYYY-MM-DD)" list="doctors" value="<?php  echo $insertkey ?>">&nbsp;&nbsp;
+                                        <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Faculty name or Email or Date (YYYY-MM-DD)" list="faculty" value="<?php  echo $insertkey ?>">&nbsp;&nbsp;
                                         
                                         <?php
-                                            echo '<datalist id="doctors">';
-                                            $list11 = $database->query("select DISTINCT * from  doctor;");
+                                            echo '<datalist id="faculty">';
+                                            $list11 = $database->query("select DISTINCT * from  faculty;");
                                             $list12 = $database->query("select DISTINCT * from  schedule GROUP BY title;");
                                             
 
@@ -161,7 +161,7 @@
 
                                             for ($y=0;$y<$list11->num_rows;$y++){
                                                 $row00=$list11->fetch_assoc();
-                                                $d=$row00["docname"];
+                                                $d=$row00["facname"];
                                                
                                                 echo "<option value='$d'><br/>";
                                                
@@ -256,7 +256,7 @@
                                         };
                                         $scheduleid=$row["scheduleid"];
                                         $title=$row["title"];
-                                        $docname=$row["docname"];
+                                        $facname=$row["facname"];
                                         $scheduledate=$row["scheduledate"];
                                         $scheduletime=$row["scheduletime"];
 
@@ -273,7 +273,7 @@
                                                                 '.substr($title,0,21).'
                                                             </div><br>
                                                             <div class="h3-search">
-                                                                '.substr($docname,0,30).'
+                                                                '.substr($facname,0,30).'
                                                             </div>
                                                             <div class="h4-search">
                                                                 '.$scheduledate.'<br>Starts: <b>@'.substr($scheduletime,0,5).'</b> (24h)
