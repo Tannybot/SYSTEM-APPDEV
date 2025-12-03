@@ -379,8 +379,8 @@ input[type=search]:focus {
 .menu-icon-appoinment{
   background-image: url('../img/icons/book.svg');
 }
-.menu-icon-patient{
-  background-image: url('../img/icons/patients.svg');
+.menu-icon-student{
+  background-image: url('../img/icons/students.svg');
 }
 .menu-icon-settings{
   background-image: url('../img/icons/settings.svg');
@@ -416,10 +416,10 @@ input[type=search]:focus {
   
   background-image: url('../img/icons/book-hover.svg');
 }
-.menu-icon-patient:hover,.menu-icon-patient-active{
+.menu-icon-student:hover,.menu-icon-student-active{
   color: var(--primarycolor);
-  
-  background-image: url('../img/icons/patients-hover.svg');
+
+  background-image: url('../img/icons/students-hover.svg');
 }
 
 .menu-icon-settings:hover,.menu-icon-settings-active{
@@ -548,7 +548,7 @@ input[type=search]:focus {
   padding-left: 35px;
 }
 
-.patient-header{
+.student-header{
   background-image: url(../img/b3.jpg);
 }
 

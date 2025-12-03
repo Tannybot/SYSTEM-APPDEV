@@ -48,17 +48,17 @@
         $result= $database->query("select * from webuser where email='$email'");
         if($result->num_rows==1){
             $utype=$result->fetch_assoc()['usertype'];
-            if ($utype=='p'){
+            if ($utype=='s'){
                 //TODO
-                $checker = $database->query("select * from patient where pemail='$email' and ppassword='$password'");
+                $checker = $database->query("select * from student where semail='$email' and spassword='$password'");
                 if ($checker->num_rows==1){
 
 
-                    //   Patient dashbord
+                    //   Student dashbord
                     $_SESSION['user']=$email;
-                    $_SESSION['usertype']='p';
-                    
-                    header('location: patient/index.php');
+                    $_SESSION['usertype']='s';
+
+                    header('location: student/index.php');
 
                 }else{
                     $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Wrong credentials: Invalid email or password</label>';

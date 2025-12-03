@@ -65,15 +65,15 @@ if($_POST){
             $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>';
         }else{
             //TODO
-            $database->query("insert into patient(pemail,pname,ppassword, paddress, pnic,pdob,ptel) values('$email','$name','$newpassword','$address','$nic','$dob','$tele');");
-            $database->query("insert into webuser values('$email','p')");
+            $database->query("insert into student(semail,sname,spassword, saddress, snic,sdob,stel) values('$email','$name','$newpassword','$address','$nic','$dob','$tele');");
+            $database->query("insert into webuser values('$email','s')");
 
-            //print_r("insert into patient values($pid,'$email','$fname','$lname','$newpassword','$address','$nic','$dob','$tele');");
+            //print_r("insert into student values($sid,'$email','$fname','$lname','$newpassword','$address','$nic','$dob','$tele');");
             $_SESSION["user"]=$email;
-            $_SESSION["usertype"]="p";
+            $_SESSION["usertype"]="s";
             $_SESSION["username"]=$fname;
 
-            header('Location: patient/index.php');
+            header('Location: student/index.php');
             $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>';
         }
         

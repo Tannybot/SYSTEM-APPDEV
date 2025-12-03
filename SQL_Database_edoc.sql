@@ -96,28 +96,28 @@ INSERT INTO `faculty` (`facid`, `facemail`, `facname`, `facpassword`, `facnic`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `patient`
+-- Table structure for table `student`
 --
 
-DROP TABLE IF EXISTS `patient`;
-CREATE TABLE IF NOT EXISTS `patient` (
-  `pid` int(11) NOT NULL AUTO_INCREMENT,
-  `pemail` varchar(255) DEFAULT NULL,
-  `pname` varchar(255) DEFAULT NULL,
-  `ppassword` varchar(255) DEFAULT NULL,
-  `paddress` varchar(255) DEFAULT NULL,
-  `pnic` varchar(15) DEFAULT NULL,
-  `pdob` date DEFAULT NULL,
-  `ptel` varchar(15) DEFAULT NULL,
-  PRIMARY KEY (`pid`)
+DROP TABLE IF EXISTS `student`;
+CREATE TABLE IF NOT EXISTS `student` (
+  `sid` int(11) NOT NULL AUTO_INCREMENT,
+  `semail` varchar(255) DEFAULT NULL,
+  `sname` varchar(255) DEFAULT NULL,
+  `spassword` varchar(255) DEFAULT NULL,
+  `saddress` varchar(255) DEFAULT NULL,
+  `snic` varchar(15) DEFAULT NULL,
+  `sdob` date DEFAULT NULL,
+  `stel` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`sid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `patient`
+-- Dumping data for table `student`
 --
 
-INSERT INTO `patient` (`pid`, `pemail`, `pname`, `ppassword`, `paddress`, `pnic`, `pdob`, `ptel`) VALUES
-(1, 'patient@edoc.com', 'Test Patient', '123', 'Sri Lanka', '0000000000', '2000-01-01', '0120000000'),
+INSERT INTO `student` (`sid`, `semail`, `sname`, `spassword`, `saddress`, `snic`, `sdob`, `stel`) VALUES
+(1, 'student@edoc.com', 'Test Student', '123', 'Sri Lanka', '0000000000', '2000-01-01', '0120000000'),
 (2, 'emhashenudara@gmail.com', 'Hashen Udara', '123', 'Sri Lanka', '0110000000', '2022-06-03', '0700000000');
 
 -- --------------------------------------------------------
@@ -248,8 +248,8 @@ START TRANSACTION;
 INSERT INTO `webuser` (`email`, `usertype`) VALUES
 ('admin@edoc.com', 'a'),
 ('faculty@edoc.com', 'f'),
-('patient@edoc.com', 'p'),
-('emhashenudara@gmail.com', 'p');
+('student@edoc.com', 's'),
+('emhashenudara@gmail.com', 's');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
