@@ -72,7 +72,7 @@
                 </tr>
                 <tr class="menu-row">
                     <td class="menu-btn menu-icon-doctor ">
-                        <a href="doctors.php" class="non-style-link-menu "><div><p class="menu-text">Doctors</p></a></div>
+                        <a href="doctors.php" class="non-style-link-menu "><div><p class="menu-text">Faculty</p></a></div>
                     </td>
                 </tr>
                 <tr class="menu-row" >
@@ -87,7 +87,7 @@
                 </tr>
                 <tr class="menu-row" >
                     <td class="menu-btn menu-icon-patient">
-                        <a href="patient.php" class="non-style-link-menu"><div><p class="menu-text">Patients</p></a></div>
+                        <a href="patient.php" class="non-style-link-menu"><div><p class="menu-text">Student</p></a></div>
                     </td>
                 </tr>
 
@@ -100,7 +100,7 @@
                     <a href="schedule.php" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
                     </td>
                     <td>
-                        <p style="font-size: 23px;padding-left:12px;font-weight: 600;">Shedule Manager</p>
+                        <p style="font-size: 23px;padding-left:12px;font-weight: 600;">Schedule Manager</p>
                                            
                     </td>
                     <td width="15%">
@@ -161,11 +161,11 @@
 
                         </td>
                         <td width="5%" style="text-align: center;">
-                        Doctor:
+                        Faculty:
                         </td>
                         <td width="30%">
                         <select name="docid" id="" class="box filter-container-items" style="width:90% ;height: 37px;margin: 0;" >
-                            <option value="" disabled selected hidden>Choose Doctor Name from the list</option><br/>
+                            <option value="" disabled selected hidden>Choose the Faculty Name from the list</option><br/>
                                 
                             <?php 
                             
@@ -253,7 +253,7 @@
                                 </th>
                                 
                                 <th class="table-headin">
-                                    Doctor
+                                    Faculty
                                 </th>
                                 <th class="table-headin">
                                     
