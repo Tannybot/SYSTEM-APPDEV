@@ -26,7 +26,7 @@
     session_start();
 
     if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='d'){
+        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='f'){
             header("location: ../login.php");
         }else{
             $useremail=$_SESSION["user"];
@@ -40,10 +40,10 @@
 
     //import database
     include("../connection.php");
-    $userrow = $database->query("select * from doctor where docemail='$useremail'");
+    $userrow = $database->query("select * from faculty where facemail='$useremail'");
     $userfetch=$userrow->fetch_assoc();
-    $userid= $userfetch["docid"];
-    $username=$userfetch["docname"];
+    $userid= $userfetch["facid"];
+    $username=$userfetch["facname"];
  //echo $userid;
  ?>
  <div class="container">
@@ -87,7 +87,7 @@
              </tr>
              <tr class="menu-row" >
                  <td class="menu-btn menu-icon-patient">
-                     <a href="patient.php" class="non-style-link-menu"><div><p class="menu-text">My Patients</p></a></div>
+                     <a href="student.php" class="non-style-link-menu"><div><p class="menu-text">My Students</p></a></div>
                  </td>
              </tr>
              <tr class="menu-row" >
@@ -102,7 +102,7 @@
             <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;margin-top:25px; ">
                 <tr >
                     <td width="13%" >
-                    <a href="schedule.php" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
+                    <a href="index.php" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
                     </td>
                     <td>
                         <p style="font-size: 23px;padding-left:12px;font-weight: 600;">My Sessions</p>
@@ -120,7 +120,7 @@
                         $today = date('Y-m-d');
                         echo $today;
 
-                        $list110 = $database->query("select  * from  schedule where docid=$userid;");
+                        $list110 = $database->query("select  * from  schedule where facid=$userid;");
 
                         ?>
                         </p>
@@ -174,7 +174,7 @@
                 
                 <?php
 
-                $sqlmain= "select schedule.scheduleid,schedule.title,doctor.docname,schedule.scheduledate,schedule.scheduletime,schedule.nop from schedule inner join doctor on schedule.docid=doctor.docid where doctor.docid=$userid ";
+                $sqlmain= "select schedule.scheduleid,schedule.title,faculty.facname,schedule.scheduledate,schedule.scheduletime,schedule.nop from schedule inner join faculty on schedule.facid=faculty.facid where faculty.facid=$userid ";
                     if($_POST){
                         //print_r($_POST);
                         $sqlpt1="";
@@ -248,7 +248,7 @@
                                     $row=$result->fetch_assoc();
                                     $scheduleid=$row["scheduleid"];
                                     $title=$row["title"];
-                                    $docname=$row["docname"];
+                                    $facname=$row["facname"];
                                     $scheduledate=$row["scheduledate"];
                                     $scheduletime=$row["scheduletime"];
                                     $nop=$row["nop"];
@@ -319,10 +319,10 @@
             </div>
             '; 
         }elseif($action=='view'){
-            $sqlmain= "select schedule.scheduleid,schedule.title,doctor.docname,schedule.scheduledate,schedule.scheduletime,schedule.nop from schedule inner join doctor on schedule.docid=doctor.docid  where  schedule.scheduleid=$id";
+            $sqlmain= "select schedule.scheduleid,schedule.title,faculty.facname,schedule.scheduledate,schedule.scheduletime,schedule.nop from schedule inner join faculty on schedule.facid=faculty.facid  where  schedule.scheduleid=$id";
             $result= $database->query($sqlmain);
             $row=$result->fetch_assoc();
-            $docname=$row["docname"];
+            $facname=$row["facname"];
             $scheduleid=$row["scheduleid"];
             $title=$row["title"];
             $scheduledate=$row["scheduledate"];
@@ -332,7 +332,7 @@
             $nop=$row['nop'];
 
 
-            $sqlmain12= "select * from appointment inner join patient on patient.pid=appointment.pid inner join schedule on schedule.scheduleid=appointment.scheduleid where schedule.scheduleid=$id;";
+            $sqlmain12= "select * from appointment inner join student on student.sid=appointment.pid inner join schedule on schedule.scheduleid=appointment.scheduleid where schedule.scheduleid=$id;";
             $result12= $database->query($sqlmain12);
             echo '
             <div id="popup1" class="overlay">
@@ -367,12 +367,12 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    <label for="Email" class="form-label">Doctor of this session: </label>
+                                    <label for="Email" class="form-label">Faculty of this session: </label>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                '.$docname.'<br><br>
+                                '.$facname.'<br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -397,7 +397,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    <label for="spec" class="form-label"><b>Patients that Already registerd for this session:</b> ('.$result12->num_rows."/".$nop.')</label>
+                                    <label for="spec" class="form-label"><b>Students that Already registered for this session:</b> ('.$result12->num_rows."/".$nop.')</label>
                                     <br><br>
                                 </td>
                             </tr>
@@ -411,20 +411,20 @@
                                  <thead>
                                  <tr>   
                                         <th class="table-headin">
-                                             Patient ID
+                                             Student ID
                                          </th>
                                          <th class="table-headin">
-                                             Patient name
+                                             Student name
                                          </th>
                                          <th class="table-headin">
-                                             
+
                                              Appointment number
-                                             
+
                                          </th>
-                                        
-                                         
+
+
                                          <th class="table-headin">
-                                             Patient Telephone
+                                             Student Telephone
                                          </th>
                                          
                                  </thead>
@@ -432,56 +432,54 @@
                                  
                 
                 
-                                         
                                          $result= $database->query($sqlmain12);
-                
-                                         if($result->num_rows==0){
-                                             echo '<tr>
-                                             <td colspan="7">
-                                             <br><br><br><br>
-                                             <center>
-                                             <img src="../img/notfound.svg" width="25%">
-                                             
-                                             <br>
-                                             <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We  couldnt find anything related to your keywords !</p>
-                                             <a class="non-style-link" href="appointment.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Appointments &nbsp;</font></button>
-                                             </a>
-                                             </center>
-                                             <br><br><br><br>
+
+                                     if($result->num_rows==0){
+                                         echo '<tr>
+                                         <td colspan="7">
+                                         <br><br><br><br>
+                                         <center>
+                                         <img src="../img/notfound.svg" width="25%">
+
+                                         <br>
+                                         <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We  couldnt find anything related to your keywords !</p>
+                                         <a class="non-style-link" href="appointment.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Appointments &nbsp;</font></button>
+                                         </a>
+                                         </center>
+                                         <br><br><br><br>
+                                         </td>
+                                         </tr>';
+
+                                     }
+                                     else{
+                                     for ( $x=0; $x<$result->num_rows;$x++){
+                                         $row=$result->fetch_assoc();
+                                         $apponum=$row["apponum"];
+                                         $sid=$row["sid"];
+                                         $sname=$row["sname"];
+                                         $stel=$row["stel"];
+
+                                         echo '<tr style="text-align:center;">
+                                            <td>
+                                            '.substr($sid,0,15).'
+                                            </td>
+                                             <td style="font-weight:600;padding:25px;">'.
+
+                                             substr($sname,0,25)
+                                             .'</td >
+                                             <td style="text-align:center;font-size:23px;font-weight:500; color: var(--btnnicetext);">
+                                             '.$apponum.'
+
                                              </td>
-                                             </tr>';
-                                             
-                                         }
-                                         else{
-                                         for ( $x=0; $x<$result->num_rows;$x++){
-                                             $row=$result->fetch_assoc();
-                                             $apponum=$row["apponum"];
-                                             $pid=$row["pid"];
-                                             $pname=$row["pname"];
-                                             $ptel=$row["ptel"];
-                                             
-                                             echo '<tr style="text-align:center;">
-                                                <td>
-                                                '.substr($pid,0,15).'
-                                                </td>
-                                                 <td style="font-weight:600;padding:25px">'.
-                                                 
-                                                 substr($pname,0,25)
-                                                 .'</td >
-                                                 <td style="text-align:center;font-size:23px;font-weight:500; color: var(--btnnicetext);">
-                                                 '.$apponum.'
-                                                 
-                                                 </td>
-                                                 <td>
-                                                 '.substr($ptel,0,25).'
-                                                 </td>
-                                                 
-                                                 
-                
-                                                 
-                                             </tr>';
-                                             
-                                         }
+                                             <td>
+                                             '.substr($stel,0,25).'
+                                             </td>
+
+
+
+                                         </tr>';
+
+                                     }
                                      }
                                           
                                      

@@ -26,7 +26,7 @@
     session_start();
 
     if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='p'){
+        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='s'){
             header("location: ../login.php");
         }else{
             $useremail=$_SESSION["user"];
@@ -40,14 +40,14 @@
     //import database
     include("../connection.php");
 
-    $sqlmain= "select * from patient where pemail=?";
+    $sqlmain= "select * from student where semail=?";
     $stmt = $database->prepare($sqlmain);
     $stmt->bind_param("s",$useremail);
     $stmt->execute();
     $result = $stmt->get_result();
     $userfetch=$result->fetch_assoc();
-    $userid= $userfetch["pid"];
-    $username=$userfetch["pname"];
+    $userid= $userfetch["sid"];
+    $username=$userfetch["sname"];
 
 
     //echo $userid;
@@ -91,8 +91,8 @@
                     </td>
                 </tr>
                 <tr class="menu-row">
-                    <td class="menu-btn menu-icon-doctor">
-                        <a href="doctors.php" class="non-style-link-menu"><div><p class="menu-text">All Faculties</p></a></div>
+                    <td class="menu-btn menu-icon-faculty">
+                        <a href="faculty.php" class="non-style-link-menu"><div><p class="menu-text">All Faculty</p></a></div>
                     </td>
                 </tr>
                 
@@ -119,16 +119,16 @@
             <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;margin-top:25px; ">
                 <tr >
                     <td width="13%" >
-                    <a href="schedule.php" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
+                    <a href="index.php" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
                     </td>
                     <td >
                             <form action="schedule.php" method="post" class="header-search">
 
-                                        <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Doctor name or Email or Date (YYYY-MM-DD)" list="doctors" >&nbsp;&nbsp;
-                                        
+                                        <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Faculty name or Email or Date (YYYY-MM-DD)" list="faculty" >&nbsp;&nbsp;
+
                                         <?php
-                                            echo '<datalist id="doctors">';
-                                            $list11 = $database->query("select DISTINCT * from  doctor;");
+                                            echo '<datalist id="faculty">';
+                                            $list11 = $database->query("select DISTINCT * from  faculty;");
                                             $list12 = $database->query("select DISTINCT * from  schedule GROUP BY title;");
                                             
 
@@ -137,7 +137,7 @@
 
                                             for ($y=0;$y<$list11->num_rows;$y++){
                                                 $row00=$list11->fetch_assoc();
-                                                $d=$row00["docname"];
+                                                $d=$row00["facname"];
                                                
                                                 echo "<option value='$d'><br/>";
                                                
@@ -209,7 +209,7 @@
 
                                     $id=$_GET["id"];
 
-                                    $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduleid=? order by schedule.scheduledate desc";
+                                    $sqlmain= "select * from schedule inner join faculty on schedule.facid=faculty.facid where schedule.scheduleid=? order by schedule.scheduledate desc";
                                     $stmt = $database->prepare($sqlmain);
                                     $stmt->bind_param("i", $id);
                                     $stmt->execute();
@@ -218,8 +218,8 @@
                                     $row=$result->fetch_assoc();
                                     $scheduleid=$row["scheduleid"];
                                     $title=$row["title"];
-                                    $docname=$row["docname"];
-                                    $docemail=$row["docemail"];
+                                    $facname=$row["facname"];
+                                    $facemail=$row["facemail"];
                                     $scheduledate=$row["scheduledate"];
                                     $scheduletime=$row["scheduletime"];
                                     $sql2="select * from appointment where scheduleid=$id";
@@ -247,8 +247,8 @@
                                                             Session Details
                                                         </div><br><br>
                                                         <div class="h3-search" style="font-size:18px;line-height:30px">
-                                                            Doctor name:  &nbsp;&nbsp;<b>'.$docname.'</b><br>
-                                                            Doctor Email:  &nbsp;&nbsp;<b>'.$docemail.'</b> 
+                                                            Faculty name:  &nbsp;&nbsp;<b>'.$facname.'</b><br>
+                                                            Faculty Email:  &nbsp;&nbsp;<b>'.$facemail.'</b>
                                                         </div>
                                                         <div class="h3-search" style="font-size:18px;">
                                                           

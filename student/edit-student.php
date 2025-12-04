@@ -14,7 +14,7 @@
         $name=$_POST['name'];
         $nic=$_POST['nic'];
         $oldemail=$_POST["oldemail"];
-        $spec=$_POST['spec'];
+        $address=$_POST['address'];
         $email=$_POST['email'];
         $tele=$_POST['Tele'];
         $password=$_POST['password'];
@@ -23,15 +23,20 @@
         
         if ($password==$cpassword){
             $error='3';
-            $result= $database->query("select doctor.docid from doctor inner join webuser on doctor.docemail=webuser.email where webuser.email='$email';");
+
+            $sqlmain= "select student.sid from student inner join webuser on student.semail=webuser.email where webuser.email=?;";
+            $stmt = $database->prepare($sqlmain);
+            $stmt->bind_param("s",$email);
+            $stmt->execute();
+            $result = $stmt->get_result();
             //$resultqq= $database->query("select * from doctor where docid='$id';");
             if($result->num_rows==1){
-                $id2=$result->fetch_assoc()["docid"];
+                $id2=$result->fetch_assoc()["sid"];
             }else{
                 $id2=$id;
             }
             
-            echo $id2."jdfjdfdh";
+
             if($id2!=$id){
                 $error='1';
                 //$resultqq1= $database->query("select * from doctor where docemail='$email';");
@@ -41,13 +46,13 @@
             }else{
 
                 //$sql1="insert into doctor(docemail,docname,docpassword,docnic,doctel,specialties) values('$email','$name','$password','$nic','$tele',$spec);";
-                $sql1="update doctor set docemail='$email',docname='$name',docpassword='$password',docnic='$nic',doctel='$tele',specialties=$spec where docid=$id ;";
+                $sql1="update student set semail='$email',sname='$name',spassword='$password',snic='$nic',stel='$tele',saddress='$address' where sid=$id ;";
                 $database->query($sql1);
-                
+                echo $sql1;
                 $sql1="update webuser set email='$email' where email='$oldemail' ;";
                 $database->query($sql1);
-                //echo $sql1;
-                //echo $sql2;
+                echo $sql1;
+                
                 $error= '4';
                 
             }
@@ -65,7 +70,7 @@
     }
     
 
-    header("location: doctors.php?action=edit&error=".$error."&id=".$id);
+    header("location: settings.php?action=edit&error=".$error."&id=".$id);
     ?>
     
    

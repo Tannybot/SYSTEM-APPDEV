@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
         
-    <title>Patients</title>
+    <title>Students</title>
     <style>
         .popup{
             animation: transitionIn-Y-bottom 0.5s;
@@ -26,7 +26,7 @@
     session_start();
 
     if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='d'){
+        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='f'){
             header("location: ../login.php");
         }else{
             $useremail=$_SESSION["user"];
@@ -35,14 +35,18 @@
     }else{
         header("location: ../login.php");
     }
-    
+
 
     //import database
     include("../connection.php");
-    $userrow = $database->query("select * from doctor where docemail='$useremail'");
+    $sqlmain= "select * from faculty where facemail=?";
+    $stmt = $database->prepare($sqlmain);
+    $stmt->bind_param("s",$useremail);
+    $stmt->execute();
+    $userrow = $stmt->get_result();
     $userfetch=$userrow->fetch_assoc();
-    $userid= $userfetch["docid"];
-    $username=$userfetch["docname"];
+    $userid= $userfetch["facid"];
+    $username=$userfetch["facname"];
 
 
     //echo $userid;
@@ -88,8 +92,8 @@
                     </td>
                 </tr>
                 <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-patient menu-active menu-icon-patient-active">
-                        <a href="patient.php" class="non-style-link-menu  non-style-link-menu-active"><div><p class="menu-text">My Patients</p></a></div>
+                    <td class="menu-btn menu-icon-student menu-active menu-icon-student-active">
+                        <a href="student.php" class="non-style-link-menu  non-style-link-menu-active"><div><p class="menu-text">My Students</p></a></div>
                     </td>
                 </tr>
                 <tr class="menu-row" >
@@ -108,24 +112,24 @@
 
                         if(isset($_POST["search"])){
                             $keyword=$_POST["search12"];
-                            
-                            $sqlmain= "select * from patient where pemail='$keyword' or pname='$keyword' or pname like '$keyword%' or pname like '%$keyword' or pname like '%$keyword%' ";
+                            /*TODO: make and understand */
+                            $sqlmain= "select * from student where semail='$keyword' or sname='$keyword' or sname like '$keyword%' or sname like '%$keyword' or sname like '%$keyword%' ";
                             $selecttype="my";
                         }
                         
                         if(isset($_POST["filter"])){
                             if($_POST["showonly"]=='all'){
-                                $sqlmain= "select * from patient";
+                                $sqlmain= "select * from student";
                                 $selecttype="All";
-                                $current="All patients";
+                                $current="All students";
                             }else{
-                                $sqlmain= "select * from appointment inner join patient on patient.pid=appointment.pid inner join schedule on schedule.scheduleid=appointment.scheduleid where schedule.docid=$userid;";
+                                $sqlmain= "select * from appointment inner join student on student.sid=appointment.pid inner join schedule on schedule.scheduleid=appointment.scheduleid where schedule.facid=$userid;";
                                 $selecttype="My";
-                                $current="My patients Only";
+                                $current="My students Only";
                             }
                         }
                     }else{
-                        $sqlmain= "select * from appointment inner join patient on patient.pid=appointment.pid inner join schedule on schedule.scheduleid=appointment.scheduleid where schedule.docid=$userid;";
+                        $sqlmain= "select * from appointment inner join student on student.sid=appointment.pid inner join schedule on schedule.scheduleid=appointment.scheduleid where schedule.facid=$userid;";
                         $selecttype="My";
                     }
 
@@ -137,24 +141,24 @@
                 <tr >
                     <td width="13%">
 
-                    <a href="patient.php" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
+                    <a href="index.php" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
                         
                     </td>
                     <td>
                         
                         <form action="" method="post" class="header-search">
 
-                            <input type="search" name="search12" class="input-text header-searchbar" placeholder="Search Patient name or Email" list="patient">&nbsp;&nbsp;
-                            
+                            <input type="search" name="search12" class="input-text header-searchbar" placeholder="Search Student name or Email" list="student">&nbsp;&nbsp;
+
                             <?php
-                                echo '<datalist id="patient">';
+                                echo '<datalist id="student">';
                                 $list11 = $database->query($sqlmain);
                                //$list12= $database->query("select * from appointment inner join patient on patient.pid=appointment.pid inner join schedule on schedule.scheduleid=appointment.scheduleid where schedule.docid=1;");
 
                                 for ($y=0;$y<$list11->num_rows;$y++){
                                     $row00=$list11->fetch_assoc();
-                                    $d=$row00["pname"];
-                                    $c=$row00["pemail"];
+                                    $d=$row00["sname"];
+                                    $c=$row00["semail"];
                                     echo "<option value='$d'><br/>";
                                     echo "<option value='$c'><br/>";
                                 };
@@ -191,7 +195,7 @@
                 
                 <tr>
                     <td colspan="4" style="padding-top:10px;">
-                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)"><?php echo $selecttype." Patients (".$list11->num_rows.")"; ?></p>
+                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)"><?php echo $selecttype." Students (".$list11->num_rows.")"; ?></p>
                     </td>
                     
                 </tr>
@@ -208,8 +212,8 @@
                         <td width="30%">
                         <select name="showonly" id="" class="box filter-container-items" style="width:90% ;height: 37px;margin: 0;" >
                                     <option value="" disabled selected hidden><?php echo $current   ?></option><br/>
-                                    <option value="my">My Patients Only</option><br/>
-                                    <option value="all">All Patients</option><br/>
+                                    <option value="my">My Students Only</option><br/>
+                                    <option value="all">All Students</option><br/>
                                     
 
                         </select>
@@ -282,7 +286,7 @@
                                     
                                     <br>
                                     <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We  couldnt find anything related to your keywords !</p>
-                                    <a class="non-style-link" href="patient.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Patients &nbsp;</font></button>
+                                    <a class="non-style-link" href="student.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Students &nbsp;</font></button>
                                     </a>
                                     </center>
                                     <br><br><br><br>
@@ -293,12 +297,12 @@
                                 else{
                                 for ( $x=0; $x<$result->num_rows;$x++){
                                     $row=$result->fetch_assoc();
-                                    $pid=$row["pid"];
-                                    $name=$row["pname"];
-                                    $email=$row["pemail"];
-                                    $nic=$row["pnic"];
-                                    $dob=$row["pdob"];
-                                    $tel=$row["ptel"];
+                                    $sid=$row["sid"];
+                                    $name=$row["sname"];
+                                    $email=$row["semail"];
+                                    $nic=$row["snic"];
+                                    $dob=$row["sdob"];
+                                    $tel=$row["stel"];
                                     
                                     echo '<tr>
                                         <td> &nbsp;'.
@@ -346,22 +350,25 @@
     <?php 
     if($_GET){
         
-        $id=$_GET["id"];
-        $action=$_GET["action"];
-            $sqlmain= "select * from patient where pid='$id'";
-            $result= $database->query($sqlmain);
+            $id=$_GET["id"];
+            $action=$_GET["action"];
+            $sqlmain= "select * from student where sid=?";
+            $stmt = $database->prepare($sqlmain);
+            $stmt->bind_param("i",$id);
+            $stmt->execute();
+            $result = $stmt->get_result();
             $row=$result->fetch_assoc();
-            $name=$row["pname"];
-            $email=$row["pemail"];
-            $nic=$row["pnic"];
-            $dob=$row["pdob"];
-            $tele=$row["ptel"];
-            $address=$row["paddress"];
+            $name=$row["sname"];
+            $email=$row["semail"];
+            $nic=$row["snic"];
+            $dob=$row["sdob"];
+            $tele=$row["stel"];
+            $address=$row["saddress"];
             echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
-                        <a class="close" href="patient.php">&times;</a>
+                        <a class="close" href="student.php">&times;</a>
                         <div class="content">
 
                         </div>
@@ -376,12 +383,12 @@
                             <tr>
                                 
                                 <td class="label-td" colspan="2">
-                                    <label for="name" class="form-label">Patient ID: </label>
+                                    <label for="name" class="form-label">Student ID: </label>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    P-'.$id.'<br><br>
+                                    S-'.$id.'<br><br>
                                 </td>
                                 
                             </tr>
@@ -453,7 +460,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <a href="patient.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
+                                    <a href="student.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
                                 
                                     
                                 </td>

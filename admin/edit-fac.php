@@ -14,7 +14,7 @@
         $name=$_POST['name'];
         $nic=$_POST['nic'];
         $oldemail=$_POST["oldemail"];
-        $address=$_POST['address'];
+        $spec=$_POST['spec'];
         $email=$_POST['email'];
         $tele=$_POST['Tele'];
         $password=$_POST['password'];
@@ -23,36 +23,30 @@
         
         if ($password==$cpassword){
             $error='3';
-
-            $sqlmain= "select patient.pid from patient inner join webuser on patient.pemail=webuser.email where webuser.email=?;";
-            $stmt = $database->prepare($sqlmain);
-            $stmt->bind_param("s",$email);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            //$resultqq= $database->query("select * from doctor where docid='$id';");
+            $result= $database->query("select faculty.facid from faculty inner join webuser on faculty.facemail=webuser.email where webuser.email='$email';");
+            //$resultqq= $database->query("select * from faculty where facid='$id';");
             if($result->num_rows==1){
-                $id2=$result->fetch_assoc()["pid"];
+                $id2=$result->fetch_assoc()["facid"];
             }else{
                 $id2=$id;
             }
-            
 
             if($id2!=$id){
                 $error='1';
-                //$resultqq1= $database->query("select * from doctor where docemail='$email';");
-                //$did= $resultqq1->fetch_assoc()["docid"];
+                //$resultqq1= $database->query("select * from faculty where facemail='$email';");
+                //$did= $resultqq1->fetch_assoc()["facid"];
                 //if($resultqq1->num_rows==1){
-                    
+
             }else{
 
-                //$sql1="insert into doctor(docemail,docname,docpassword,docnic,doctel,specialties) values('$email','$name','$password','$nic','$tele',$spec);";
-                $sql1="update patient set pemail='$email',pname='$name',ppassword='$password',pnic='$nic',ptel='$tele',paddress='$address' where pid=$id ;";
+                //$sql1="insert into faculty(facemail,facname,facpassword,facnic,factel,specialties) values('$email','$name','$password','$nic','$tele',$spec);";
+                $sql1="update faculty set facemail='$email',facname='$name',facpassword='$password',facnic='$nic',factel='$tele',specialties=$spec where facid=$id ;";
                 $database->query($sql1);
-                echo $sql1;
+                
                 $sql1="update webuser set email='$email' where email='$oldemail' ;";
                 $database->query($sql1);
-                echo $sql1;
-                
+                //echo $sql1;
+                //echo $sql2;
                 $error= '4';
                 
             }
@@ -70,7 +64,7 @@
     }
     
 
-    header("location: settings.php?action=edit&error=".$error."&id=".$id);
+    header("location: faculty.php?action=edit&error=".$error."&id=".$id);
     ?>
     
    
