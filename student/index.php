@@ -50,11 +50,15 @@
     $stmt->bind_param("s",$useremail);
     $stmt->execute();
     $userrow = $stmt->get_result();
-    $userfetch=$userrow->fetch_assoc();
-
-    $userid= $userfetch["sid"];
-    $username=$userfetch["sname"];
-    $profilepic=$userfetch["profilepic"];
+    if($userrow && $userrow->num_rows > 0){
+        $userfetch=$userrow->fetch_assoc();
+        $userid= $userfetch["sid"];
+        $username=$userfetch["sname"];
+        $profilepic=$userfetch["profilepic"];
+    }else{
+        header("location: ../login.php");
+        exit();
+    }
 
 
     //echo $userid;
@@ -330,14 +334,14 @@
                                                 $sqlmain= "select * from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid  where  student.sid=$userid  and schedule.scheduledate>='$today' order by schedule.scheduledate asc";
                                                 //echo $sqlmain;
                                                 $result= $database->query($sqlmain);
-                
-                                                if($result->num_rows==0){
+                                                
+                                                if($result && $result->num_rows==0){
                                                     echo '<tr>
                                                     <td colspan="4">
                                                     <br><br><br><br>
                                                     <center>
                                                     <img src="../img/notfound.svg" width="25%">
-                                                    
+                                                
                                                     <br>
                                                     <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">Nothing to show here!</p>
                                                     <a class="non-style-link" href="schedule.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Channel a Faculty &nbsp;</font></button>
@@ -346,9 +350,9 @@
                                                     <br><br><br><br>
                                                     </td>
                                                     </tr>';
-                                                    
+                                                
                                                 }
-                                                else{
+                                                elseif($result){
                                                 for ( $x=0; $x<$result->num_rows;$x++){
                                                     $row=$result->fetch_assoc();
                                                     $scheduleid=$row["scheduleid"];
