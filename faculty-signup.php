@@ -49,6 +49,21 @@ if($_POST){
     $nic=''; // Removed NIC
     $subject=$_POST['subject'];
 
+    $profilepic = 'img/user.png'; // default
+    if(isset($_FILES['profilepic']) && $_FILES['profilepic']['error'] == 0){
+        $target_dir = "uploads/";
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        $target_file = $target_dir . basename($_FILES["profilepic"]["name"]);
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+        if(in_array($imageFileType, ['jpg','png','jpeg','gif'])){
+            if(move_uploaded_file($_FILES["profilepic"]["tmp_name"], $target_file)){
+                $profilepic = $target_file;
+            }
+        }
+    }
+
     if ($newpassword==$cpassword){
         $sqlmain= "select * from webuser where email=?;";
         $stmt = $database->prepare($sqlmain);
@@ -59,7 +74,7 @@ if($_POST){
             $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>';
         }else{
             //Insert into faculty table
-            $database->query("insert into faculty(facemail,facname,facpassword, facnic,factel,subject) values('$email','$name','$newpassword','$nic','$tele',$subject);");
+            $database->query("insert into faculty(facemail,facname,facpassword, facnic,factel,subject,profilepic) values('$email','$name','$newpassword','$nic','$tele',$subject,'$profilepic');");
             $database->query("insert into webuser values('$email','f')");
 
             $_SESSION["user"]=$email;
@@ -91,7 +106,7 @@ if($_POST){
                 </td>
             </tr>
             <tr>
-                <form action="" method="POST" >
+                <form action="" method="POST" enctype="multipart/form-data">
                 <td class="label-td" colspan="2">
                     <label for="name" class="form-label">Name: </label>
                 </td>
@@ -144,6 +159,16 @@ if($_POST){
                         };
                         ?>
                     </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="label-td" colspan="2">
+                    <label for="profilepic" class="form-label">Profile Picture: </label>
+                </td>
+            </tr>
+            <tr>
+                <td class="label-td" colspan="2">
+                    <input type="file" name="profilepic" class="input-text" accept="image/*">
                 </td>
             </tr>
             <tr>

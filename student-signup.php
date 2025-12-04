@@ -50,6 +50,21 @@ if($_POST){
     $newpassword=$_POST['newpassword'];
     $cpassword=$_POST['cpassword'];
 
+    $profilepic = 'img/user.png'; // default
+    if(isset($_FILES['profilepic']) && $_FILES['profilepic']['error'] == 0){
+        $target_dir = "uploads/";
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        $target_file = $target_dir . basename($_FILES["profilepic"]["name"]);
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+        if(in_array($imageFileType, ['jpg','png','jpeg','gif'])){
+            if(move_uploaded_file($_FILES["profilepic"]["tmp_name"], $target_file)){
+                $profilepic = $target_file;
+            }
+        }
+    }
+
     if ($newpassword==$cpassword){
         $sqlmain= "select * from webuser where email=?;";
         $stmt = $database->prepare($sqlmain);
@@ -60,7 +75,7 @@ if($_POST){
             $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>';
         }else{
             //Insert into student table
-            $database->query("insert into student(semail,sname,spassword, saddress, snic,sdob,stel) values('$email','$name','$newpassword','$address','$nic','$dob','$tele');");
+            $database->query("insert into student(semail,sname,spassword, saddress, snic,sdob,stel,profilepic) values('$email','$name','$newpassword','$address','$nic','$dob','$tele','$profilepic');");
             $database->query("insert into webuser values('$email','s')");
 
             $_SESSION["user"]=$email;
@@ -92,7 +107,7 @@ if($_POST){
                 </td>
             </tr>
             <tr>
-                <form action="" method="POST" >
+                <form action="" method="POST" enctype="multipart/form-data">
                 <td class="label-td" colspan="2">
                     <label for="name" class="form-label">Name: </label>
                 </td>
@@ -144,6 +159,16 @@ if($_POST){
             <tr>
                 <td class="label-td" colspan="2">
                 <input type="tel" name="tele" class="input-text" pattern="^\d{10}$" placeholder="ex. 0712345678" required>
+                </td>
+            </tr>
+            <tr>
+                <td class="label-td" colspan="2">
+                    <label for="profilepic" class="form-label">Profile Picture: </label>
+                </td>
+            </tr>
+            <tr>
+                <td class="label-td" colspan="2">
+                    <input type="file" name="profilepic" class="input-text" accept="image/*">
                 </td>
             </tr>
             <tr>

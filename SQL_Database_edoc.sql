@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS `faculty` (
   `facnic` varchar(15) DEFAULT NULL,
   `factel` varchar(15) DEFAULT NULL,
   `subject` int(2) DEFAULT NULL,
+  `profilepic` varchar(255) DEFAULT 'img/user.png',
   PRIMARY KEY (`facid`),
   KEY `subject` (`subject`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
@@ -109,6 +110,7 @@ CREATE TABLE IF NOT EXISTS `student` (
   `snic` varchar(15) DEFAULT NULL,
   `sdob` date DEFAULT NULL,
   `stel` varchar(15) DEFAULT NULL,
+  `profilepic` varchar(255) DEFAULT 'img/user.png',
   PRIMARY KEY (`sid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 

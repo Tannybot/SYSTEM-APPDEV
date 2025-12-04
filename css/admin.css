@@ -22,6 +22,9 @@
 .menu.collapsed .logout-btn{
     display: none;
 }
+.dash-body.expanded{
+    margin-left: 60px;
+}
 .dash-body{
     width: 79%;
     height: 100vh;

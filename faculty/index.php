@@ -51,6 +51,7 @@
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["facid"];
     $username=$userfetch["facname"];
+    $profilepic=$userfetch["profilepic"];
 
 
     //echo $userid;
@@ -65,7 +66,7 @@
                         <table border="0" class="profile-container">
                             <tr>
                                 <td width="30%" style="padding-left:20px" >
-                                    <img src="../img/user.png" alt="" width="100%" style="border-radius:50%">
+                                    <img src="../<?php echo $profilepic; ?>" alt="" width="100%" style="border-radius:50%">
                                 </td>
                                 <td style="padding:0px;margin:0px; position: relative;">
                                     <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
