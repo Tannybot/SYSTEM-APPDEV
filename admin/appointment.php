@@ -51,9 +51,10 @@
                                 <td width="30%" style="padding-left:20px" >
                                     <img src="../img/user.png" alt="" width="100%" style="border-radius:50%">
                                 </td>
-                                <td style="padding:0px;margin:0px;">
+                                <td style="padding:0px;margin:0px; position: relative;">
                                     <p class="profile-title">Administrator</p>
                                     <p class="profile-subtitle">admin@edoc.com</p>
+                                    <button id="toggle-btn" class="btn-icon-back btn" style="position: absolute; top: 0; right: 0;"></button>
                                 </td>
                             </tr>
                             <tr>
@@ -64,11 +65,6 @@
                     </table>
                     </td>
 
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <button id="toggle-btn" class="btn-primary-soft btn" style="width:100%;">Toggle Sidebar</button>
-                    </td>
                 </tr>
                 <tr class="menu-row" >
                     <td class="menu-btn menu-icon-dashbord" >

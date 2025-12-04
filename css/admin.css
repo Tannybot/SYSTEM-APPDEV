@@ -16,7 +16,10 @@
 .menu.collapsed{
     width: 60px;
 }
-.menu.collapsed .menu-text{
+.menu.collapsed .menu-text,
+.menu.collapsed .profile-title,
+.menu.collapsed .profile-subtitle,
+.menu.collapsed .logout-btn{
     display: none;
 }
 .dash-body{
