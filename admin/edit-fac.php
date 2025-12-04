@@ -39,8 +39,8 @@
 
             }else{
 
-                //$sql1="insert into faculty(facemail,facname,facpassword,facnic,factel,specialties) values('$email','$name','$password','$nic','$tele',$spec);";
-                $sql1="update faculty set facemail='$email',facname='$name',facpassword='$password',facnic='$nic',factel='$tele',specialties=$spec where facid=$id ;";
+                //$sql1="insert into faculty(facemail,facname,facpassword,facnic,factel,subject) values('$email','$name','$password','$nic','$tele',$spec);";
+                $sql1="update faculty set facemail='$email',facname='$name',facpassword='$password',facnic='$nic',factel='$tele',subject=$spec where facid=$id ;";
                 $database->query($sql1);
                 
                 $sql1="update webuser set email='$email' where email='$oldemail' ;";

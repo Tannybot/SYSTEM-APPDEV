@@ -47,7 +47,7 @@
     //echo $userid;
     ?>
     <div class="container">
-        <div class="menu">
+        <div class="menu" id="menu">
         <table class="menu-container" border="0">
                 <tr>
                     <td style="padding:10px" colspan="2">
@@ -67,6 +67,11 @@
                                 </td>
                             </tr>
                     </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button id="toggle-btn" class="btn-primary-soft btn" style="width:100%;">Toggle Sidebar</button>
                     </td>
                 </tr>
                 <tr class="menu-row" >
@@ -98,7 +103,7 @@
                 
             </table>
         </div>
-        <div class="dash-body">
+        <div class="dash-body" id="dash-body">
             <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;margin-top:25px; ">
                 <tr >
                     <td width="13%" >
@@ -499,9 +504,9 @@
             $row=$result->fetch_assoc();
             $name=$row["facname"];
             $email=$row["facemail"];
-            $spe=$row["specialties"];
+            $spe=$row["subject"];
 
-            $spcil_res= $database->query("select sname from specialties where id='$spe'");
+            $spcil_res= $database->query("select sname from subject where id='$spe'");
             $spcil_array= $spcil_res->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
             $nic=$row['facnic'];
@@ -569,8 +574,8 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    <label for="spec" class="form-label">Specialties: </label>
-                                    
+                                    <label for="spec" class="form-label">Subject: </label>
+
                                 </td>
                             </tr>
                             <tr>
@@ -600,6 +605,15 @@
 
     ?>
     </div>
+
+<script>
+document.getElementById('toggle-btn').addEventListener('click', function() {
+    const menu = document.getElementById('menu');
+    const dashBody = document.getElementById('dash-body');
+    menu.classList.toggle('collapsed');
+    dashBody.classList.toggle('expanded');
+});
+</script>
 
 </body>
 </html>

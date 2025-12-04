@@ -10,10 +10,22 @@
     width: 21%;
     height: 100vh;
     box-shadow: 0 0px 0px 2px rgba(240, 240, 240, 0.3);
+    transition: width 0.3s ease;
+    position: relative;
+}
+.menu.collapsed{
+    width: 60px;
+}
+.menu.collapsed .menu-text{
+    display: none;
 }
 .dash-body{
     width: 79%;
     height: 100vh;
+    transition: width 0.3s ease;
+}
+.dash-body.expanded{
+    width: calc(100% - 60px);
 }
 
 .menu-container{

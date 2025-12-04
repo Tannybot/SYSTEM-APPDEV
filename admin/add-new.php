@@ -56,7 +56,7 @@
                 $error='1';
             }else{
 
-                $sql1="insert into faculty(facemail,facname,facpassword,facnic,factel,specialties) values('$email','$name','$password','$nic','$tele',$spec);";
+                $sql1="insert into faculty(facemail,facname,facpassword,facnic,factel,subject) values('$email','$name','$password','$nic','$tele',$spec);";
                 $sql2="insert into webuser values('$email','f')";
                 $database->query($sql1);
                 $database->query($sql2);

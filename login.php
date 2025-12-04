@@ -123,7 +123,7 @@
         <table border="0" style="margin: 0;padding: 0;width: 60%;">
             <tr>
                 <td>
-                    <p class="header-text">Welcome Bacdsdkz!</p>
+                    <p class="header-text">Welcome to ConsultEase!</p>
                 </td>
             </tr>
         <div class="form-body">

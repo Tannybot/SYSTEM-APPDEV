@@ -47,7 +47,7 @@ if($_POST){
     $newpassword=$_POST['newpassword'];
     $cpassword=$_POST['cpassword'];
     $nic=''; // Removed NIC
-    $specialties=$_POST['specialties'];
+    $subject=$_POST['subject'];
 
     if ($newpassword==$cpassword){
         $sqlmain= "select * from webuser where email=?;";
@@ -59,7 +59,7 @@ if($_POST){
             $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>';
         }else{
             //Insert into faculty table
-            $database->query("insert into faculty(facemail,facname,facpassword, facnic,factel,specialties) values('$email','$name','$newpassword','$nic','$tele',$specialties);");
+            $database->query("insert into faculty(facemail,facname,facpassword, facnic,factel,subject) values('$email','$name','$newpassword','$nic','$tele',$subject);");
             $database->query("insert into webuser values('$email','f')");
 
             $_SESSION["user"]=$email;
@@ -127,15 +127,15 @@ if($_POST){
             </tr>
             <tr>
                 <td class="label-td" colspan="2">
-                    <label for="specialties" class="form-label">Specialties: </label>
+                    <label for="subject" class="form-label">Subject: </label>
                 </td>
             </tr>
             <tr>
                 <td class="label-td" colspan="2">
-                    <select name="specialties" class="input-text" required>
-                        <option value="" disabled selected hidden>Choose Specialty</option>
+                    <select name="subject" class="input-text" required>
+                        <option value="" disabled selected hidden>Choose Subject</option>
                         <?php
-                        $list11 = $database->query("select * from specialties order by sname asc;");
+                        $list11 = $database->query("select * from subject order by sname asc;");
                         for ($y=0;$y<$list11->num_rows;$y++){
                             $row00=$list11->fetch_assoc();
                             $sn=$row00["sname"];

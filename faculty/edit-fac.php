@@ -40,8 +40,8 @@
                     
             }else{
 
-                //$sql1="insert into doctor(docemail,docname,docpassword,docnic,doctel,specialties) values('$email','$name','$password','$nic','$tele',$spec);";
-                $sql1="update doctor set docemail='$email',docname='$name',docpassword='$password',docnic='$nic',doctel='$tele',specialties=$spec where docid=$id ;";
+                //$sql1="insert into doctor(docemail,docname,docpassword,docnic,doctel,subject) values('$email','$name','$password','$nic','$tele',$spec);";
+                $sql1="update doctor set docemail='$email',docname='$name',docpassword='$password',docnic='$nic',doctel='$tele',subject=$spec where docid=$id ;";
                 $database->query($sql1);
 
                 $sql1="update webuser set email='$email' where email='$oldemail' ;";

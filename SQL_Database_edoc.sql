@@ -81,16 +81,16 @@ CREATE TABLE IF NOT EXISTS `faculty` (
   `facpassword` varchar(255) DEFAULT NULL,
   `facnic` varchar(15) DEFAULT NULL,
   `factel` varchar(15) DEFAULT NULL,
-  `specialties` int(2) DEFAULT NULL,
+  `subject` int(2) DEFAULT NULL,
   PRIMARY KEY (`facid`),
-  KEY `specialties` (`specialties`)
+  KEY `subject` (`subject`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `faculty`
 --
 
-INSERT INTO `faculty` (`facid`, `facemail`, `facname`, `facpassword`, `facnic`, `factel`, `specialties`) VALUES
+INSERT INTO `faculty` (`facid`, `facemail`, `facname`, `facpassword`, `facnic`, `factel`, `subject`) VALUES
 (1, 'faculty@edoc.com', 'Test Faculty', '123', '000000000', '0110000000', 1);
 
 -- --------------------------------------------------------
@@ -155,77 +155,26 @@ INSERT INTO `schedule` (`scheduleid`, `facid`, `title`, `scheduledate`, `schedul
 -- --------------------------------------------------------
 
 --
--- Table structure for table `specialties`
+-- Table structure for table `subject`
 --
 
-DROP TABLE IF EXISTS `specialties`;
-CREATE TABLE IF NOT EXISTS `specialties` (
+DROP TABLE IF EXISTS `subject`;
+CREATE TABLE IF NOT EXISTS `subject` (
   `id` int(2) NOT NULL,
   `sname` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `specialties`
+-- Dumping data for table `subject`
 --
 
-INSERT INTO `specialties` (`id`, `sname`) VALUES
-(1, 'Accident and emergency medicine'),
-(2, 'Allergology'),
-(3, 'Anaesthetics'),
-(4, 'Biological hematology'),
-(5, 'Cardiology'),
-(6, 'Child psychiatry'),
-(7, 'Clinical biology'),
-(8, 'Clinical chemistry'),
-(9, 'Clinical neurophysiology'),
-(10, 'Clinical radiology'),
-(11, 'Dental, oral and maxillo-facial surgery'),
-(12, 'Dermato-venerology'),
-(13, 'Dermatology'),
-(14, 'Endocrinology'),
-(15, 'Gastro-enterologic surgery'),
-(16, 'Gastroenterology'),
-(17, 'General hematology'),
-(18, 'General Practice'),
-(19, 'General surgery'),
-(20, 'Geriatrics'),
-(21, 'Immunology'),
-(22, 'Infectious diseases'),
-(23, 'Internal medicine'),
-(24, 'Laboratory medicine'),
-(25, 'Maxillo-facial surgery'),
-(26, 'Microbiology'),
-(27, 'Nephrology'),
-(28, 'Neuro-psychiatry'),
-(29, 'Neurology'),
-(30, 'Neurosurgery'),
-(31, 'Nuclear medicine'),
-(32, 'Obstetrics and gynecology'),
-(33, 'Occupational medicine'),
-(34, 'Ophthalmology'),
-(35, 'Orthopaedics'),
-(36, 'Otorhinolaryngology'),
-(37, 'Paediatric surgery'),
-(38, 'Paediatrics'),
-(39, 'Pathology'),
-(40, 'Pharmacology'),
-(41, 'Physical medicine and rehabilitation'),
-(42, 'Plastic surgery'),
-(43, 'Podiatric Medicine'),
-(44, 'Podiatric Surgery'),
-(45, 'Psychiatry'),
-(46, 'Public health and Preventive Medicine'),
-(47, 'Radiology'),
-(48, 'Radiotherapy'),
-(49, 'Respiratory medicine'),
-(50, 'Rheumatology'),
-(51, 'Stomatology'),
-(52, 'Thoracic surgery'),
-(53, 'Tropical medicine'),
-(54, 'Urology'),
-(55, 'Vascular surgery'),
-(56, 'Venereology');
+INSERT INTO `subject` (`id`, `sname`) VALUES
+(1, 'Information Assurance & Cyber Security'),
+(2, 'Elective 2'),
+(3, 'Application Development & Emerging Technologies'),
+(4, 'Automata Theory and Formal Languages'),
+(5, 'Software Engineering');
 
 -- --------------------------------------------------------
 
