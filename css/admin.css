@@ -12,6 +12,7 @@
     box-shadow: 0 0px 0px 2px rgba(240, 240, 240, 0.3);
     transition: width 0.3s ease;
     position: relative;
+    background: darkgreen;
 }
 .menu.collapsed{
     width: 60px;
@@ -42,7 +43,7 @@
 
 .profile-title{
     font-weight: 500;
-    color: #161c2d;
+    color: white;
     font-size: 22px;
     margin: 0;
     text-align: left;
@@ -51,7 +52,7 @@
 
 .profile-subtitle{
     font-weight: 300;
-    color: #8492a6;
+    color: white;
     font-size: 15px;
     margin: 0;
     text-align: left;
@@ -61,6 +62,24 @@
 .logout-btn{
     margin-top: 30px;
     width: 85%;
+    color: white;
+}
+
+.menu-btn{
+    color: white;
+}
+
+.menu-text{
+    color: white;
+}
+
+.menu-btn:hover{
+    background: yellow;
+    color: black;
+}
+
+.menu-text:hover{
+    color: black;
 }
 
 .profile-container{

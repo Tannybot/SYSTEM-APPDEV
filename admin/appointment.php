@@ -54,7 +54,6 @@
                                 <td style="padding:0px;margin:0px; position: relative;">
                                     <p class="profile-title">Administrator</p>
                                     <p class="profile-subtitle">admin@edoc.com</p>
-                                    <button id="toggle-btn" class="btn-icon-back btn" style="position: absolute; top: 0; right: 0;"></button>
                                 </td>
                             </tr>
                             <tr>
@@ -291,7 +290,7 @@
                                 
                                 $result= $database->query($sqlmain);
 
-                                if($result->num_rows==0){
+                                if(!$result || $result->num_rows==0){
                                     echo '<tr>
                                     <td colspan="7">
                                     <br><br><br><br>
@@ -314,7 +313,7 @@
                                     $appoid=$row["appoid"];
                                     $scheduleid=$row["scheduleid"];
                                     $title=$row["title"];
-                                    $docname=$row["docname"];
+                                    $facname=$row["facname"];
                                     $scheduledate=$row["scheduledate"];
                                     $scheduletime=$row["scheduletime"];
                                     $sname=$row["sname"];
@@ -330,7 +329,7 @@
                                         
                                         </td>
                                         <td>
-                                        '.substr($docname,0,25).'
+                                        '.substr($facname,0,25).'
                                         </td>
                                         <td>
                                         '.substr($title,0,15).'
@@ -546,7 +545,6 @@
             $spcil_res= $database->query("select sname from subject where id='$spe'");
             $spcil_array= $spcil_res->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
-            $nic=$row['facnic'];
             $tele=$row['factel'];
             echo '
             <div id="popup1" class="overlay">
@@ -587,16 +585,6 @@
                             <tr>
                                 <td class="label-td" colspan="2">
                                 '.$email.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="nic" class="form-label">NIC: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$nic.'<br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -643,14 +631,6 @@
     ?>
     </div>
 
-<script>
-document.getElementById('toggle-btn').addEventListener('click', function() {
-    const menu = document.getElementById('menu');
-    const dashBody = document.getElementById('dash-body');
-    menu.classList.toggle('collapsed');
-    dashBody.classList.toggle('expanded');
-});
-</script>
 
 </body>
 </html>

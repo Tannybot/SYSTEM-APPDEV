@@ -79,10 +79,8 @@ CREATE TABLE IF NOT EXISTS `faculty` (
   `facemail` varchar(255) DEFAULT NULL,
   `facname` varchar(255) DEFAULT NULL,
   `facpassword` varchar(255) DEFAULT NULL,
-  `facnic` varchar(15) DEFAULT NULL,
   `factel` varchar(15) DEFAULT NULL,
   `subject` int(2) DEFAULT NULL,
-  `profilepic` varchar(255) DEFAULT 'img/user.png',
   PRIMARY KEY (`facid`),
   KEY `subject` (`subject`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
@@ -91,8 +89,8 @@ CREATE TABLE IF NOT EXISTS `faculty` (
 -- Dumping data for table `faculty`
 --
 
-INSERT INTO `faculty` (`facid`, `facemail`, `facname`, `facpassword`, `facnic`, `factel`, `subject`) VALUES
-(1, 'faculty@edoc.com', 'Test Faculty', '123', '000000000', '0110000000', 1);
+INSERT INTO `faculty` (`facid`, `facemail`, `facname`, `facpassword`, `factel`, `subject`) VALUES
+(1, 'faculty@edoc.com', 'Test Faculty', '123', '0110000000', 1);
 
 -- --------------------------------------------------------
 
@@ -110,7 +108,6 @@ CREATE TABLE IF NOT EXISTS `student` (
   `snic` varchar(15) DEFAULT NULL,
   `sdob` date DEFAULT NULL,
   `stel` varchar(15) DEFAULT NULL,
-  `profilepic` varchar(255) DEFAULT 'img/user.png',
   PRIMARY KEY (`sid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 

@@ -54,7 +54,6 @@
         $userfetch=$userrow->fetch_assoc();
         $userid= $userfetch["sid"];
         $username=$userfetch["sname"];
-        $profilepic=$userfetch["profilepic"];
     }else{
         header("location: ../login.php");
         exit();
@@ -72,9 +71,6 @@
                     <td style="padding:10px" colspan="2">
                         <table border="0" class="profile-container">
                             <tr>
-                                <td width="30%" style="padding-left:20px" >
-                                    <img src="../<?php echo $profilepic; ?>" alt="" width="100%" style="border-radius:50%">
-                                </td>
                                 <td style="padding:0px;margin:0px;">
                                     <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
                                     <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
