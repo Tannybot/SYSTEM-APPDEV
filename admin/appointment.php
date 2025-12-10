@@ -209,7 +209,7 @@
                         $sqlpt2="";
                         if(!empty($_POST["docid"])){
                             $docid=$_POST["docid"];
-                            $sqlpt2=" doctor.docid=$docid ";
+                            $sqlpt2=" faculty.facid=$docid ";
                         }
                         //echo $sqlpt2;
                         //echo $sqlpt1;

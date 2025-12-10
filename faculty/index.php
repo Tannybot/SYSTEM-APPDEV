@@ -58,7 +58,7 @@
     
     ?>
     <div class="container">
-        <div class="menu" id="menu">
+        <div class="menu">
             <table class="menu-container" border="0">
                 <tr>
                     <td style="padding:10px" colspan="2">
@@ -67,7 +67,6 @@
                                 <td style="padding:0px;margin:0px;">
                                     <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
                                     <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
-                                    <button id="toggle-btn" class="btn-icon-back btn" style="position: absolute; top: 0; right: 0;"></button>
                                 </td>
                             </tr>
                             <tr>
@@ -155,8 +154,8 @@
                         <td >
                             <h3>Welcome!</h3>
                             <h1><?php echo $username  ?>.</h1>
-                            <p>Thanks for joinnig with us. We are always trying to get you a complete service<br>
-                            You can view your dailly schedule, Reach Patients Appointment at home!<br><br>
+                            <p>Thanks for joining with us. We are always trying to get you a complete service<br>
+                            You can view your daily schedule, Reach a Student Appointment at home!<br><br>
                             </p>
                             <a href="appointment.php" class="non-style-link"><button class="btn-primary btn" style="width:30%">View My Appointments</button></a>
                             <br>
@@ -197,7 +196,6 @@
                                                                     All Faculty &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                 </div>
                                                         </div>
-                                                                <div class="btn-icon-back dashboard-icons" style="background-image: url('../img/icons/faculty-hover.svg');"></div>
                                                     </div>
                                                 </td>
                                                 <td style="width: 25%;">
@@ -207,10 +205,9 @@
                                                                     <?php    echo $studentrow->num_rows  ?>
                                                                 </div><br>
                                                                 <div class="h3-dashboard">
-                                                                    All Patients &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    All Students &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                 </div>
                                                         </div>
-                                                                <div class="btn-icon-back dashboard-icons" style="background-image: url('../img/icons/students-hover.svg');"></div>
                                                     </div>
                                                 </td>
                                                 </tr>
@@ -222,10 +219,9 @@
                                                                     <?php    echo $appointmentrow ->num_rows  ?>
                                                                 </div><br>
                                                                 <div class="h3-dashboard" >
-                                                                    NewBooking &nbsp;&nbsp;
+                                                                    New Booking &nbsp;&nbsp;
                                                                 </div>
                                                         </div>
-                                                                <div class="btn-icon-back dashboard-icons" style="margin-left: 0px;background-image: url('../img/icons/book-hover.svg');"></div>
                                                     </div>
                                                     
                                                 </td>
@@ -240,7 +236,6 @@
                                                                     Today Sessions
                                                                 </div>
                                                         </div>
-                                                                <div class="btn-icon-back dashboard-icons" style="background-image: url('../img/icons/session-iceblue.svg');"></div>
                                                     </div>
                                                 </td>
                                                 
@@ -260,7 +255,7 @@
 
 
                             
-                                    <p id="anim" style="font-size: 20px;font-weight:600;padding-left: 40px;">Your Up Coming Sessions until Next week</p>
+                                    <p id="anim" style="font-size: 20px;font-weight:600;padding-left: 40px;">Your upcoming Sessions until Next week</p>
                                     <center>
                                         <div class="abc scroll" style="height: 250px;padding: 0;margin: 0;">
                                         <table width="85%" class="sub-table scrolldown" border="0" >
@@ -359,14 +354,6 @@
         </div>
     </div>
 
-<script>
-document.getElementById('toggle-btn').addEventListener('click', function() {
-    const menu = document.getElementById('menu');
-    const dashBody = document.getElementById('dash-body');
-    menu.classList.toggle('collapsed');
-    dashBody.classList.toggle('expanded');
-});
-</script>
 
 </body>
 </html>
