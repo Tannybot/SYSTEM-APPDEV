@@ -33,7 +33,24 @@
             $apponum=$_POST["apponum"];
             $scheduleid=$_POST["scheduleid"];
             $date=$_POST["date"];
-            $scheduleid=$_POST["scheduleid"];
+
+            // Check capacity before booking
+            $sql_capacity = "SELECT nop FROM schedule WHERE scheduleid = $scheduleid";
+            $capacity_result = $database->query($sql_capacity);
+            $capacity_row = $capacity_result->fetch_assoc();
+            $max_capacity = $capacity_row['nop'];
+
+            $sql_current = "SELECT COUNT(*) as current_count FROM appointment WHERE scheduleid = $scheduleid";
+            $current_result = $database->query($sql_current);
+            $current_row = $current_result->fetch_assoc();
+            $current_bookings = $current_row['current_count'];
+
+            if($current_bookings >= $max_capacity){
+                // Redirect back with error message
+                header("location: booking.php?id=$scheduleid&error=capacity_full");
+                exit();
+            }
+
             $sql2="insert into appointment(pid,apponum,scheduleid,appodate) values ($userid,$apponum,$scheduleid,'$date')";
             $result= $database->query($sql2);
 

@@ -29,7 +29,6 @@
 .dash-body{
     width: 79%;
     height: 100vh;
-    transition: width 0.3s ease;
 }
 .dash-body.expanded{
     width: calc(100% - 60px);
