@@ -9,50 +9,47 @@
 
 
     if($_POST){
-        //print_r($_POST);
         $result= $database->query("select * from webuser");
         $name=$_POST['name'];
         $oldemail=$_POST["oldemail"];
-        $nic=$_POST['nic'];
         $spec=$_POST['spec'];
         $email=$_POST['email'];
-        $tele=$_POST['Tele'];
+        $tele_raw = $_POST['Tele'];
+        $tele = (strpos($tele_raw, '+63') === 0) ? $tele_raw : '+63' . $tele_raw;
         $password=$_POST['password'];
         $cpassword=$_POST['cpassword'];
         $id=$_POST['id00'];
-        
+
         if ($password==$cpassword){
             $error='3';
-            $result= $database->query("select doctor.docid from doctor inner join webuser on doctor.docemail=webuser.email where webuser.email='$email';");
-            //$resultqq= $database->query("select * from doctor where docid='$id';");
+            $query_select = "select faculty.facid from faculty inner join webuser on faculty.facemail=webuser.email where webuser.email='$email';";
+            error_log("SELECT query: " . $query_select);
+            $result= $database->query($query_select);
+            error_log("SELECT result num_rows: " . $result->num_rows);
             if($result->num_rows==1){
-                $id2=$result->fetch_assoc()["docid"];
+                $id2=$result->fetch_assoc()["facid"];
+                error_log("Fetched facid: " . $id2);
             }else{
                 $id2=$id;
+                error_log("Using provided id: " . $id2);
             }
-            
-            echo $id2."jdfjdfdh";
+
             if($id2!=$id){
                 $error='1';
-                //$resultqq1= $database->query("select * from doctor where docemail='$email';");
-                //$did= $resultqq1->fetch_assoc()["docid"];
-                //if($resultqq1->num_rows==1){
-                    
+                error_log("ID mismatch: id2=$id2, id=$id");
             }else{
-
-                //$sql1="insert into doctor(docemail,docname,docpassword,docnic,doctel,subject) values('$email','$name','$password','$nic','$tele',$spec);";
-                $sql1="update doctor set docemail='$email',docname='$name',docpassword='$password',docnic='$nic',doctel='$tele',subject=$spec where docid=$id ;";
+                $sql1="update faculty set facemail='$email',facname='$name',facpassword='$password',factel='$tele',subject=$spec where facid=$id ;";
+                error_log("UPDATE faculty query: " . $sql1);
                 $database->query($sql1);
 
-                $sql1="update webuser set email='$email' where email='$oldemail' ;";
-                $database->query($sql1);
+                $sql2="update webuser set email='$email' where email='$oldemail' ;";
+                error_log("UPDATE webuser query: " . $sql2);
+                $database->query($sql2);
 
-                echo $sql1;
-                //echo $sql2;
                 $error= '4';
-                
+
             }
-            
+
         }else{
             $error='2';
         }

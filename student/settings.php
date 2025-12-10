@@ -327,7 +327,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                '.$nic.'<br><br>
+                                Removed<br><br>
                                 </td>
                             </tr>
                             <tr>
