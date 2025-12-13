@@ -73,7 +73,7 @@
                             <tr>
                                 <td style="padding:0px;margin:0px;">
                                     <div style="display: flex; align-items: center;">
-                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="Profile" style="width: 76px; height: 76px; margin-right: 8px; border-radius: 50%;">
+                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="Profile" style="width: 91.85px; height: 91.85px; margin-right: 8px; border-radius: 50%;">
                                         <div>
                                             <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
                                             <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>

@@ -57,7 +57,7 @@
                             <tr>
                                 <td style="padding:0px;margin:0px;">
                                     <div style="display: flex; align-items: center;">
-                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="User Icon" style="width: 76px; height: 76px; margin-right: 8px; border-radius: 50%;">
+                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="User Icon" style="width: 91.85px; height: 91.85px; margin-right: 8px; border-radius: 50%;">
                                         <div>
                                             <p class="profile-title">Administrator</p>
                                             <p class="profile-subtitle">admin@edoc.com</p>

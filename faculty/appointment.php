@@ -55,13 +55,12 @@
                             <tr>
                                 <td style="padding:0px;margin:0px;">
                                     <div style="display: flex; align-items: center;">
-                                        <img src="../img/user.png" alt="User Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="User Icon" style="width: 91.85px; height: 91.85px; margin-right: 8px; border-radius: 50%;">
                                         <div>
                                             <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
                                             <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
                                         </div>
                                     </div>
-                                    <button id="toggle-btn" class="btn-icon-back btn" style="position: absolute; top: 0; right: 0;"></button>
                                 </td>
                             </tr>
                             <tr>
@@ -469,14 +468,6 @@
     ?>
     </div>
 
-<script>
-document.getElementById('toggle-btn').addEventListener('click', function() {
-    const menu = document.getElementById('menu');
-    const dashBody = document.getElementById('dash-body');
-    menu.classList.toggle('collapsed');
-    dashBody.classList.toggle('expanded');
-});
-</script>
 
 </body>
 </html>
