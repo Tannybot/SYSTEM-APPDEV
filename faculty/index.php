@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
-        
+         
     <title>Dashboard</title>
     <style>
         .dashbord-tables,.faculty-heade{
@@ -65,8 +65,13 @@
                         <table border="0" class="profile-container">
                             <tr>
                                 <td style="padding:0px;margin:0px;">
-                                    <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
-                                    <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
+                                    <div style="display: flex; align-items: center;">
+                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="Profile" style="width: 76px; height: 76px; margin-right: 8px; border-radius: 50%;">
+                                        <div>
+                                            <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
+                                            <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -113,7 +118,7 @@
                             
                             <td colspan="1" class="nav-bar" >
                             <p style="font-size: 23px;padding-left:12px;font-weight: 600;margin-left:20px;">     Dashboard</p>
-                          
+                           
                             </td>
                             <td width="25%">
 
@@ -171,86 +176,6 @@
                     <td colspan="4">
                         <table border="0" width="100%"">
                             <tr>
-                                <td width="50%">
-
-                                    
-
-
-
-
-                                    <center>
-                                        <table class="filter-container" style="border: none;" border="0">
-                                            <tr>
-                                                <td colspan="4">
-                                                    <p style="font-size: 20px;font-weight:600;padding-left: 12px;">Status</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="width: 25%;">
-                                                    <div  class="dashboard-items"  style="padding:20px;margin:auto;width:95%;display: flex">
-                                                        <div>
-                                                                <div class="h1-dashboard">
-                                                                    <?php    echo $facultyrow->num_rows  ?>
-                                                                </div><br>
-                                                                <div class="h3-dashboard">
-                                                                    All Faculty &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td style="width: 25%;">
-                                                    <div  class="dashboard-items"  style="padding:20px;margin:auto;width:95%;display: flex;">
-                                                        <div>
-                                                                <div class="h1-dashboard">
-                                                                    <?php    echo $studentrow->num_rows  ?>
-                                                                </div><br>
-                                                                <div class="h3-dashboard">
-                                                                    All Students &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                </tr>
-                                                <tr>
-                                                <td style="width: 25%;">
-                                                    <div  class="dashboard-items"  style="padding:20px;margin:auto;width:95%;display: flex; ">
-                                                        <div>
-                                                                <div class="h1-dashboard" >
-                                                                    <?php    echo $appointmentrow ->num_rows  ?>
-                                                                </div><br>
-                                                                <div class="h3-dashboard" >
-                                                                    New Booking &nbsp;&nbsp;
-                                                                </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                </td>
-
-                                                <td style="width: 25%;">
-                                                    <div  class="dashboard-items"  style="padding:20px;margin:auto;width:95%;display: flex;padding-top:21px;padding-bottom:21px;">
-                                                        <div>
-                                                                <div class="h1-dashboard">
-                                                                    <?php    echo $schedulerow ->num_rows  ?>
-                                                                </div><br>
-                                                                <div class="h3-dashboard" style="font-size: 15px">
-                                                                    Today Sessions
-                                                                </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                
-                                            </tr>
-                                        </table>
-                                    </center>
-
-
-
-
-
-
-
-
-                                </td>
                                 <td>
 
 
@@ -325,22 +250,19 @@
                                                         </td>
 
                 
-                                                       
+                                                        
                                                     </tr>';
                                                     
                                                 }
                                             }
-                                                 
+                                              
                                             ?>
-                 
+                  
                                             </tbody>
                 
                                         </table>
                                         </div>
                                         </center>
-
-
-
 
 
 

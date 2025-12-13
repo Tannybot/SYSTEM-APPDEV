@@ -103,7 +103,7 @@
         <?php       
 
                     $selecttype="My";
-                    $current="My patients Only";
+                    $current="My students only";
                     if($_POST){
 
                         if(isset($_POST["search"])){

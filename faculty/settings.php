@@ -65,7 +65,7 @@
                             <tr>
                                 <td style="padding:0px;margin:0px;">
                                     <div style="display: flex; align-items: center;">
-                                        <img src="../img/user.png" alt="User Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="User Icon" style="width: 76px; height: 76px; margin-right: 8px; border-radius: 50%;">
                                         <div>
                                             <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
                                             <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
@@ -213,6 +213,31 @@
                             </tr>
                             <tr>
                             <td style="width: 25%;">
+                                    <a href="upload-profile-faculty.php" class="non-style-link">
+                                    <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex;">
+                                        <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('../img/icons/view-iceblue.svg');"></div>
+                                        <div>
+                                                <div class="h1-dashboard">
+                                                    Upload Profile Image
+
+                                                </div><br>
+                                                <div class="h3-dashboard"  style="font-size: 15px;">
+                                                    Change your profile picture
+                                                </div>
+                                        </div>
+
+                                    </div>
+                                    </a>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <p style="font-size: 5px">&nbsp;</p>
+                                </td>
+                            </tr>
+                            <tr>
+                            <td style="width: 25%;">
                                     <a href="?action=drop&id=<?php echo $userid.'&name='.$username ?>" class="non-style-link">
                                     <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex;">
                                         <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('../img/icons/students-hover.svg');"></div>
@@ -276,7 +301,6 @@
             $spcil_res= $database->query("select sname from subject where id='$spe'");
             $spcil_array= $spcil_res->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
-            $nic=$row['facnic'];
             $tele=$row['factel'];
             echo '
             <div id="popup1" class="overlay">
@@ -317,16 +341,6 @@
                             <tr>
                                 <td class="label-td" colspan="2">
                                 '.$email.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="nic" class="form-label">NIC: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                Removed<br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -378,7 +392,6 @@
             $spcil_res= $database->query("select sname from subject where id='$spe'");
             $spcil_array= $spcil_res->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
-            $nic=$row['facnic'];
             $tele=$row['factel'];
 
             $error_1=$_GET["error"];
@@ -436,17 +449,6 @@
                                             <input type="text" name="name" class="input-text" placeholder="Faculty Name" value="'.$name.'" required><br>
                                         </td>
                                         
-                                    </tr>
-                                    
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="nic" class="form-label">NIC: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <input type="text" name="nic" class="input-text" placeholder="NIC Number" value="'.$nic.'" required><br>
-                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">

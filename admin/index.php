@@ -33,6 +33,8 @@
     if(isset($_SESSION["user"])){
         if(($_SESSION["user"])=="" or $_SESSION['usertype']!='a'){
             header("location: ../login.php");
+        }else{
+            $useremail = $_SESSION["user"];
         }
 
     }else{
@@ -55,7 +57,7 @@
                             <tr>
                                 <td style="padding:0px;margin:0px;">
                                     <div style="display: flex; align-items: center;">
-                                        <img src="../img/user.png" alt="User Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="User Icon" style="width: 76px; height: 76px; margin-right: 8px; border-radius: 50%;">
                                         <div>
                                             <p class="profile-title">Administrator</p>
                                             <p class="profile-subtitle">admin@edoc.com</p>
@@ -94,6 +96,11 @@
                 <tr class="menu-row" >
                     <td class="menu-btn menu-icon-student">
                         <a href="student.php" class="non-style-link-menu"><div><p class="menu-text">Students</p></a></div>
+                    </td>
+                </tr>
+                <tr class="menu-row" >
+                    <td class="menu-btn menu-icon-settings">
+                        <a href="upload-profile-admin.php" class="non-style-link-menu"><div><p class="menu-text">Profile</p></a></div>
                     </td>
                 </tr>
             </table>
