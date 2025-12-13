@@ -83,13 +83,14 @@
                     <td style="padding:10px" colspan="2">
                         <table border="0" class="profile-container">
                             <tr>
-                                <td width="30%" style="padding-left:20px" >
-                                    <img src="../img/user.png" alt="" width="100%" style="border-radius:50%">
-                                </td>
                                 <td style="padding:0px;margin:0px; position: relative;">
-                                    <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
-                                    <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
-                                    <button id="toggle-btn" class="btn-icon-back btn" style="position: absolute; top: 0; right: 0;"></button>
+                                    <div style="display: flex; align-items: center;">
+                                        <img src="../img/user.png" alt="User Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+                                        <div>
+                                            <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
+                                            <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -521,15 +522,6 @@
 
     ?>
     </div>
-
-<script>
-document.getElementById('toggle-btn').addEventListener('click', function() {
-    const menu = document.getElementById('menu');
-    const dashBody = document.getElementById('dash-body');
-    menu.classList.toggle('collapsed');
-    dashBody.classList.toggle('expanded');
-});
-</script>
 
 </body>
 </html>

@@ -1,17 +1,17 @@
 <?php
 
     session_start();
-    
+
     if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='a'){
+        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='s'){
             header("location: ../login.php");
         }
 
     }else{
         header("location: ../login.php");
     }
-    
-    
+
+
         //import database
         include("../connection.php");
         $title=$_POST["title"];
@@ -19,6 +19,22 @@
         $nop=$_POST["nop"];
         $date=$_POST["date"];
         $time=$_POST["time"];
+
+        // Basic validations
+        $today = date('Y-m-d');
+        if($date < $today){
+            echo "<script>alert('Cannot schedule sessions in the past.'); window.location.href='schedule.php';</script>";
+            exit();
+        }
+
+        // Check for conflicts: same faculty, same date and time
+        $sql_check = "SELECT * FROM schedule WHERE facid=$docid AND scheduledate='$date' AND scheduletime='$time'";
+        $check_result = $database->query($sql_check);
+        if($check_result->num_rows > 0){
+            echo "<script>alert('This faculty already has a session at this date and time. Please choose a different time.'); window.location.href='schedule.php';</script>";
+            exit();
+        }
+
         $sql="insert into schedule (facid,title,scheduledate,scheduletime,nop) values ($docid,'$title','$date','$time',$nop);";
         $result= $database->query($sql);
 
@@ -40,7 +56,7 @@
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Session Added</title>
+            <title>Session Scheduled</title>
             <!-- Include EmailJS SDK -->
             <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
             <script>
@@ -51,7 +67,7 @@
             </script>
         </head>
         <body>
-            <div id="emailStatus">Session added successfully. Notifying faculty...</div>
+            <div id="emailStatus">Session scheduled successfully. Notifying faculty...</div>
             <script>
               const templateParams = {
                 to_email: <?php echo json_encode($faculty_email); ?>,
@@ -59,7 +75,7 @@
                 session_title: <?php echo json_encode($title); ?>,
                 session_date: <?php echo json_encode($date); ?>,
                 session_time: <?php echo json_encode($time); ?>,
-                action: "added"
+                action: "scheduled"
               };
 
               function sendNotification() {
@@ -75,7 +91,7 @@
                      }, 2000);
                   }, function(error) {
                      console.error('Failed to send notification:', error);
-                     document.getElementById('emailStatus').innerText = "Session added, but failed to notify faculty. Redirecting...";
+                     document.getElementById('emailStatus').innerText = "Session scheduled, but failed to notify faculty. Redirecting...";
                      setTimeout(() => {
                        window.location.href = 'schedule.php?action=session-added&title=<?php echo urlencode($title); ?>';
                      }, 2000);
@@ -89,8 +105,6 @@
         </html>
         <?php
         exit();
-        
-   // } 
 
 
 ?>

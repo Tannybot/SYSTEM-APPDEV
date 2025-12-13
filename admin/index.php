@@ -42,8 +42,9 @@
 
     //import database
     include("../connection.php");
+    $userrow = $database->query("select * from admin where aemail='$useremail'");
+    $userfetch = $userrow->fetch_assoc();
 
-    
     ?>
     <div class="container">
         <div class="menu">
@@ -52,12 +53,14 @@
                     <td style="padding:10px" colspan="2">
                         <table border="0" class="profile-container">
                             <tr>
-                                <td width="30%" style="padding-left:20px" >
-                                    <img src="../img/user.png" alt="" width="100%" style="border-radius:50%">
-                                </td>
                                 <td style="padding:0px;margin:0px;">
-                                    <p class="profile-title">Administrator</p>
-                                    <p class="profile-subtitle">admin@edoc.com</p>
+                                    <div style="display: flex; align-items: center;">
+                                        <img src="../img/user.png" alt="User Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+                                        <div>
+                                            <p class="profile-title">Administrator</p>
+                                            <p class="profile-subtitle">admin@edoc.com</p>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -462,7 +465,6 @@
             </table>
         </div>
     </div>
-
 
 </body>
 </html>

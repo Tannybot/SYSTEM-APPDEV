@@ -63,12 +63,14 @@
                     <td style="padding:10px" colspan="2">
                         <table border="0" class="profile-container">
                             <tr>
-                                <td width="30%" style="padding-left:20px" >
-                                    <img src="../img/user.png" alt="" width="100%" style="border-radius:50%">
-                                </td>
                                 <td style="padding:0px;margin:0px;">
-                                    <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
-                                    <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
+                                    <div style="display: flex; align-items: center;">
+                                        <img src="../img/user.png" alt="User Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+                                        <div>
+                                            <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
+                                            <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -217,17 +219,17 @@
                                         <div>
                                                 <div class="h1-dashboard" style="color: #ff5050;">
                                                     Delete Account
-                                                    
+
                                                 </div><br>
                                                 <div class="h3-dashboard"  style="font-size: 15px;">
                                                     Will Permanently Remove your Account
                                                 </div>
                                         </div>
-                                                
+
                                     </div>
                                     </a>
                                 </td>
-                                
+
                             </tr>
                         </table>
                     </center>
@@ -549,7 +551,6 @@
 
 
         }; }
-
     }
         ?>
 
