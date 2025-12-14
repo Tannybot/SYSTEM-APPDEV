@@ -358,11 +358,11 @@
                         <div class="abc">
                         <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
                         <tr>
-                                <td class="label-td" colspan="2">'.
-                                   ""
+                            <td class="label-td" colspan="2">'.
+                                (!empty($_GET['error']) && $_GET['error'] == 'availability' ? '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">The faculty is not available at the requested time. No available slots on this day.</label>' : "")
 
-                                .'</td>
-                           </tr>
+                            .'</td>
+                        </tr>
 
                            <tr>
                                <td>

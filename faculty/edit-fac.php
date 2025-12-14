@@ -9,6 +9,28 @@
 
 
     if($_POST){
+        if(isset($_POST['action']) && $_POST['action'] == 'update_availability'){
+            $facid = $_POST['facid'];
+            $start_times = $_POST['start_time'];
+            $end_times = $_POST['end_time'];
+
+            // Delete existing availability
+            $database->query("DELETE FROM faculty_availability WHERE facid=$facid");
+
+            // Insert new availability
+            for($d=1; $d<=7; $d++){
+                if(!empty($start_times[$d][0]) && !empty($end_times[$d][0])){
+                    $start = $start_times[$d][0];
+                    $end = $end_times[$d][0];
+                    $sql = "INSERT INTO faculty_availability (facid, day_of_week, start_time, end_time) VALUES ($facid, $d, '$start', '$end')";
+                    $database->query($sql);
+                }
+            }
+
+            header("location: settings.php?action=availability&id=$facid&error=0");
+            exit();
+        }
+
         $result= $database->query("select * from webuser");
         $name=$_POST['name'];
         $oldemail=$_POST["oldemail"];

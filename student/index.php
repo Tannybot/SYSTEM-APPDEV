@@ -165,10 +165,8 @@
                     <tr>
                         <td >
                             <h3>Welcome!</h3>
-                            <h1><?php echo $username  ?>.</h1>
-                            <p>Have a problem in our School Appointment System? No problem let's jump to 
-                                <a href="faculty.php" class="non-style-link"><b>"All Faculty"</b></a> section or
-                                <a href="schedule.php" class="non-style-link"><b>"Sessions"</b> </a><br>
+                            <h1><?php echo $username  ?></h1>
+                            <p>Have a problem in our School Appointment System?<br> No problem let's jump to All Faculty section or Sessions!<br>
                                 Track your past and future appointment history.<br>You can also find out the expected arrival time of your faculty member or academic consultant.<br><br>
                             </p>
                             

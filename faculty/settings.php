@@ -238,6 +238,31 @@
                             </tr>
                             <tr>
                             <td style="width: 25%;">
+                                    <a href="?action=availability&id=<?php echo $userid ?>" class="non-style-link">
+                                    <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex;">
+                                        <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('../img/icons/schedule-hover.svg');"></div>
+                                        <div>
+                                                <div class="h1-dashboard">
+                                                    Availability Settings
+
+                                                </div><br>
+                                                <div class="h3-dashboard"  style="font-size: 15px;">
+                                                    Set your available days and time slots
+                                                </div>
+                                        </div>
+
+                                    </div>
+                                    </a>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <p style="font-size: 5px">&nbsp;</p>
+                                </td>
+                            </tr>
+                            <tr>
+                            <td style="width: 25%;">
                                     <a href="?action=drop&id=<?php echo $userid.'&name='.$username ?>" class="non-style-link">
                                     <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex;">
                                         <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('../img/icons/students-hover.svg');"></div>
@@ -375,6 +400,81 @@
                            
 
                         </table>
+                        </div>
+                    </center>
+                    <br><br>
+            </div>
+            </div>
+            ';
+        }elseif($action=='availability'){
+            $sqlmain= "select * from faculty_availability where facid='$id' order by day_of_week";
+            $result= $database->query($sqlmain);
+            $availabilities = [];
+            while($row = $result->fetch_assoc()){
+                $availabilities[$row['day_of_week']][] = $row;
+            }
+
+            $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+            echo '
+            <div id="popup1" class="overlay">
+                    <div class="popup">
+                    <center>
+                        <a class="close" href="settings.php">&times;</a>
+                        <div style="display: flex;justify-content: center;">
+                        <div class="abc">
+                        <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
+                        <tr>
+                                <td class="label-td" colspan="2">'.
+                                    ""
+
+                                .'</td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Set Your Availability</p><br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label-td" colspan="2">
+                                <form action="edit-fac.php" method="POST" class="add-new-form">
+                                    <input type="hidden" name="action" value="update_availability">
+                                    <input type="hidden" value="'.$id.'" name="facid">
+';
+
+            for($d=1; $d<=7; $d++){
+                $day_name = $days[$d-1];
+                $slots = isset($availabilities[$d]) ? $availabilities[$d] : [];
+                echo '
+                                <tr>
+                                    <td class="label-td" colspan="2">
+                                        <label for="day'.$d.'" class="form-label"><b>'.$day_name.'</b></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label-td" colspan="2">
+                                        Start Time: <input type="time" name="start_time['.$d.'][]" value="'.(isset($slots[0]) ? $slots[0]['start_time'] : '').'" class="input-text">
+                                        End Time: <input type="time" name="end_time['.$d.'][]" value="'.(isset($slots[0]) ? $slots[0]['end_time'] : '').'" class="input-text">
+                                    </td>
+                                </tr>
+';
+            }
+
+            echo '
+                            <tr>
+                                <td colspan="2">
+                                    <input type="reset" value="Reset" class="login-btn btn-primary-soft btn" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                    <input type="submit" value="Save Availability" class="login-btn btn-primary btn">
+                                </td>
+
+                            </tr>
+
+                            </form>
+                            </tr>
+                        </table>
+                        </div>
                         </div>
                     </center>
                     <br><br>

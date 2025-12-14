@@ -30,6 +30,8 @@
             header("location: ../login.php");
         }
 
+        $useremail = $_SESSION["user"];
+
     }else{
         header("location: ../login.php");
     }

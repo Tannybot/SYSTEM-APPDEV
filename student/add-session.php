@@ -35,8 +35,25 @@
             exit();
         }
 
+        // Check faculty availability
+        $day_of_week = date('N', strtotime($date)); // 1=Monday, 7=Sunday
+        $sql_avail = "SELECT * FROM faculty_availability WHERE facid=$docid AND day_of_week=$day_of_week AND start_time <= '$time' AND end_time >= '$time'";
+        $avail_result = $database->query($sql_avail);
+        if($avail_result->num_rows == 0){
+            header("location: schedule.php?action=add-session&error=availability");
+            exit();
+        }
+
         $sql="insert into schedule (facid,title,scheduledate,scheduletime,nop) values ($docid,'$title','$date','$time',$nop);";
         $result= $database->query($sql);
+
+        // Get the inserted scheduleid
+        $scheduleid = $database->insert_id;
+
+        // Automatically book the student into this session
+        $today = date('Y-m-d');
+        $sql_appointment = "INSERT INTO appointment (pid, apponum, scheduleid, appodate) VALUES ($userid, 1, $scheduleid, '$today')";
+        $database->query($sql_appointment);
 
         // Get faculty details for notification
         $sql_faculty = "SELECT facemail, facname FROM faculty WHERE facid=$docid";

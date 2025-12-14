@@ -16,7 +16,102 @@
         .sub-table{
             animation: transitionIn-Y-bottom 0.5s;
         }
-</style>
+        .calendar {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .calendar caption {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .calendar th, .calendar td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        .calendar th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+        }
+        .calendar .day {
+            cursor: pointer;
+            position: relative;
+        }
+        .calendar .day:hover {
+            background-color: #f1f3f4;
+        }
+        .calendar .has-appointment {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            font-weight: bold;
+        }
+        .calendar .has-appointment:hover {
+            background-color: #bbdefb;
+            transform: scale(1.05);
+        }
+        .calendar .has-appointment small {
+            display: block;
+            font-size: 10px;
+            color: #42a5f5;
+            margin-top: 5px;
+        }
+        .appointment-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 30px;
+            z-index: 1000;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .appointment-popup h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .appointment-popup .close {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
+            color: #999;
+            transition: color 0.3s;
+        }
+        .appointment-popup .close:hover {
+            color: #333;
+        }
+        .appointment-popup div {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .appointment-popup a {
+            color: #dc3545;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .appointment-popup a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <?php
@@ -44,6 +139,67 @@
        $userfetch=$userrow->fetch_assoc();
        $userid= $userfetch["facid"];
        $username=$userfetch["facname"];
+
+       // Fetch appointments grouped by date
+       $appointments = [];
+       $sql = "SELECT appointment.appoid, schedule.scheduleid, schedule.title, student.sname, schedule.scheduledate, schedule.scheduletime, appointment.apponum, appointment.appodate FROM schedule INNER JOIN appointment ON schedule.scheduleid=appointment.scheduleid INNER JOIN student ON student.sid=appointment.pid WHERE schedule.facid=$userid ORDER BY schedule.scheduledate, schedule.scheduletime";
+       $result = $database->query($sql);
+       while($row = $result->fetch_assoc()){
+           $date = $row['scheduledate'];
+           if(!isset($appointments[$date])) $appointments[$date] = [];
+           $appointments[$date][] = $row;
+       }
+
+       // Function to generate calendar
+       function generate_calendar($month, $year, $appointments) {
+           $daysOfWeek = array('Sun','Mon','Tue','Wed','Thu','Fri','Sat');
+           $firstDayOfMonth = mktime(0,0,0,$month,1,$year);
+           $numberDays = date('t',$firstDayOfMonth);
+           $dateComponents = getdate($firstDayOfMonth);
+           $monthName = $dateComponents['month'];
+           $dayOfWeek = $dateComponents['wday'];
+
+           $calendar = "<table class='calendar'>";
+           $calendar .= "<caption>$monthName $year</caption>";
+           $calendar .= "<tr>";
+           foreach($daysOfWeek as $day) {
+               $calendar .= "<th class='header'>$day</th>";
+           }
+           $calendar .= "</tr><tr>";
+
+           if ($dayOfWeek > 0) {
+               $calendar .= "<td colspan='$dayOfWeek'>&nbsp;</td>";
+           }
+
+           $currentDay = 1;
+           while ($currentDay <= $numberDays) {
+               if ($dayOfWeek == 7) {
+                   $dayOfWeek = 0;
+                   $calendar .= "</tr><tr>";
+               }
+
+               $currentDate = "$year-" . str_pad($month, 2, "0", STR_PAD_LEFT) . "-" . str_pad($currentDay, 2, "0", STR_PAD_LEFT);
+               $class = 'day';
+               $content = $currentDay;
+               if(isset($appointments[$currentDate])){
+                   $class .= ' has-appointment';
+                   $content .= '<br><small>' . count($appointments[$currentDate]) . ' appt</small>';
+               }
+               $calendar .= "<td class='$class' data-date='$currentDate'>$content</td>";
+
+               $currentDay++;
+               $dayOfWeek++;
+           }
+
+           if ($dayOfWeek != 7) {
+               $remainingDays = 7 - $dayOfWeek;
+               $calendar .= "<td colspan='$remainingDays'>&nbsp;</td>";
+           }
+
+           $calendar .= "</tr>";
+           $calendar .= "</table>";
+           return $calendar;
+       }
     //echo $userid;
     ?>
     <div class="container">
@@ -146,37 +302,7 @@
                 <tr>
                     <td colspan="4" style="padding-top:10px;width: 100%;" >
                     
-                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">My Appointments (<?php echo $list110->num_rows; ?>)</p>
-                    </td>
-                    
-                </tr>
-                <tr>
-                    <td colspan="4" style="padding-top:0px;width: 100%;" >
-                        <center>
-                        <table class="filter-container" border="0" >
-                        <tr>
-                           <td width="10%">
-
-                           </td> 
-                        <td width="5%" style="text-align: center;">
-                        Date:
-                        </td>
-                        <td width="30%">
-                        <form action="" method="post">
-                            
-                            <input type="date" name="sheduledate" id="date" class="input-text filter-container-items" style="margin: 0;width: 95%;">
-
-                        </td>
-                        
-                    <td width="12%">
-                        <input type="submit"  name="filter" value=" Filter" class=" btn-primary-soft btn button-icon btn-filter"  style="padding: 15px; margin :0;width:100%">
-                        </form>
-                    </td>
-
-                    </tr>
-                            </table>
-
-                        </center>
+                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">My Appointments Calendar</p>
                     </td>
                     
                 </tr>
@@ -210,117 +336,7 @@
                    <td colspan="4">
                        <center>
                         <div class="abc scroll">
-                        <table width="93%" class="sub-table scrolldown" border="0">
-                        <thead>
-                        <tr>
-                                <th class="table-headin">
-                                    Student name
-                                </th>
-                                <th class="table-headin">
-                                    
-                                    Appointment number
-                                    
-                                </th>
-                               
-                                <th class="table-headin">
-                                    
-                                
-                                    Session Title
-                                    
-                                    </th>
-                                
-                                <th class="table-headin" >
-                                    
-                                    Session Date & Time
-                                    
-                                </th>
-                                
-                                <th class="table-headin">
-                                    
-                                    Appointment Date
-                                    
-                                </th>
-                                
-                                <th class="table-headin">
-                                    
-                                    Events
-                                    
-                                </tr>
-                        </thead>
-                        <tbody>
-                        
-                            <?php
-
-                                
-                                $result= $database->query($sqlmain);
-
-                                if($result->num_rows==0){
-                                    echo '<tr>
-                                    <td colspan="7">
-                                    <br><br><br><br>
-                                    <center>
-                                    <img src="../img/notfound.svg" width="25%">
-                                    
-                                    <br>
-                                    <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We  couldnt find anything related to your keywords !</p>
-                                    <a class="non-style-link" href="appointment.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Appointments &nbsp;</font></button>
-                                    </a>
-                                    </center>
-                                    <br><br><br><br>
-                                    </td>
-                                    </tr>';
-                                    
-                                }
-                                else{
-                                for ( $x=0; $x<$result->num_rows;$x++){
-                                    $row=$result->fetch_assoc();
-                                    $appoid=$row["appoid"];
-                                    $scheduleid=$row["scheduleid"];
-                                    $title=$row["title"];
-                                    $facname=$row["facname"];
-                                    $scheduledate=$row["scheduledate"];
-                                    $scheduletime=$row["scheduletime"];
-                                    $sname=$row["sname"];
-                                    $apponum=$row["apponum"];
-                                    $appodate=$row["appodate"];
-                                    echo '<tr >
-                                        <td style="font-weight:600;"> &nbsp;'.
-                                        
-                                        substr($sname,0,25)
-                                        .'</td >
-                                        <td style="text-align:center;font-size:23px;font-weight:500; color: var(--btnnicetext);">
-                                        '.$apponum.'
-
-                                        </td>
-                                        <td>
-                                        '.substr($title,0,15).'
-                                        </td>
-                                        <td style="text-align:center;;">
-                                            '.substr($scheduledate,0,10).' @'.substr($scheduletime,0,5).'
-                                        </td>
-
-                                        <td style="text-align:center;">
-                                            '.$appodate.'
-                                        </td>
-
-                                        <td>
-                                        <div style="display:flex;justify-content: center;">
-
-                                        <!--<a href="?action=view&id='.$appoid.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
-                                       &nbsp;&nbsp;&nbsp;-->
-                                       <a href="?action=drop&id='.$appoid.'&name='.$sname.'&session='.$title.'&apponum='.$apponum.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-delete"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Cancel</font></button></a>
-                                       &nbsp;&nbsp;&nbsp;</div>
-                                        </td>
-                                    </tr>';
-                                    
-                                }
-                            }
-                                 
-                            ?>
- 
-                            </tbody>
-
-                        </table>
+                        <?php echo generate_calendar(date('m'), date('Y'), $appointments); ?>
                         </div>
                         </center>
                    </td> 
@@ -330,8 +346,13 @@
                         
             </table>
         </div>
-    </div>
-    <?php
+   </div>
+   <div id="appointment-popup" class="appointment-popup">
+       <span class="close" onclick="closePopup()">&times;</span>
+       <h3 id="popup-date"></h3>
+       <div id="popup-content"></div>
+   </div>
+   <?php
     if($_GET){
         $id=$_GET["id"];
         $action=$_GET["action"];
@@ -371,7 +392,6 @@
             $spcil_res= $database->query("select sname from subject where id='$spe'");
             $spcil_array= $spcil_res->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
-            $nic=$row['facnic'];
             $tele=$row['factel'];
             echo '
             <div id="popup1" class="overlay">
@@ -412,16 +432,6 @@
                             <tr>
                                 <td class="label-td" colspan="2">
                                 '.$email.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="nic" class="form-label">NIC: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$nic.'<br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -468,6 +478,44 @@
     ?>
     </div>
 
+    <script>
+        var appointments = <?php echo json_encode($appointments); ?>;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var days = document.querySelectorAll('.day.has-appointment');
+            days.forEach(function(day) {
+                day.addEventListener('click', function() {
+                    var date = this.getAttribute('data-date');
+                    showAppointments(date);
+                });
+            });
+        });
+
+        function showAppointments(date) {
+            var popup = document.getElementById('appointment-popup');
+            var popupDate = document.getElementById('popup-date');
+            var popupContent = document.getElementById('popup-content');
+
+            popupDate.textContent = 'Appointments on ' + date;
+            popupContent.innerHTML = '';
+
+            if (appointments[date]) {
+                appointments[date].forEach(function(appt) {
+                    var div = document.createElement('div');
+                    div.innerHTML = '<strong>' + appt.sname + '</strong> - ' + appt.title + ' at ' + appt.scheduletime + ' (#' + appt.apponum + ') <a href="?action=drop&id=' + appt.appoid + '&name=' + appt.sname + '&session=' + appt.title + '&apponum=' + appt.apponum + '">Cancel</a>';
+                    popupContent.appendChild(div);
+                });
+            } else {
+                popupContent.textContent = 'No appointments on this date.';
+            }
+
+            popup.style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('appointment-popup').style.display = 'none';
+        }
+    </script>
 
 </body>
 </html>

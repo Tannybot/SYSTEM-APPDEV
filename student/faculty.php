@@ -76,7 +76,7 @@
                 </tr>
                 <tr class="menu-row">
                     <td class="menu-btn menu-icon-faculty menu-active menu-icon-faculty-active">
-                        <a href="faculty.php" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">All Faculty</p></a></div>
+                        <a href="faculty.php" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">My Faculty</p></a></div>
                     </td>
                 </tr>
                 
@@ -154,19 +154,39 @@
                 
                 <tr>
                     <td colspan="4" style="padding-top:10px;">
-                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">All Faculties (<?php echo $list11->num_rows; ?>)</p>
+                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">My Faculty (<?php echo $result->num_rows; ?>)</p>
                     </td>
                     
                 </tr>
                 <?php
-                    if($_POST){
-                        $keyword=$_POST["search"];
-                        
-                        $sqlmain= "select * from faculty where facemail='$keyword' or facname='$keyword' or facname like '$keyword%' or facname like '%$keyword' or facname like '%$keyword%'";
-                    }else{
-                        $sqlmain= "select * from faculty order by facid desc";
-
+                    // Get booked faculty IDs
+                    $sql_booked = "SELECT DISTINCT schedule.facid FROM appointment INNER JOIN schedule ON appointment.scheduleid = schedule.scheduleid WHERE appointment.pid = $userid";
+                    $booked_result = $database->query($sql_booked);
+                    $booked_facids = [];
+                    while($row = $booked_result->fetch_assoc()){
+                        $booked_facids[] = $row['facid'];
                     }
+   
+                    if($_POST){
+                            $keyword=$_POST["search"];
+   
+                            $base_query = "select * from faculty where (facemail='$keyword' or facname='$keyword' or facname like '$keyword%' or facname like '%$keyword' or facname like '%$keyword%')";
+   
+                            if(!empty($booked_facids)){
+                                $facid_list = implode(',', $booked_facids);
+                                $base_query .= " AND facid IN ($facid_list)";
+                            }
+   
+                            $sqlmain = $base_query;
+                        }else{
+                            if(!empty($booked_facids)){
+                                $facid_list = implode(',', $booked_facids);
+                                $sqlmain= "select * from faculty where facid IN ($facid_list) order by facid desc";
+                            }else{
+                                $sqlmain= "select * from faculty order by facid desc";
+                            }
+   
+                        }
 
 
 
@@ -246,8 +266,10 @@
 
                                         <td>
                                         <div style="display:flex;justify-content: center;">
-                                        
+
                                         <a href="?action=view&id='.$facid.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
+                                       &nbsp;&nbsp;&nbsp;
+                                        <a href="?action=availability&id='.$facid.'&name='.$name.'"  class="non-style-link"><button  class="btn-primary-soft btn button-icon"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Availability</font></button></a>
                                        &nbsp;&nbsp;&nbsp;
                                         <a href="?action=session&id='.$facid.'&name='.$name.'"  class="non-style-link"><button  class="btn-primary-soft btn button-icon menu-icon-session-active"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Sessions</font></button></a>
                                         </div>
@@ -316,7 +338,6 @@
             $spcil_res = $stmt->get_result();
             $spcil_array= $result->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
-            $nic=$row['facnic'];
             $tele=$row['factel'];
             echo '
             <div id="popup1" class="overlay">
@@ -361,16 +382,6 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    <label for="nic" class="form-label">NIC: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$nic.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
                                     <label for="Tele" class="form-label">Telephone: </label>
                                 </td>
                             </tr>
@@ -404,6 +415,65 @@
                         </div>
                     </center>
                     <br><br>
+            </div>
+            </div>
+            ';
+        }elseif($action=='availability'){
+            $name=$_GET["name"];
+            $sql_avail = "SELECT * FROM faculty_availability WHERE facid=$id ORDER BY day_of_week";
+            $avail_result = $database->query($sql_avail);
+            $availabilities = [];
+            while($row = $avail_result->fetch_assoc()){
+                $availabilities[$row['day_of_week']][] = $row;
+            }
+
+            $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+            echo '
+            <div id="popup1" class="overlay">
+                    <div class="popup">
+                    <center>
+                        <h2>Availability for '.substr($name,0,40).'</h2>
+                        <a class="close" href="faculty.php">&times;</a>
+                        <div class="content">
+                            <table class="sub-table" border="0" style="width:100%; text-align:left;">
+                                <thead>
+                                    <tr>
+                                        <th class="table-headin">Day</th>
+                                        <th class="table-headin">Available Times</th>
+                                    </tr>
+                                </thead>
+                                <tbody>';
+
+            $has_availability = false;
+            for($d=1; $d<=7; $d++){
+                $day_name = $days[$d-1];
+                $slots = isset($availabilities[$d]) ? $availabilities[$d] : [];
+                $times = [];
+                foreach($slots as $slot){
+                    $times[] = substr($slot['start_time'], 0, 5) . ' - ' . substr($slot['end_time'], 0, 5);
+                }
+                $time_str = implode(', ', $times);
+                if(!empty($time_str)){
+                    $has_availability = true;
+                    echo '<tr>
+                        <td>'.$day_name.'</td>
+                        <td>'.$time_str.'</td>
+                    </tr>';
+                }
+            }
+
+            if(!$has_availability){
+                echo '<tr><td colspan="2" style="text-align:center;">No availability set.</td></tr>';
+            }
+
+            echo '          </tbody>
+                            </table>
+                        </div>
+                        <div style="display: flex;justify-content: center;margin-top:20px;">
+                            <a href="faculty.php" class="non-style-link"><button class="btn-primary btn">OK</button></a>
+                        </div>
+                    </center>
             </div>
             </div>
             ';
@@ -455,7 +525,6 @@
 
             $spcil_array= $spcil_res->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
-            $nic=$row['facnic'];
             $tele=$row['factel'];
 
             $error_1=$_GET["error"];
@@ -514,16 +583,6 @@
                                         
                                     </tr>
                                     
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="nic" class="form-label">NIC: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <input type="text" name="nic" class="input-text" placeholder="NIC Number" value="'.$nic.'" required><br>
-                                        </td>
-                                    </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
                                             <label for="Tele" class="form-label">Telephone: </label>

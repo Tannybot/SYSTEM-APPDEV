@@ -377,11 +377,6 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    <label for="nic" class="form-label">Scheduled Date: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
                                 '.$scheduledate.'<br><br>
                                 </td>
                             </tr>

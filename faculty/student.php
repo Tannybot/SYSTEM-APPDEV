@@ -296,7 +296,6 @@
                                     $sid=$row["sid"];
                                     $name=$row["sname"];
                                     $email=$row["semail"];
-                                    $nic=$row["snid"];
                                     $dob=$row["sdob"];
                                     $tel=$row["stel"];
                                     
@@ -353,7 +352,6 @@
             $row=$result->fetch_assoc();
             $name=$row["sname"];
             $email=$row["semail"];
-            $nic=$row["snid"];
             $dob=$row["sdob"];
             $tele=$row["stel"];
             $address=$row["saddress"];
@@ -406,16 +404,6 @@
                             <tr>
                                 <td class="label-td" colspan="2">
                                 '.$email.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="nic" class="form-label">NIC: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$nic.'<br><br>
                                 </td>
                             </tr>
                             <tr>
