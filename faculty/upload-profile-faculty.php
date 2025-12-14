@@ -19,7 +19,18 @@ $userrow = $database->query("select * from faculty where facemail='$useremail'")
 $userfetch=$userrow->fetch_assoc();
 $userid= $userfetch["facid"];
 
-if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['profile_image'])){
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if(isset($_POST['remove'])){
+        // Remove profile image
+        $sql = "UPDATE faculty SET profile_image = NULL WHERE facid = ?";
+        $stmt = $database->prepare($sql);
+        $stmt->bind_param("i", $userid);
+        if($stmt->execute()){
+            $success = "Profile image removed successfully.";
+        }else{
+            $error = "Failed to remove profile image.";
+        }
+    }elseif(isset($_FILES['profile_image'])){
     $file = $_FILES['profile_image'];
 
     // Check for errors
@@ -56,6 +67,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['profile_image'])){
                 }
             }
         }
+    }
     }
 }
 
@@ -291,6 +303,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['profile_image'])){
                                 <label for="profile_image" class="form-label">Select Profile Image: </label>
                                 <input type="file" name="profile_image" id="profile_image" class="input-text" accept="image/*" required><br><br>
                                 <input type="submit" value="Upload" class="login-btn btn-primary btn">
+                                <input type="submit" name="remove" value="Remove Profile Image" class="login-btn btn-primary-soft btn" onclick="return confirm(\'Are you sure you want to remove your profile image?\')">
                                 </form>'
                             .'</td>
                         </tr>
