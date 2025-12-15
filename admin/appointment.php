@@ -94,6 +94,11 @@
                         <a href="student.php" class="non-style-link-menu"><div><p class="menu-text">Student</p></a></div>
                     </td>
                 </tr>
+                <tr class="menu-row" >
+                    <td class="menu-btn menu-icon-settings">
+                        <a href="upload-profile-admin.php" class="non-style-link-menu"><div><p class="menu-text">Profile</p></a></div>
+                    </td>
+                </tr>
 
             </table>
         </div>

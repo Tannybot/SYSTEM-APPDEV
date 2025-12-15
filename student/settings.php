@@ -63,14 +63,12 @@
                     <td style="padding:10px" colspan="2">
                         <table border="0" class="profile-container">
                             <tr>
+                                <td width="30%" style="padding-left:20px" >
+                                    <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="User Icon" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                </td>
                                 <td style="padding:0px;margin:0px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="User Icon" style="width: 91.85px; height: 91.85px; margin-right: 8px; border-radius: 50%;">
-                                        <div>
-                                            <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
-                                            <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
-                                        </div>
-                                    </div>
+                                    <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
+                                    <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
                                 </td>
                             </tr>
                             <tr>
@@ -78,7 +76,7 @@
                                 <a href="../logout.php" ><input type="button" value="Log out" class="logout-btn btn-primary-soft btn"></a>
                                 </td>
                             </tr>
-                    </table>
+                        </table>
                     </td>
                 
                 </tr>

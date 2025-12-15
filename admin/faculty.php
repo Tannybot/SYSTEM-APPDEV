@@ -94,6 +94,11 @@
                         <a href="student.php" class="non-style-link-menu"><div><p class="menu-text">Students</p></a></div>
                     </td>
                 </tr>
+                <tr class="menu-row" >
+                    <td class="menu-btn menu-icon-settings">
+                        <a href="upload-profile-admin.php" class="non-style-link-menu"><div><p class="menu-text">Profile</p></a></div>
+                    </td>
+                </tr>
 
             </table>
         </div>
@@ -236,9 +241,7 @@
                                     $name=$row["facname"];
                                     $email=$row["facemail"];
                                     $spe=$row["subject"];
-                                    $spcil_res= $database->query("select sname from subject where id='$spe'");
-                                    $spcil_array= $spcil_res->fetch_assoc();
-                                    $spcil_name=$spcil_array["sname"];
+                                    $spcil_name=$spe;
                                     echo '<tr>
                                         <td> &nbsp;'.
                                         substr($name,0,30)
@@ -313,9 +316,7 @@
             $email=$row["facemail"];
             $spe=$row["subject"];
 
-            $spcil_res= $database->query("select sname from subject where id='$spe'");
-            $spcil_array= $spcil_res->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
+            $spcil_name=$spe;
             $tele=$row['factel'];
             echo '
             <div id="popup1" class="overlay">
@@ -461,28 +462,13 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    <label for="spec" class="form-label">Choose subject: </label>
-                                    
+                                    <label for="spec" class="form-label">Subject: </label>
+
                                 </td>
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    <select name="spec" id="" class="box" >';
-                                        
-        
-                                        $list11 = $database->query("select  * from  subject order by sname asc;");
-        
-                                        for ($y=0;$y<$list11->num_rows;$y++){
-                                            $row00=$list11->fetch_assoc();
-                                            $sn=$row00["sname"];
-                                            $id00=$row00["id"];
-                                            echo "<option value=".$id00.">$sn</option><br/>";
-                                        };
-        
-        
-        
-                                        
-                        echo     '       </select><br>
+                                    <input type="text" name="spec" class="input-text" placeholder="Subject" required><br>
                                 </td>
                             </tr>
                             <tr>
@@ -595,7 +581,7 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <form action="edit-doc.php" method="POST" class="add-new-form">
+                                            <form action="edit-fac.php" method="POST" class="add-new-form">
                                             <label for="Email" class="form-label">Email: </label>
                                             <input type="hidden" value="'.$id.'" name="id00">
                                             <input type="hidden" name="oldemail" value="'.$email.'" >
@@ -631,28 +617,13 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <label for="spec" class="form-label">Choose subject: (Current'.$spcil_name.')</label>
-                                            
+                                            <label for="spec" class="form-label">Subject: </label>
+
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <select name="spec" id="" class="box">';
-                                                
-                
-                                                $list11 = $database->query("select  * from  subject;");
-                
-                                                for ($y=0;$y<$list11->num_rows;$y++){
-                                                    $row00=$list11->fetch_assoc();
-                                                    $sn=$row00["sname"];
-                                                    $id00=$row00["id"];
-                                                    echo "<option value=".$id00.">$sn</option><br/>";
-                                                };
-                
-                
-                
-                                                
-                                echo     '       </select><br><br>
+                                            <input type="text" name="spec" class="input-text" placeholder="Subject" value="'.$spcil_name.'" required><br>
                                         </td>
                                     </tr>
                                     <tr>

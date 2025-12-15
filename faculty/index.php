@@ -64,14 +64,12 @@
                     <td style="padding:10px" colspan="2">
                         <table border="0" class="profile-container">
                             <tr>
+                                <td width="30%" style="padding-left:20px" >
+                                    <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                </td>
                                 <td style="padding:0px;margin:0px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="Profile" style="width: 91.85px; height: 91.85px; margin-right: 8px; border-radius: 50%;">
-                                        <div>
-                                            <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
-                                            <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
-                                        </div>
-                                    </div>
+                                    <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
+                                    <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
                                 </td>
                             </tr>
                             <tr>
@@ -209,7 +207,7 @@
                                         
                                             <?php
                                             $nextweek=date("Y-m-d",strtotime("+1 week"));
-                                            $sqlmain= "select schedule.scheduleid,schedule.title,faculty.facname,schedule.scheduledate,schedule.scheduletime,schedule.nop from schedule inner join faculty on schedule.facid=faculty.facid  where schedule.scheduledate>='$today' and schedule.scheduledate<='$nextweek' order by schedule.scheduledate desc";
+                                            $sqlmain= "select schedule.scheduleid,schedule.title,faculty.facname,schedule.scheduledate,schedule.scheduletime,schedule.nop from schedule inner join faculty on schedule.facid=faculty.facid  where schedule.facid=$userid and schedule.scheduledate>='$today' and schedule.scheduledate<='$nextweek' order by schedule.scheduledate desc";
                                                 $result= $database->query($sqlmain);
                 
                                                 if($result->num_rows==0){
