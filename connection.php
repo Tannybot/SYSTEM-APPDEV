@@ -17,11 +17,15 @@ if ($database_url) {
 
         error_log("Parsed DB config - Host: $host, User: $username, DB: $database_name, Port: $port");
 
-        // Force TCP connection for Railway
-        $database = new mysqli($host, $username, $password, $database_name, $port);
-
-        // Set additional options for Railway
-        $database->set_charset("utf8mb4");
+        // Create PDO DSN
+        $dsn = "mysql:host=$host;port=$port;dbname=$database_name;charset=utf8mb4";
+        try {
+            $database = new PDO($dsn, $username, $password);
+            $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            error_log("Database connection failed: " . $e->getMessage());
+            die("Connection failed: " . $e->getMessage());
+        }
     } else {
         error_log("Invalid DATABASE_URL format: $database_url");
         die("Invalid DATABASE_URL format");
@@ -36,20 +40,24 @@ if ($database_url) {
 
     error_log("Using fallback DB config - Host: $host, User: $username, DB: $database_name, Port: $port");
 
-    $database = new mysqli($host, $username, $password, $database_name, $port);
-}
-
-// Check connection
-if ($database->connect_error) {
-    error_log("Database connection failed: " . $database->connect_error . " (Host: $host, Port: $port, DB: $database_name)");
-    die("Connection failed: " . $database->connect_error . " (Host: $host, Port: $port, DB: $database_name)");
+    // Create PDO DSN
+    $dsn = "mysql:host=$host;port=$port;dbname=$database_name;charset=utf8mb4";
+    try {
+        $database = new PDO($dsn, $username, $password);
+        $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        error_log("Database connection failed: " . $e->getMessage());
+        die("Connection failed: " . $e->getMessage());
+    }
 }
 
 // Test query to ensure database is accessible
-$result = $database->query("SELECT 1");
-if (!$result) {
-    error_log("Database test query failed: " . $database->error);
-    die("Database test failed: " . $database->error);
+try {
+    $stmt = $database->query("SELECT 1");
+    $stmt->fetch();
+} catch (PDOException $e) {
+    error_log("Database test query failed: " . $e->getMessage());
+    die("Database test failed: " . $e->getMessage());
 }
 ?>
 

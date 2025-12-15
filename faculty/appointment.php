@@ -49,6 +49,14 @@
         .calendar .day:hover {
             background-color: #f1f3f4;
         }
+        .calendar .has-session {
+            background-color: #fff3e0;
+            color: #f57c00;
+            font-weight: bold;
+        }
+        .calendar .has-session:hover {
+            background-color: #ffe0b2;
+        }
         .calendar .has-appointment {
             background-color: #e3f2fd;
             color: #1976d2;
@@ -58,11 +66,23 @@
             background-color: #bbdefb;
             transform: scale(1.05);
         }
-        .calendar .has-appointment small {
+        .calendar .has-session.has-appointment {
+            background: linear-gradient(45deg, #fff3e0 50%, #e3f2fd 50%);
+            color: #333;
+        }
+        .calendar .has-session.has-appointment:hover {
+            background: linear-gradient(45deg, #ffe0b2 50%, #bbdefb 50%);
+        }
+        .calendar .day small {
             display: block;
             font-size: 10px;
-            color: #42a5f5;
             margin-top: 5px;
+        }
+        .calendar .has-session small {
+            color: #f57c00;
+        }
+        .calendar .has-appointment small {
+            color: #42a5f5;
         }
         .appointment-popup {
             display: none;
@@ -140,6 +160,16 @@
        $userid= $userfetch["facid"];
        $username=$userfetch["facname"];
 
+       // Fetch all schedules for the faculty
+       $schedules = [];
+       $sql_sched = "SELECT scheduleid, title, scheduledate, scheduletime FROM schedule WHERE facid=$userid ORDER BY scheduledate, scheduletime";
+       $result_sched = $database->query($sql_sched);
+       while($row = $result_sched->fetch_assoc()){
+           $date = $row['scheduledate'];
+           if(!isset($schedules[$date])) $schedules[$date] = [];
+           $schedules[$date][] = $row;
+       }
+
        // Fetch appointments grouped by date
        $appointments = [];
        $sql = "SELECT appointment.appoid, schedule.scheduleid, schedule.title, student.sname, schedule.scheduledate, schedule.scheduletime, appointment.apponum, appointment.appodate FROM schedule INNER JOIN appointment ON schedule.scheduleid=appointment.scheduleid INNER JOIN student ON student.sid=appointment.pid WHERE schedule.facid=$userid ORDER BY schedule.scheduledate, schedule.scheduletime";
@@ -151,7 +181,7 @@
        }
 
        // Function to generate calendar
-       function generate_calendar($month, $year, $appointments) {
+       function generate_calendar($month, $year, $schedules, $appointments) {
            $daysOfWeek = array('Sun','Mon','Tue','Wed','Thu','Fri','Sat');
            $firstDayOfMonth = mktime(0,0,0,$month,1,$year);
            $numberDays = date('t',$firstDayOfMonth);
@@ -181,9 +211,15 @@
                $currentDate = "$year-" . str_pad($month, 2, "0", STR_PAD_LEFT) . "-" . str_pad($currentDay, 2, "0", STR_PAD_LEFT);
                $class = 'day';
                $content = $currentDay;
-               if(isset($appointments[$currentDate])){
-                   $class .= ' has-appointment';
-                   $content .= '<br><small>' . count($appointments[$currentDate]) . ' appt</small>';
+               $hasSession = isset($schedules[$currentDate]);
+               $hasAppointment = isset($appointments[$currentDate]);
+               if($hasSession){
+                   $class .= ' has-session';
+                   $content .= '<br><small>' . count($schedules[$currentDate]) . ' sess</small>';
+                   if($hasAppointment){
+                       $class .= ' has-appointment';
+                       $content .= '<br><small>' . count($appointments[$currentDate]) . ' booked</small>';
+                   }
                }
                $calendar .= "<td class='$class' data-date='$currentDate'>$content</td>";
 
@@ -209,14 +245,12 @@
                     <td style="padding:10px" colspan="2">
                         <table border="0" class="profile-container">
                             <tr>
+                                <td width="30%" style="padding-left:20px" >
+                                    <img src="../img/user.png" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                </td>
                                 <td style="padding:0px;margin:0px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="User Icon" style="width: 91.85px; height: 91.85px; margin-right: 8px; border-radius: 50%;">
-                                        <div>
-                                            <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
-                                            <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
-                                        </div>
-                                    </div>
+                                    <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
+                                    <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
                                 </td>
                             </tr>
                             <tr>
@@ -336,7 +370,7 @@
                    <td colspan="4">
                        <center>
                         <div class="abc scroll">
-                        <?php echo generate_calendar(date('m'), date('Y'), $appointments); ?>
+                        <?php echo generate_calendar(date('m'), date('Y'), $schedules, $appointments); ?>
                         </div>
                         </center>
                    </td> 
@@ -388,10 +422,6 @@
             $name=$row["facname"];
             $email=$row["facemail"];
             $spe=$row["subject"];
-
-            $spcil_res= $database->query("select sname from subject where id='$spe'");
-            $spcil_array= $spcil_res->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
             $tele=$row['factel'];
             echo '
             <div id="popup1" class="overlay">
@@ -452,7 +482,7 @@
                             </tr>
                             <tr>
                             <td class="label-td" colspan="2">
-                            '.$spcil_name.'<br><br>
+                            '.$spe.'<br><br>
                             </td>
                             </tr>
                             <tr>
@@ -479,34 +509,47 @@
     </div>
 
     <script>
+        var schedules = <?php echo json_encode($schedules); ?>;
         var appointments = <?php echo json_encode($appointments); ?>;
 
         document.addEventListener('DOMContentLoaded', function() {
-            var days = document.querySelectorAll('.day.has-appointment');
+            var days = document.querySelectorAll('.day.has-session');
             days.forEach(function(day) {
                 day.addEventListener('click', function() {
                     var date = this.getAttribute('data-date');
-                    showAppointments(date);
+                    showDetails(date);
                 });
             });
         });
 
-        function showAppointments(date) {
+        function showDetails(date) {
             var popup = document.getElementById('appointment-popup');
             var popupDate = document.getElementById('popup-date');
             var popupContent = document.getElementById('popup-content');
 
-            popupDate.textContent = 'Appointments on ' + date;
+            popupDate.textContent = 'Details for ' + date;
             popupContent.innerHTML = '';
 
+            if (schedules[date]) {
+                popupContent.innerHTML += '<h4>Sessions:</h4>';
+                schedules[date].forEach(function(sess) {
+                    var div = document.createElement('div');
+                    div.innerHTML = '<strong>' + sess.title + '</strong> at ' + sess.scheduletime;
+                    popupContent.appendChild(div);
+                });
+            }
+
             if (appointments[date]) {
+                popupContent.innerHTML += '<h4>Booked Appointments:</h4>';
                 appointments[date].forEach(function(appt) {
                     var div = document.createElement('div');
                     div.innerHTML = '<strong>' + appt.sname + '</strong> - ' + appt.title + ' at ' + appt.scheduletime + ' (#' + appt.apponum + ') <a href="?action=drop&id=' + appt.appoid + '&name=' + appt.sname + '&session=' + appt.title + '&apponum=' + appt.apponum + '">Cancel</a>';
                     popupContent.appendChild(div);
                 });
-            } else {
-                popupContent.textContent = 'No appointments on this date.';
+            }
+
+            if (!schedules[date] && !appointments[date]) {
+                popupContent.textContent = 'No sessions or appointments on this date.';
             }
 
             popup.style.display = 'block';

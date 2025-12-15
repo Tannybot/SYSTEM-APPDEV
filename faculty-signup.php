@@ -58,7 +58,7 @@ if($_POST){
             $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>';
         }else{
             //Insert into faculty table
-            $database->query("insert into faculty(facemail,facname,facpassword, factel,subject) values('$email','$name','$newpassword','$tele',$subject);");
+            $database->query("insert into faculty(facemail,facname,facpassword, factel,subject) values('$email','$name','$newpassword','$tele','$subject');");
             $database->query("insert into webuser values('$email','f')");
 
             $_SESSION["user"]=$email;
@@ -131,18 +131,7 @@ if($_POST){
             </tr>
             <tr>
                 <td class="label-td" colspan="2">
-                    <select name="subject" class="input-text" required>
-                        <option value="" disabled selected hidden>Choose Subject</option>
-                        <?php
-                        $list11 = $database->query("select * from subject order by sname asc;");
-                        for ($y=0;$y<$list11->num_rows;$y++){
-                            $row00=$list11->fetch_assoc();
-                            $sn=$row00["sname"];
-                            $id00=$row00["id"];
-                            echo "<option value=".$id00.">$sn</option>";
-                        };
-                        ?>
-                    </select>
+                    <input type="text" name="subject" class="input-text" placeholder="Enter Subject" required>
                 </td>
             </tr>
             <tr>

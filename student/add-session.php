@@ -14,6 +14,10 @@
 
         //import database
         include("../connection.php");
+        $userrow = $database->query("select * from student where semail='$useremail'");
+        $userfetch = $userrow->fetch_assoc();
+        $userid = $userfetch["sid"];
+
         $title=$_POST["title"];
         $docid=$_POST["docid"];
         $nop=$_POST["nop"];

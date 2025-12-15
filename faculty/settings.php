@@ -63,14 +63,12 @@
                     <td style="padding:10px" colspan="2">
                         <table border="0" class="profile-container">
                             <tr>
+                                <td width="30%" style="padding-left:20px" >
+                                    <img src="../img/user.png" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                </td>
                                 <td style="padding:0px;margin:0px;">
-                                    <div style="display: flex; align-items: center;">
-                                        <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="User Icon" style="width: 91.85px; height: 91.85px; margin-right: 8px; border-radius: 50%;">
-                                        <div>
-                                            <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
-                                            <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
-                                        </div>
-                                    </div>
+                                    <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
+                                    <p class="profile-subtitle"><?php echo substr($useremail,0,22)  ?></p>
                                 </td>
                             </tr>
                             <tr>
@@ -207,36 +205,6 @@
                                 
                             </tr>
                             <tr>
-                                <td colspan="4">
-                                    <p style="font-size: 5px">&nbsp;</p>
-                                </td>
-                            </tr>
-                            <tr>
-                            <td style="width: 25%;">
-                                    <a href="upload-profile-faculty.php" class="non-style-link">
-                                    <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex;">
-                                        <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('../img/icons/view-iceblue.svg');"></div>
-                                        <div>
-                                                <div class="h1-dashboard">
-                                                    Upload Profile Image
-
-                                                </div><br>
-                                                <div class="h3-dashboard"  style="font-size: 15px;">
-                                                    Change your profile picture
-                                                </div>
-                                        </div>
-
-                                    </div>
-                                    </a>
-                                </td>
-
-                            </tr>
-                            <tr>
-                                <td colspan="4">
-                                    <p style="font-size: 5px">&nbsp;</p>
-                                </td>
-                            </tr>
-                            <tr>
                             <td style="width: 25%;">
                                     <a href="?action=availability&id=<?php echo $userid ?>" class="non-style-link">
                                     <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex;">
@@ -322,10 +290,6 @@
             $name=$row["facname"];
             $email=$row["facemail"];
             $spe=$row["subject"];
-
-            $spcil_res= $database->query("select sname from subject where id='$spe'");
-            $spcil_array= $spcil_res->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
             $tele=$row['factel'];
             echo '
             <div id="popup1" class="overlay">
@@ -386,7 +350,7 @@
                             </tr>
                             <tr>
                             <td class="label-td" colspan="2">
-                            '.$spcil_name.'<br><br>
+                            '.$spe.'<br><br>
                             </td>
                             </tr>
                             <tr>
@@ -443,23 +407,31 @@
                                     <input type="hidden" value="'.$id.'" name="facid">
 ';
 
+            echo '<table border="0" style="width:100%">';
+            $col = 0;
             for($d=1; $d<=7; $d++){
+                if($col == 0) echo '<tr>';
                 $day_name = $days[$d-1];
                 $slots = isset($availabilities[$d]) ? $availabilities[$d] : [];
-                echo '
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <label for="day'.$d.'" class="form-label"><b>'.$day_name.'</b></label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        Start Time: <input type="time" name="start_time['.$d.'][]" value="'.(isset($slots[0]) ? $slots[0]['start_time'] : '').'" class="input-text">
-                                        End Time: <input type="time" name="end_time['.$d.'][]" value="'.(isset($slots[0]) ? $slots[0]['end_time'] : '').'" class="input-text">
-                                    </td>
-                                </tr>
-';
+                echo '<td style="padding:10px; vertical-align:top;">
+                    <label for="day'.$d.'" class="form-label"><b>'.$day_name.'</b></label><br>
+                    Start Time: <input type="time" name="start_time['.$d.'][]" value="'.(isset($slots[0]) ? $slots[0]['start_time'] : '').'" class="input-text"><br>
+                    End Time: <input type="time" name="end_time['.$d.'][]" value="'.(isset($slots[0]) ? $slots[0]['end_time'] : '').'" class="input-text">
+                </td>';
+                $col++;
+                if($col == 5) {
+                    echo '</tr>';
+                    $col = 0;
+                }
             }
+            if($col > 0) {
+
+                for($i=$col; $i<5; $i++) echo '<td style="padding:10px;"></td>';
+
+                echo '</tr>';
+
+            }
+            echo '</table>';
 
             echo '
                             <tr>
@@ -488,16 +460,12 @@
             $name=$row["facname"];
             $email=$row["facemail"];
             $spe=$row["subject"];
-
-            $spcil_res= $database->query("select sname from subject where id='$spe'");
-            $spcil_array= $spcil_res->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
             $tele=$row['factel'];
 
             $error_1=$_GET["error"];
                 $errorlist= array(
                     '1'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>',
-                    '2'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Password Conformation Error! Reconform Password</label>',
+                    '2'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Password Confirmation Error! Reconfirm Password</label>',
                     '3'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>',
                     '4'=>"",
                     '0'=>'',
@@ -562,28 +530,13 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <label for="spec" class="form-label">Choose subject: (Current'.$spcil_name.')</label>
+                                            <label for="spec" class="form-label">Subject: (Current'.$spe.')</label>
                                             
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <select name="spec" id="" class="box">';
-                                                
-                
-                                                $list11 = $database->query("select  * from  subject;");
-                
-                                                for ($y=0;$y<$list11->num_rows;$y++){
-                                                    $row00=$list11->fetch_assoc();
-                                                    $sn=$row00["sname"];
-                                                    $id00=$row00["id"];
-                                                    echo "<option value=".$id00.">$sn</option><br/>";
-                                                };
-                
-                
-                
-                                                
-                                echo     '       </select><br><br>
+                                            <input type="text" name="spec" class="input-text" placeholder="Enter Subject" value="'.$spe.'" required><br><br>
                                         </td>
                                     </tr>
                                     <tr>
@@ -593,16 +546,16 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <input type="password" name="password" class="input-text" placeholder="Defind a Password" required><br>
+                                            <input type="password" name="password" class="input-text" placeholder="Define a Password" required><br>
                                         </td>
                                     </tr><tr>
                                         <td class="label-td" colspan="2">
-                                            <label for="cpassword" class="form-label">Conform Password: </label>
+                                            <label for="cpassword" class="form-label">Confirm Password: </label>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <input type="password" name="cpassword" class="input-text" placeholder="Conform Password" required><br>
+                                            <input type="password" name="cpassword" class="input-text" placeholder="Confirm Password" required><br>
                                         </td>
                                     </tr>
                                     
