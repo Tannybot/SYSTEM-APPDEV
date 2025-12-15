@@ -251,7 +251,7 @@
                                     $spe=$row["subject"];
                                     $spcil_res= $database->query("select sname from subject where id='$spe'");
                                     $spcil_array= $spcil_res->fetch_assoc();
-                                    $spcil_name=$spcil_array["sname"];
+                                    $spcil_name = $spcil_array ? $spcil_array["sname"] : 'Unknown';
                                     echo '<tr>
                                         <td> &nbsp;'.
                                         substr($name,0,30)
@@ -336,7 +336,7 @@
             $stmt->execute();
             $spcil_res = $stmt->get_result();
             $spcil_array= $spcil_res->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
+            $spcil_name = $spcil_array ? $spcil_array["sname"] : 'Unknown';
             $tele=$row['factel'];
             echo '
             <div id="popup1" class="overlay">
@@ -619,7 +619,7 @@
             $spcil_result = $stmt->get_result();
 
             $spcil_array= $spcil_result->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
+            $spcil_name = $spcil_array ? $spcil_array["sname"] : 'Unknown';
             $tele=$row['factel'];
 
             $error_1=$_GET["error"];

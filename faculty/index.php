@@ -156,7 +156,7 @@
                     <tr>
                         <td >
                             <h3>Welcome!</h3>
-                            <h1><?php echo $username  ?>.</h1>
+                            <h1><?php echo $username  ?></h1>
                             <p>Thanks for joining with us. We are always trying to get you a complete service<br>
                             You can view your daily schedule, Reach a Student Appointment at home!<br><br>
                             </p>
