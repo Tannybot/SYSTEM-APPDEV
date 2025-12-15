@@ -60,7 +60,17 @@
                 $error='1';
                 error_log("ID mismatch: id2=$id2, id=$id");
             }else{
-                $sql1="update faculty set facemail='$email',facname='$name',facpassword='$password',factel='$tele',subject=$spec where facid=$id ;";
+                // Get subject id from name
+                $spec_result = $database->query("select id from subject where sname='$spec'");
+                $spec_row = $spec_result->fetch_assoc();
+                if ($spec_row) {
+                    $spec_id = $spec_row['id'];
+                } else {
+                    $error = '5'; // Invalid subject
+                    header("location: settings.php?action=edit&error=".$error."&id=".$id);
+                    exit();
+                }
+                $sql1="update faculty set facemail='$email',facname='$name',facpassword='$password',factel='$tele',subject=$spec_id where facid=$id ;";
                 error_log("UPDATE faculty query: " . $sql1);
                 $database->query($sql1);
 

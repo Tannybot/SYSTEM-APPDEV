@@ -5,6 +5,8 @@
     if(isset($_SESSION["user"])){
         if(($_SESSION["user"])=="" or $_SESSION['usertype']!='s'){
             header("location: ../login.php");
+        }else{
+            $useremail = $_SESSION["user"];
         }
 
     }else{
@@ -16,7 +18,15 @@
         include("../connection.php");
         $userrow = $database->query("select * from student where semail='$useremail'");
         $userfetch = $userrow->fetch_assoc();
+        if (!$userfetch) {
+            header("location: ../login.php");
+            exit();
+        }
         $userid = $userfetch["sid"];
+        if (!$userid) {
+            header("location: ../login.php");
+            exit();
+        }
 
         $title=$_POST["title"];
         $docid=$_POST["docid"];
@@ -50,6 +60,10 @@
 
         $sql="insert into schedule (facid,title,scheduledate,scheduletime,nop) values ($docid,'$title','$date','$time',$nop);";
         $result= $database->query($sql);
+        if (!$result) {
+            echo "<script>alert('Error scheduling session.'); window.location.href='schedule.php';</script>";
+            exit();
+        }
 
         // Get the inserted scheduleid
         $scheduleid = $database->insert_id;

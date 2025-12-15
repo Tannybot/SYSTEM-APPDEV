@@ -67,7 +67,7 @@
                      <table border="0" class="profile-container">
                          <tr>
                              <td width="30%" style="padding-left:20px" >
-                                 <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                 <img src="../img/user.png" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
                              </td>
                              <td style="padding:0px;margin:0px;">
                                  <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
@@ -366,13 +366,13 @@
 
                            <tr>
                                <td>
-                                   <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Schedule New Session.</p><br>
+                                   <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Book an Appointment</p><br>
                                </td>
                            </tr>
                            <tr>
                                <td class="label-td" colspan="2">
                                <form action="add-session.php" method="POST" class="add-new-form">
-                                   <label for="title" class="form-label">Session Title : </label>
+                                   <label for="title" class="form-label">Concern : </label>
                                </td>
                            </tr>
                            <tr>
@@ -409,7 +409,7 @@
                            </tr>
                            <tr>
                                <td class="label-td" colspan="2">
-                                   <label for="nop" class="form-label">Number of Students/Appointment Numbers : </label>
+                                   <label for="nop" class="form-label">Number of Concerned Students : </label>
                                </td>
                            </tr>
                            <tr>

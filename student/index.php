@@ -72,7 +72,7 @@
                         <table border="0" class="profile-container">
                             <tr>
                                 <td width="30%" style="padding-left:20px" >
-                                    <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="Profile" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                    <img src="../img/user.png" alt="Profile" style="width: 91.85px; height: 91.85px; border-radius:50%">
                                 </td>
                                 <td style="padding:0px;margin:0px;">
                                     <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>

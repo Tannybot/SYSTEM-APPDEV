@@ -17,14 +17,11 @@ if ($database_url) {
 
         error_log("Parsed DB config - Host: $host, User: $username, DB: $database_name, Port: $port");
 
-        // Create PDO DSN
-        $dsn = "mysql:host=$host;port=$port;dbname=$database_name;charset=utf8mb4";
-        try {
-            $database = new PDO($dsn, $username, $password);
-            $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            error_log("Database connection failed: " . $e->getMessage());
-            die("Connection failed: " . $e->getMessage());
+        // Create mysqli connection
+        $database = new mysqli($host, $username, $password, $database_name, $port);
+        if ($database->connect_error) {
+            error_log("Database connection failed: " . $database->connect_error);
+            die("Connection failed: " . $database->connect_error);
         }
     } else {
         error_log("Invalid DATABASE_URL format: $database_url");
@@ -40,24 +37,20 @@ if ($database_url) {
 
     error_log("Using fallback DB config - Host: $host, User: $username, DB: $database_name, Port: $port");
 
-    // Create PDO DSN
-    $dsn = "mysql:host=$host;port=$port;dbname=$database_name;charset=utf8mb4";
-    try {
-        $database = new PDO($dsn, $username, $password);
-        $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        error_log("Database connection failed: " . $e->getMessage());
-        die("Connection failed: " . $e->getMessage());
+    // Create mysqli connection
+    $database = new mysqli($host, $username, $password, $database_name, $port);
+    if ($database->connect_error) {
+        error_log("Database connection failed: " . $database->connect_error);
+        die("Connection failed: " . $database->connect_error);
     }
 }
 
 // Test query to ensure database is accessible
-try {
-    $stmt = $database->query("SELECT 1");
-    $stmt->fetch();
-} catch (PDOException $e) {
-    error_log("Database test query failed: " . $e->getMessage());
-    die("Database test failed: " . $e->getMessage());
+$result = $database->query("SELECT 1");
+if (!$result) {
+    error_log("Database test query failed: " . $database->error);
+    die("Database test failed: " . $database->error);
 }
+$result->free();
 ?>
 

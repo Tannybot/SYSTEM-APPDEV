@@ -53,7 +53,7 @@
                         <table border="0" class="profile-container">
                             <tr>
                                 <td width="30%" style="padding-left:20px" >
-                                    <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                    <img src="../img/user.png" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
                                 </td>
                                 <td style="padding:0px;margin:0px;">
                                     <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
@@ -152,41 +152,44 @@
                 </tr>
                
                 
-                <tr>
-                    <td colspan="4" style="padding-top:10px;">
-                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">My Faculty (<?php echo $result->num_rows; ?>)</p>
-                    </td>
-                    
-                </tr>
-                <?php
-                    // Get booked faculty IDs
-                    $sql_booked = "SELECT DISTINCT schedule.facid FROM appointment INNER JOIN schedule ON appointment.scheduleid = schedule.scheduleid WHERE appointment.pid = $userid";
-                    $booked_result = $database->query($sql_booked);
-                    $booked_facids = [];
-                    while($row = $booked_result->fetch_assoc()){
-                        $booked_facids[] = $row['facid'];
-                    }
-   
-                    if($_POST){
-                            $keyword=$_POST["search"];
-   
-                            $base_query = "select * from faculty where (facemail='$keyword' or facname='$keyword' or facname like '$keyword%' or facname like '%$keyword' or facname like '%$keyword%')";
-   
-                            if(!empty($booked_facids)){
-                                $facid_list = implode(',', $booked_facids);
-                                $base_query .= " AND facid IN ($facid_list)";
-                            }
-   
-                            $sqlmain = $base_query;
-                        }else{
-                            if(!empty($booked_facids)){
-                                $facid_list = implode(',', $booked_facids);
-                                $sqlmain= "select * from faculty where facid IN ($facid_list) order by facid desc";
-                            }else{
-                                $sqlmain= "select * from faculty order by facid desc";
-                            }
-   
-                        }
+               <?php
+                   // Get booked faculty IDs
+                   $sql_booked = "SELECT DISTINCT schedule.facid FROM appointment INNER JOIN schedule ON appointment.scheduleid = schedule.scheduleid WHERE appointment.pid = $userid";
+                   $booked_result = $database->query($sql_booked);
+                   $booked_facids = [];
+                   while($row = $booked_result->fetch_assoc()){
+                       $booked_facids[] = $row['facid'];
+                   }
+
+                   if($_POST){
+                           $keyword=$_POST["search"];
+
+                           $base_query = "select * from faculty where (facemail='$keyword' or facname='$keyword' or facname like '$keyword%' or facname like '%$keyword' or facname like '%$keyword%')";
+
+                           if(!empty($booked_facids)){
+                               $facid_list = implode(',', $booked_facids);
+                               $base_query .= " AND facid IN ($facid_list)";
+                           }
+
+                           $sqlmain = $base_query;
+                       }else{
+                           if(!empty($booked_facids)){
+                               $facid_list = implode(',', $booked_facids);
+                               $sqlmain= "select * from faculty where facid IN ($facid_list) order by facid desc";
+                           }else{
+                               $sqlmain= "select * from faculty order by facid desc";
+                           }
+
+                       }
+
+                   $result= $database->query($sqlmain);
+               ?>
+               <tr>
+                   <td colspan="4" style="padding-top:10px;">
+                       <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">My Faculty (<?php echo $result->num_rows; ?>)</p>
+                   </td>
+
+               </tr>
 
 
 
@@ -220,13 +223,9 @@
                                 </tr>
                         </thead>
                         <tbody>
-                        
-                            <?php
+                        <?php
 
-                                
-                                $result= $database->query($sqlmain);
-
-                                if($result->num_rows==0){
+                            if($result->num_rows==0){
                                     echo '<tr>
                                     <td colspan="4">
                                     <br><br><br><br>
@@ -271,7 +270,7 @@
                                        &nbsp;&nbsp;&nbsp;
                                         <a href="?action=availability&id='.$facid.'&name='.$name.'"  class="non-style-link"><button  class="btn-primary-soft btn button-icon"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Availability</font></button></a>
                                        &nbsp;&nbsp;&nbsp;
-                                        <a href="?action=session&id='.$facid.'&name='.$name.'"  class="non-style-link"><button  class="btn-primary-soft btn button-icon menu-icon-session-active"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Sessions</font></button></a>
+                                        <a href="?action=book&id='.$facid.'&name='.$name.'"  class="non-style-link"><button  class="btn-primary-soft btn button-icon menu-icon-session-active"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Book Now</font></button></a>
                                         </div>
                                         </td>
                                     </tr>';
@@ -336,7 +335,7 @@
             $stmt->bind_param("s",$spe);
             $stmt->execute();
             $spcil_res = $stmt->get_result();
-            $spcil_array= $result->fetch_assoc();
+            $spcil_array= $spcil_res->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
             $tele=$row['factel'];
             echo '
@@ -504,6 +503,102 @@
             </div>
             </div>
             ';
+        }elseif($action=='book'){
+            $name = $_GET["name"];
+            // Find the next available session for this faculty
+            $today = date('Y-m-d');
+            $sql_next_session = "SELECT * FROM schedule WHERE facid=$id AND scheduledate >= '$today' ORDER BY scheduledate ASC, scheduletime ASC LIMIT 1";
+            $next_session_result = $database->query($sql_next_session);
+            if ($next_session_result && $next_session_result->num_rows > 0) {
+                $next_session = $next_session_result->fetch_assoc();
+                $scheduleid = $next_session['scheduleid'];
+                // Check if already booked
+                $sql_check_booked = "SELECT * FROM appointment WHERE pid=$userid AND scheduleid=$scheduleid";
+                $check_result = $database->query($sql_check_booked);
+                if ($check_result->num_rows == 0) {
+                    // Get next apponum
+                    $sql_max_apponum = "SELECT MAX(apponum) as maxnum FROM appointment WHERE scheduleid=$scheduleid";
+                    $max_result = $database->query($sql_max_apponum);
+                    $max_row = $max_result->fetch_assoc();
+                    $apponum = ($max_row['maxnum'] ?? 0) + 1;
+                    // Insert appointment
+                    $sql_insert = "INSERT INTO appointment (pid, apponum, scheduleid, appodate) VALUES ($userid, $apponum, $scheduleid, '$today')";
+                    $insert_result = $database->query($sql_insert);
+                    if ($insert_result) {
+                        echo '
+                        <div id="popup1" class="overlay">
+                                <div class="popup">
+                                <center>
+                                    <h2>Booking Successful!</h2>
+                                    <a class="close" href="faculty.php">&times;</a>
+                                    <div class="content">
+                                        You have successfully booked a session with '.substr($name,0,40).'.
+
+                                    </div>
+                                    <div style="display: flex;justify-content: center;">
+                                        <a href="appointment.php" class="non-style-link"><button class="btn-primary btn">View My Bookings</button></a>
+                                    </div>
+                                </center>
+                        </div>
+                        </div>
+                        ';
+                    } else {
+                        echo '
+                        <div id="popup1" class="overlay">
+                                <div class="popup">
+                                <center>
+                                    <h2>Booking Failed!</h2>
+                                    <a class="close" href="faculty.php">&times;</a>
+                                    <div class="content">
+                                        There was an error booking the session.
+
+                                    </div>
+                                    <div style="display: flex;justify-content: center;">
+                                        <a href="faculty.php" class="non-style-link"><button class="btn-primary btn">OK</button></a>
+                                    </div>
+                                </center>
+                        </div>
+                        </div>
+                        ';
+                    }
+                } else {
+                    echo '
+                    <div id="popup1" class="overlay">
+                            <div class="popup">
+                            <center>
+                                <h2>Already Booked!</h2>
+                                <a class="close" href="faculty.php">&times;</a>
+                                <div class="content">
+                                    You have already booked this session.
+
+                                </div>
+                                <div style="display: flex;justify-content: center;">
+                                    <a href="appointment.php" class="non-style-link"><button class="btn-primary btn">View My Bookings</button></a>
+                                </div>
+                            </center>
+                    </div>
+                    </div>
+                    ';
+                }
+            } else {
+                echo '
+                <div id="popup1" class="overlay">
+                        <div class="popup">
+                        <center>
+                            <h2>No Available Sessions!</h2>
+                            <a class="close" href="faculty.php">&times;</a>
+                            <div class="content">
+                                There are no upcoming sessions available for '.substr($name,0,40).'.
+
+                            </div>
+                            <div style="display: flex;justify-content: center;">
+                                <a href="faculty.php" class="non-style-link"><button class="btn-primary btn">OK</button></a>
+                            </div>
+                        </center>
+                </div>
+                </div>
+                ';
+            }
         }
         }elseif($action=='edit'){
             $sqlmain= "select * from faculty where facid=?";
@@ -521,9 +616,9 @@
             $stmt = $database->prepare($sqlmain);
             $stmt->bind_param("s",$spe);
             $stmt->execute();
-            $result = $stmt->get_result();
+            $spcil_result = $stmt->get_result();
 
-            $spcil_array= $spcil_res->fetch_assoc();
+            $spcil_array= $spcil_result->fetch_assoc();
             $spcil_name=$spcil_array["sname"];
             $tele=$row['factel'];
 
