@@ -64,7 +64,7 @@
                         <table border="0" class="profile-container">
                             <tr>
                                 <td width="30%" style="padding-left:20px" >
-                                    <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="User Icon" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                    <img src="../img/user.png" alt="User Icon" style="width: 91.85px; height: 91.85px; border-radius:50%">
                                 </td>
                                 <td style="padding:0px;margin:0px;">
                                     <p class="profile-title"><?php echo substr($username,0,13)  ?>..</p>
@@ -204,36 +204,6 @@
                                     </a>
                                 </td>
                                 
-                            </tr>
-                            <tr>
-                                <td colspan="4">
-                                    <p style="font-size: 5px">&nbsp;</p>
-                                </td>
-                            </tr>
-                            <tr>
-                            <td style="width: 25%;">
-                                    <a href="upload-profile-student.php" class="non-style-link">
-                                    <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex;">
-                                        <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('../img/icons/view-iceblue.svg');"></div>
-                                        <div>
-                                                <div class="h1-dashboard">
-                                                    Upload Profile Image
-
-                                                </div><br>
-                                                <div class="h3-dashboard"  style="font-size: 15px;">
-                                                    Change your profile picture
-                                                </div>
-                                        </div>
-
-                                    </div>
-                                    </a>
-                                </td>
-
-                            </tr>
-                            <tr>
-                                <td colspan="4">
-                                    <p style="font-size: 5px">&nbsp;</p>
-                                </td>
                             </tr>
                             <tr>
                             <td style="width: 25%;">

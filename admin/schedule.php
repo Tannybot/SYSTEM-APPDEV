@@ -52,7 +52,7 @@
                         <table border="0" class="profile-container">
                             <tr>
                                 <td width="30%" style="padding-left:20px" >
-                                    <img src="../img/<?php echo $userfetch['profile_image'] ?: 'user.png'; ?>" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                    <img src="../img/user.png" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
                                 </td>
                                 <td style="padding:0px;margin:0px;">
                                     <p class="profile-title">Administrator</p>
@@ -91,11 +91,6 @@
                 <tr class="menu-row" >
                     <td class="menu-btn menu-icon-patient">
                         <a href="student.php" class="non-style-link-menu"><div><p class="menu-text">Students</p></a></div>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-settings">
-                        <a href="upload-profile-admin.php" class="non-style-link-menu"><div><p class="menu-text">Profile</p></a></div>
                     </td>
                 </tr>
 
