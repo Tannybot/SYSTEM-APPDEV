@@ -21,7 +21,26 @@
         .sub-table{
             animation: transitionIn-Y-bottom 0.5s;
         }
-    </style>
+        .history-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .history-table th, .history-table td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: left;
+        }
+        .history-table th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+        .history-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .history-table tr:hover {
+            background-color: #e9e9e9;
+        }
+        </style>
     
     
 </head>
@@ -319,7 +338,7 @@
                         <h2></h2>
                         <a class="close" href="settings.php">&times;</a>
                         <div class="content">
-                            eDoc Web App<br>
+                            ConsultEase<br>
                             
                         </div>
                         <div style="display: flex;justify-content: center;">
@@ -327,7 +346,7 @@
                         
                             <tr>
                                 <td>
-                                    <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">View Details.</p><br><br>
+                                    <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">View Details</p><br><br>
                                 </td>
                             </tr>
                             
@@ -533,13 +552,13 @@
                            </tr>
                            <tr>
                                <td>
-                                   <table class="filter-container" border="1" style="width:100%; border-collapse: collapse;">
+                                   <table class="history-table">
                                        <thead>
                                            <tr>
                                                <th onclick="sortTable(0)">Booking ID <span id="sort-icon-0">↕</span></th>
                                                <th onclick="sortTable(1)">Date <span id="sort-icon-1">↕</span></th>
                                                <th onclick="sortTable(2)">Time <span id="sort-icon-2">↕</span></th>
-                                               <th onclick="sortTable(3)">Room/Facility <span id="sort-icon-3">↕</span></th>
+                                               <th onclick="sortTable(3)">Concern <span id="sort-icon-3">↕</span></th>
                                                <th onclick="sortTable(4)">Purpose <span id="sort-icon-4">↕</span></th>
                                                <th onclick="sortTable(5)">Status <span id="sort-icon-5">↕</span></th>
                                            </tr>

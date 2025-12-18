@@ -315,7 +315,7 @@
                             <tr>
                                 
                                 <td class="label-td" colspan="2">
-                                    <label for="name" class="form-label">Patient ID: </label>
+                                    <label for="name" class="form-label">Student ID: </label>
                                 </td>
                             </tr>
                             <tr>
