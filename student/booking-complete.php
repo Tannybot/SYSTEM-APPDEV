@@ -18,6 +18,7 @@
 
     //import database
     include("../connection.php");
+    include("../notification_functions.php");
     $sqlmain= "select * from student where semail=?";
     $stmt = $database->prepare($sqlmain);
     $stmt->bind_param("s",$useremail);
@@ -51,9 +52,6 @@
                 exit();
             }
 
-            $sql2="insert into appointment(pid,apponum,scheduleid,appodate) values ($userid,$apponum,$scheduleid,'$date')";
-            $result= $database->query($sql2);
-
             // Get faculty details for email
             $sql_faculty = "SELECT faculty.facemail, faculty.facname, schedule.title, schedule.scheduledate, schedule.scheduletime
                             FROM faculty
@@ -73,6 +71,13 @@
                 $session_date = $faculty_data['scheduledate'];
                 $session_time = $faculty_data['scheduletime'];
             }
+
+            $sql2="insert into appointment(pid,apponum,scheduleid,appodate) values ($userid,$apponum,$scheduleid,'$date')";
+            $result= $database->query($sql2);
+
+            // Add notification to faculty
+            $message = "New booking by $username for session '$session_title' on $session_date at $session_time. Appointment number: $apponum.";
+            add_notification($faculty_email, 'booking', $message);
 
             // Output HTML page with EmailJS
             ?>

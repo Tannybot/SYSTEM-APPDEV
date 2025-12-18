@@ -225,6 +225,27 @@
 
                             </tr>
                             <tr>
+                            <td style="width: 25%;">
+                                    <a href="?action=history&id=<?php echo $userid ?>" class="non-style-link">
+                                    <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex">
+                                        <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('../img/icons/view-iceblue.svg');"></div>
+                                        <div>
+                                                <div class="h1-dashboard">
+                                                    Booking History  &nbsp;
+
+                                                </div><br>
+                                                <div class="h3-dashboard" style="font-size: 15px;">
+                                                    View completed appointments
+                                                </div>
+                                        </div>
+                                            
+
+                                    </div>
+                                    </a>
+                                </td>
+
+                            </tr>
+                            <tr>
                                 <td colspan="4">
                                     <p style="font-size: 5px">&nbsp;</p>
                                 </td>
@@ -453,7 +474,100 @@
             </div>
             </div>
             ';
-        }elseif($action=='edit'){
+       }elseif($action=='history'){
+           $where = "schedule.facid = '$id' AND appointment.status = 'done'";
+           if(!empty($_GET['from_date'])) $where .= " AND appointment.appodate >= '".$_GET['from_date']."'";
+           if(!empty($_GET['to_date'])) $where .= " AND appointment.appodate <= '".$_GET['to_date']."'";
+           if(!empty($_GET['subject'])) $where .= " AND faculty.subject = '".$_GET['subject']."'";
+           $sqlmain = "SELECT appointment.appoid, appointment.appodate, schedule.scheduletime, schedule.title, subject.sname as subject_name, appointment.status
+                       FROM appointment
+                       INNER JOIN schedule ON appointment.scheduleid = schedule.scheduleid
+                       INNER JOIN faculty ON schedule.facid = faculty.facid
+                       INNER JOIN subject ON faculty.subject = subject.id
+                       WHERE $where
+                       ORDER BY appointment.appodate DESC, schedule.scheduletime DESC";
+           $result = $database->query($sqlmain);
+           $bookings = [];
+           while($row = $result->fetch_assoc()){
+               $bookings[] = $row;
+           }
+           echo '
+           <div id="popup1" class="overlay">
+                   <div class="popup">
+                   <center>
+                       <a class="close" href="settings.php">&times;</a>
+                       <div style="display: flex;justify-content: center;">
+                       <div class="abc" style="width: 90%; max-width: 1200px;">
+                       <table width="100%" class="sub-table scrolldown add-doc-form-container" border="0">
+                       <tr>
+                               <td>
+                                   <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Booking History</p><br>
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <form method="GET" action="settings.php">
+                                       <input type="hidden" name="action" value="history">
+                                       <input type="hidden" name="id" value="'.$id.'">
+                                       <label>Date Range: From </label>
+                                       <input type="date" name="from_date" value="'.($_GET['from_date'] ?? '').'">
+                                       <label> To </label>
+                                       <input type="date" name="to_date" value="'.($_GET['to_date'] ?? '').'">
+                                       <label> Booking Type: </label>
+                                       <select name="subject">
+                                           <option value="">All</option>';
+                                           $subjects = $database->query("SELECT id, sname FROM subject");
+                                           while($sub = $subjects->fetch_assoc()){
+                                               $selected = ($_GET['subject'] == $sub['id']) ? 'selected' : '';
+                                               echo '<option value="'.$sub['id'].'" '.$selected.'>'.$sub['sname'].'</option>';
+                                           }
+                                       echo '</select>
+                                       <input type="submit" value="Filter" class="btn-primary btn">
+                                   </form>
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <button onclick="downloadCSV()" class="btn-primary btn">Download to Excel</button>
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <table class="filter-container" border="1" style="width:100%; border-collapse: collapse;">
+                                       <thead>
+                                           <tr>
+                                               <th onclick="sortTable(0)">Booking ID <span id="sort-icon-0">↕</span></th>
+                                               <th onclick="sortTable(1)">Date <span id="sort-icon-1">↕</span></th>
+                                               <th onclick="sortTable(2)">Time <span id="sort-icon-2">↕</span></th>
+                                               <th onclick="sortTable(3)">Room/Facility <span id="sort-icon-3">↕</span></th>
+                                               <th onclick="sortTable(4)">Purpose <span id="sort-icon-4">↕</span></th>
+                                               <th onclick="sortTable(5)">Status <span id="sort-icon-5">↕</span></th>
+                                           </tr>
+                                       </thead>
+                                       <tbody id="booking-table">';
+                                       foreach($bookings as $booking){
+                                           echo '<tr>
+                                               <td>'.$booking['appoid'].'</td>
+                                               <td>'.$booking['appodate'].'</td>
+                                               <td>'.$booking['scheduletime'].'</td>
+                                               <td>'.$booking['title'].'</td>
+                                               <td>'.$booking['subject_name'].'</td>
+                                               <td>'.$booking['status'].'</td>
+                                           </tr>';
+                                       }
+                                       echo '</tbody>
+                                   </table>
+                               </td>
+                           </tr>
+                       </table>
+                       </div>
+                       </div>
+                   </center>
+                   <br><br>
+           </div>
+           </div>
+           ';
+       }elseif($action=='edit'){
             $sqlmain= "select * from faculty where facid='$id'";
             $result= $database->query($sqlmain);
             $row=$result->fetch_assoc();
@@ -608,6 +722,136 @@
         }; }
     }
         ?>
+
+<script>
+
+function sortTable(n) {
+
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+
+  table = document.getElementById("booking-table");
+
+  switching = true;
+
+  dir = "asc";
+
+  while (switching) {
+
+    switching = false;
+
+    rows = table.rows;
+
+    for (i = 0; i < (rows.length - 1); i++) {
+
+      shouldSwitch = false;
+
+      x = rows[i].getElementsByTagName("TD")[n];
+
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+
+      if (dir == "asc") {
+
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+
+          shouldSwitch = true;
+
+          break;
+
+        }
+
+      } else if (dir == "desc") {
+
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+
+          shouldSwitch = true;
+
+          break;
+
+        }
+
+      }
+
+    }
+
+    if (shouldSwitch) {
+
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+
+      switching = true;
+
+      switchcount ++;
+
+    } else {
+
+      if (switchcount == 0 && dir == "asc") {
+
+        dir = "desc";
+
+        switching = true;
+
+      }
+
+    }
+
+  }
+
+  // Update sort icons
+
+  for (var j = 0; j < 6; j++) {
+
+    document.getElementById("sort-icon-" + j).innerHTML = "↕";
+
+  }
+
+  document.getElementById("sort-icon-" + n).innerHTML = (dir == "asc") ? "↑" : "↓";
+
+}
+
+function downloadCSV() {
+
+  var table = document.getElementById("booking-table");
+
+  var csv = [];
+
+  var rows = table.rows;
+
+  for (var i = 0; i < rows.length; i++) {
+
+    var row = [], cols = rows[i].querySelectorAll("td, th");
+
+    for (var j = 0; j < cols.length; j++) {
+
+      row.push(cols[j].innerText);
+
+    }
+
+    csv.push(row.join(","));
+
+  }
+
+  var csv_string = csv.join("\n");
+
+  var filename = 'booking_history_' + new Date().toISOString().slice(0,10) + '.csv';
+
+  var link = document.createElement('a');
+
+  link.style.display = 'none';
+
+  link.setAttribute('target', '_blank');
+
+  link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv_string));
+
+  link.setAttribute('download', filename);
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+
+}
+
+</script>
 
 </body>
 </html>

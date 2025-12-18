@@ -378,8 +378,18 @@
                            <tr>
                                <td class="label-td" colspan="2">
                                    <input type="text" name="title" class="input-text" placeholder="Name of this Session" required><br>
-                               </td>
-                           </tr>
+                                       </td>
+                                   </tr>
+                                   <tr>
+                                       <td class="label-td" colspan="2">
+                                           <label for="purpose" class="form-label">Purpose : </label>
+                                       </td>
+                                   </tr>
+                                   <tr>
+                                       <td class="label-td" colspan="2">
+                                           <input type="text" name="purpose" class="input-text" placeholder="Purpose of this Session" required><br>
+                                       </td>
+                                   </tr>
                            <tr>
 
                                <td class="label-td" colspan="2">

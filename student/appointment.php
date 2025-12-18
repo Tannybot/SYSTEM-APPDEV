@@ -16,6 +16,52 @@
         .sub-table{
             animation: transitionIn-Y-bottom 0.5s;
         }
+        .review-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 30px;
+            z-index: 1001;
+            max-width: 500px;
+            width: 90%;
+        }
+        .review-modal h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .stars {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .stars input {
+            display: none;
+        }
+        .stars label {
+            font-size: 30px;
+            color: #ddd;
+            cursor: pointer;
+        }
+        .stars input:checked ~ label,
+        .stars label:hover,
+        .stars label:hover ~ label {
+            color: #ffc107;
+        }
+        .review-modal textarea {
+            width: 100%;
+            height: 80px;
+            margin: 10px 0;
+        }
+        .review-modal .buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
 </style>
 </head>
 <body>
@@ -54,7 +100,7 @@
 
 
     //TODO
-    $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,faculty.facname,student.sname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid  where  student.sid=$userid ";
+    $sqlmain= "select appointment.appoid,appointment.status,schedule.scheduleid,schedule.title,faculty.facname,student.sname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid  where  student.sid=$userid ";
 
     if($_POST){
         //print_r($_POST);
@@ -257,6 +303,7 @@
                                             $apponum=$row["apponum"];
                                             $appodate=$row["appodate"];
                                             $appoid=$row["appoid"];
+                                            $status=$row["status"];
     
                                             if($scheduleid==""){
                                                 break;
@@ -287,6 +334,7 @@
                                                                 </div>
                                                                 <br>
                                                                 <a href="?action=drop&id='.$appoid.'&title='.$title.'&doc='.$facname.'" ><button  class="login-btn btn-primary-soft btn "  style="padding-top:11px;padding-bottom:11px;width:100%"><font class="tn-in-text">Cancel Booking</font></button></a>
+                                                                '.($status=='done' ? '<a href="?action=review&id='.$appoid.'" ><button  class="login-btn btn-primary btn "  style="padding-top:11px;padding-bottom:11px;width:100%;margin-top:5px"><font class="tn-in-text">Review Faculty</font></button></a>' : '').'
                                                         </div>
                                                                 
                                                     </div>
@@ -509,6 +557,48 @@
 
     ?>
     </div>
+    <div id="review-modal" class="review-modal">
+        <span class="close" onclick="closeReviewModal()">&times;</span>
+        <h3>Review Faculty</h3>
+        <form id="review-form" action="submit-review.php" method="post">
+            <input type="hidden" name="appoid" id="review-appoid">
+            <label>Rating:</label>
+            <div class="stars">
+                <input type="radio" id="star5" name="rating" value="5"><label for="star5">&#9733;</label>
+                <input type="radio" id="star4" name="rating" value="4"><label for="star4">&#9733;</label>
+                <input type="radio" id="star3" name="rating" value="3"><label for="star3">&#9733;</label>
+                <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
+                <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
+            </div>
+            <label>Comments (optional):</label>
+            <textarea name="comments" placeholder="Leave your comments here..."></textarea>
+            <div class="buttons">
+                <button type="button" onclick="closeReviewModal()">Cancel</button>
+                <button type="submit">Submit Review</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        function closeReviewModal() {
+            document.getElementById('review-modal').style.display = 'none';
+        }
+
+        // Check for review action
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('action') === 'review') {
+                const appoid = urlParams.get('id');
+                document.getElementById('review-appoid').value = appoid;
+                document.getElementById('review-modal').style.display = 'block';
+            }
+            if (urlParams.get('review') === 'success') {
+                alert('Review submitted successfully!');
+            } else if (urlParams.get('review') === 'error') {
+                const msg = urlParams.get('msg') || 'Error submitting review.';
+                alert(msg);
+            }
+        });
+    </script>
 
 </body>
 </html>

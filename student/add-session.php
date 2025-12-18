@@ -33,6 +33,7 @@
         $nop=$_POST["nop"];
         $date=$_POST["date"];
         $time=$_POST["time"];
+        $purpose = $_POST["purpose"];
 
         // Basic validations
         $today = date('Y-m-d');
@@ -58,7 +59,7 @@
             exit();
         }
 
-        $sql="insert into schedule (facid,title,scheduledate,scheduletime,nop) values ($docid,'$title','$date','$time',$nop);";
+        $sql="insert into schedule (facid,title,purpose,scheduledate,scheduletime,nop) values ($docid,'$title','$purpose','$date','$time',$nop);";
         $result= $database->query($sql);
         if (!$result) {
             echo "<script>alert('Error scheduling session.'); window.location.href='schedule.php';</script>";

@@ -1,13 +1,126 @@
+<?php
+
+session_start();
+
+if(isset($_SESSION["user"])){
+    if(($_SESSION["user"])=="" or $_SESSION['usertype']!='f'){
+        header("location: ../login.php");
+        exit();
+    }else{
+        $useremail=$_SESSION["user"];
+    }
+
+}else{
+    header("location: ../login.php");
+    exit();
+}
+    
+include("../connection.php");
+$userrow = $database->query("select * from faculty where facemail='$useremail'");
+if(!$userrow){
+    die("Database query failed: " . $database->error);
+}
+$userfetch=$userrow->fetch_assoc();
+if(!$userfetch){
+    die("No faculty found with email: $useremail");
+}
+$userid= $userfetch["facid"];
+$username=$userfetch["facname"];
+
+
+// Fetch all schedules for the faculty
+$schedules = [];
+$sql_sched = "SELECT scheduleid, title, scheduledate, scheduletime FROM schedule WHERE facid=$userid ORDER BY scheduledate, scheduletime";
+$result_sched = $database->query($sql_sched);
+if(!$result_sched){
+    die("Schedule query failed: " . $database->error);
+}
+while($row = $result_sched->fetch_assoc()){
+    $date = $row['scheduledate'];
+    if(!isset($schedules[$date])) $schedules[$date] = [];
+    $schedules[$date][] = $row;
+}
+
+// Fetch appointments grouped by date
+$appointments = [];
+$sql = "SELECT appointment.appoid, schedule.scheduleid, schedule.title, student.sname, schedule.scheduledate, schedule.scheduletime, appointment.apponum, appointment.appodate FROM schedule INNER JOIN appointment ON schedule.scheduleid=appointment.scheduleid INNER JOIN student ON student.sid=appointment.pid WHERE schedule.facid=$userid ORDER BY schedule.scheduledate, schedule.scheduletime";
+$result = $database->query($sql);
+if(!$result){
+    die("Appointment query failed: " . $database->error);
+}
+while($row = $result->fetch_assoc()){
+    $date = $row['scheduledate'];
+    if(!isset($appointments[$date])) $appointments[$date] = [];
+    $appointments[$date][] = $row;
+}
+
+// Function to generate calendar
+function generate_calendar($month, $year, $schedules, $appointments) {
+    $daysOfWeek = array('Sun','Mon','Tue','Wed','Thu','Fri','Sat');
+    $firstDayOfMonth = mktime(0,0,0,$month,1,$year);
+    $numberDays = date('t',$firstDayOfMonth);
+    $dateComponents = getdate($firstDayOfMonth);
+    $monthName = $dateComponents['month'];
+    $dayOfWeek = $dateComponents['wday'];
+
+    $calendar = "<table class='calendar'>";
+    $calendar .= "<caption>$monthName $year</caption>";
+    $calendar .= "<tr>";
+    foreach($daysOfWeek as $day) {
+        $calendar .= "<th class='header'>$day</th>";
+    }
+    $calendar .= "</tr><tr>";
+
+    if ($dayOfWeek > 0) {
+        $calendar .= "<td colspan='$dayOfWeek'>&nbsp;</td>";
+    }
+
+    $currentDay = 1;
+    while ($currentDay <= $numberDays) {
+        if ($dayOfWeek == 7) {
+            $dayOfWeek = 0;
+            $calendar .= "</tr><tr>";
+        }
+
+        $currentDate = "$year-" . str_pad($month, 2, "0", STR_PAD_LEFT) . "-" . str_pad($currentDay, 2, "0", STR_PAD_LEFT);
+        $class = 'day';
+        $content = $currentDay;
+        $hasSession = isset($schedules[$currentDate]);
+        $hasAppointment = isset($appointments[$currentDate]);
+        if($hasSession){
+            $class .= ' has-session';
+            $content .= '<br><small>' . count($schedules[$currentDate]) . ' sess</small>';
+            if($hasAppointment){
+                $class .= ' has-appointment';
+                $content .= '<br><small>' . count($appointments[$currentDate]) . ' booked</small>';
+            }
+        }
+        $calendar .= "<td class='$class' data-date='$currentDate'>$content</td>";
+
+        $currentDay++;
+        $dayOfWeek++;
+    }
+
+    if ($dayOfWeek != 7) {
+        $remainingDays = 7 - $dayOfWeek;
+        $calendar .= "<td colspan='$remainingDays'>&nbsp;</td>";
+    }
+
+    $calendar .= "</tr>";
+    $calendar .= "</table>";
+    return $calendar;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/animations.css">  
-    <link rel="stylesheet" href="../css/main.css">  
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/admin.css">
-        
+         
     <title>Appointments</title>
     <style>
         .popup{
@@ -131,14 +244,79 @@
         .appointment-popup a:hover {
             text-decoration: underline;
         }
+        .appointment-popup .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .appointment-popup .btn-done {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .appointment-popup .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .review-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 30px;
+            z-index: 1001;
+            max-width: 500px;
+            width: 90%;
+        }
+        .review-modal h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .stars {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .stars input {
+            display: none;
+        }
+        .stars label {
+            font-size: 30px;
+            color: #ddd;
+            cursor: pointer;
+        }
+        .stars input:checked ~ label,
+        .stars label:hover,
+        .stars label:hover ~ label {
+            color: #ffc107;
+        }
+        .review-modal textarea {
+            width: 100%;
+            height: 80px;
+            margin: 10px 0;
+        }
+        .review-modal .buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
     <?php
 
     //learn from w3schools.com
-
-    session_start();
 
     if(isset($_SESSION["user"])){
         if(($_SESSION["user"])=="" or $_SESSION['usertype']!='f'){
@@ -180,62 +358,6 @@
            $appointments[$date][] = $row;
        }
 
-       // Function to generate calendar
-       function generate_calendar($month, $year, $schedules, $appointments) {
-           $daysOfWeek = array('Sun','Mon','Tue','Wed','Thu','Fri','Sat');
-           $firstDayOfMonth = mktime(0,0,0,$month,1,$year);
-           $numberDays = date('t',$firstDayOfMonth);
-           $dateComponents = getdate($firstDayOfMonth);
-           $monthName = $dateComponents['month'];
-           $dayOfWeek = $dateComponents['wday'];
-
-           $calendar = "<table class='calendar'>";
-           $calendar .= "<caption>$monthName $year</caption>";
-           $calendar .= "<tr>";
-           foreach($daysOfWeek as $day) {
-               $calendar .= "<th class='header'>$day</th>";
-           }
-           $calendar .= "</tr><tr>";
-
-           if ($dayOfWeek > 0) {
-               $calendar .= "<td colspan='$dayOfWeek'>&nbsp;</td>";
-           }
-
-           $currentDay = 1;
-           while ($currentDay <= $numberDays) {
-               if ($dayOfWeek == 7) {
-                   $dayOfWeek = 0;
-                   $calendar .= "</tr><tr>";
-               }
-
-               $currentDate = "$year-" . str_pad($month, 2, "0", STR_PAD_LEFT) . "-" . str_pad($currentDay, 2, "0", STR_PAD_LEFT);
-               $class = 'day';
-               $content = $currentDay;
-               $hasSession = isset($schedules[$currentDate]);
-               $hasAppointment = isset($appointments[$currentDate]);
-               if($hasSession){
-                   $class .= ' has-session';
-                   $content .= '<br><small>' . count($schedules[$currentDate]) . ' sess</small>';
-                   if($hasAppointment){
-                       $class .= ' has-appointment';
-                       $content .= '<br><small>' . count($appointments[$currentDate]) . ' booked</small>';
-                   }
-               }
-               $calendar .= "<td class='$class' data-date='$currentDate'>$content</td>";
-
-               $currentDay++;
-               $dayOfWeek++;
-           }
-
-           if ($dayOfWeek != 7) {
-               $remainingDays = 7 - $dayOfWeek;
-               $calendar .= "<td colspan='$remainingDays'>&nbsp;</td>";
-           }
-
-           $calendar .= "</tr>";
-           $calendar .= "</table>";
-           return $calendar;
-       }
     //echo $userid;
     ?>
     <div class="container">
@@ -385,6 +507,27 @@
        <span class="close" onclick="closePopup()">&times;</span>
        <h3 id="popup-date"></h3>
        <div id="popup-content"></div>
+   </div>
+   <div id="review-modal" class="review-modal">
+       <span class="close" onclick="closeReviewModal()">&times;</span>
+       <h3>Review Student</h3>
+       <form id="review-form" action="submit-review.php" method="post">
+           <input type="hidden" name="appoid" id="review-appoid">
+           <label>Rating:</label>
+           <div class="stars">
+               <input type="radio" id="star5" name="rating" value="5"><label for="star5">&#9733;</label>
+               <input type="radio" id="star4" name="rating" value="4"><label for="star4">&#9733;</label>
+               <input type="radio" id="star3" name="rating" value="3"><label for="star3">&#9733;</label>
+               <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
+               <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
+           </div>
+           <label>Comments (optional):</label>
+           <textarea name="comments" placeholder="Leave your comments here..."></textarea>
+           <div class="buttons">
+               <button type="button" onclick="closeReviewModal()">Cancel</button>
+               <button type="submit">Submit Review</button>
+           </div>
+       </form>
    </div>
    <?php
     if($_GET){
@@ -543,7 +686,11 @@
                 popupContent.innerHTML += '<h4>Booked Appointments:</h4>';
                 appointments[date].forEach(function(appt) {
                     var div = document.createElement('div');
-                    div.innerHTML = '<strong>' + appt.sname + '</strong> - ' + appt.title + ' at ' + appt.scheduletime + ' (#' + appt.apponum + ') <a href="?action=drop&id=' + appt.appoid + '&name=' + appt.sname + '&session=' + appt.title + '&apponum=' + appt.apponum + '">Cancel</a>';
+                    var buttons = '<div class="buttons">';
+                    buttons += '<button class="btn-done" onclick="markDone(' + appt.appoid + ')">Mark as Done</button>';
+                    buttons += '<button class="btn-cancel" onclick="cancelAppointment(' + appt.appoid + ', \'' + appt.sname + '\', \'' + appt.title + '\', ' + appt.apponum + ')">Cancel</button>';
+                    buttons += '</div>';
+                    div.innerHTML = '<strong>' + appt.sname + '</strong> - ' + appt.title + ' at ' + appt.scheduletime + ' (#' + appt.apponum + ')' + buttons;
                     popupContent.appendChild(div);
                 });
             }
@@ -558,6 +705,36 @@
         function closePopup() {
             document.getElementById('appointment-popup').style.display = 'none';
         }
+
+        function markDone(appoid) {
+            window.location.href = 'mark-done.php?id=' + appoid;
+        }
+
+        function cancelAppointment(appoid, sname, title, apponum) {
+            if (confirm('Are you sure you want to cancel this appointment for ' + sname + '?')) {
+                window.location.href = 'cancel-appointment.php?id=' + appoid;
+            }
+        }
+
+        function closeReviewModal() {
+            document.getElementById('review-modal').style.display = 'none';
+        }
+
+        // Check for review action
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('action') === 'review') {
+                const appoid = urlParams.get('id');
+                document.getElementById('review-appoid').value = appoid;
+                document.getElementById('review-modal').style.display = 'block';
+            }
+            if (urlParams.get('review') === 'success') {
+                alert('Review submitted successfully!');
+            } else if (urlParams.get('review') === 'error') {
+                const msg = urlParams.get('msg') || 'Error submitting review.';
+                alert(msg);
+            }
+        });
     </script>
 
 </body>

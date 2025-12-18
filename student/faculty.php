@@ -297,7 +297,7 @@
     if($_GET){
         
         $id=$_GET["id"];
-        $action=$_GET["action"];
+        $action = $_GET["action"] ?? '';
         if($action=='drop'){
             $nameget=$_GET["name"];
             echo '

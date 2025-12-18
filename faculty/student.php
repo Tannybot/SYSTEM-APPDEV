@@ -39,10 +39,12 @@
 
     //import database
     include("../connection.php");
+    include("../notification_functions.php");
     $userrow = $database->query("select * from faculty where facemail='$useremail'");
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["facid"];
     $username=$userfetch["facname"];
+    $unread_count = get_unread_count($useremail);
 
 
     //echo $userid;
@@ -134,17 +136,19 @@
                     <td width="10%">
                         <button  class="btn-label"  style="display: flex;justify-content: center;align-items: center;"><img src="../img/calendar.svg" width="100%"></button>
                     </td>
-
-
+    
+    
                 </tr>
             </table>
         </div>
+
     </div>
     <?php
     // Removed student viewing functionality
 
 ?>
 </div>
+
 
 </body>
 </html>
