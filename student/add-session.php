@@ -60,10 +60,8 @@
         }
 
         $sql="insert into schedule (facid,title,purpose,scheduledate,scheduletime,nop) values ($docid,'$title','$purpose','$date','$time',$nop);";
-        error_log("DEBUG: SQL: $sql");
         $result= $database->query($sql);
         if (!$result) {
-            error_log("DEBUG: SQL Error: " . $database->error);
             echo "<script>alert('Error scheduling session.'); window.location.href='schedule.php';</script>";
             exit();
         }

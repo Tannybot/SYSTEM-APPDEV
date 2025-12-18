@@ -25,10 +25,11 @@ if($_POST){
         exit;
     }
 
-    // Get faculty id
+    // Get faculty id and name
     $userrow = $database->query("select * from faculty where facemail='$useremail'");
     $userfetch=$userrow->fetch_assoc();
     $facid= $userfetch["facid"];
+    $faculty_name = $userfetch["facname"];
 
     // Get student id from appointment
     $appt = $database->query("SELECT pid FROM appointment WHERE appoid='$appoid'");
@@ -51,8 +52,9 @@ if($_POST){
     // Insert review
     $sql = "INSERT INTO reviews (appoid, reviewer_type, reviewer_id, reviewee_id, rating, comments) VALUES ('$appoid', 'faculty', '$facid', '$sid', '$rating', '$comments')";
     if($database->query($sql)){
-        // Add notification to student
-        $message = "You have received a review from your faculty for your appointment.";
+        // Add notification to student with review details
+        $stars = str_repeat('★', $rating) . str_repeat('☆', 5 - $rating);
+        $message = "Faculty $faculty_name has left remarks on your appointment: Rating: $stars" . (!empty($comments) ? " | Comments: $comments" : "");
         add_notification($student_email, 'review', $message);
         header("location: appointment.php?review=success");
     }else{

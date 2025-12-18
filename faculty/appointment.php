@@ -350,7 +350,7 @@ function generate_calendar($month, $year, $schedules, $appointments) {
 
        // Fetch appointments grouped by date
        $appointments = [];
-       $sql = "SELECT appointment.appoid, schedule.scheduleid, schedule.title, student.sname, schedule.scheduledate, schedule.scheduletime, appointment.apponum, appointment.appodate FROM schedule INNER JOIN appointment ON schedule.scheduleid=appointment.scheduleid INNER JOIN student ON student.sid=appointment.pid WHERE schedule.facid=$userid ORDER BY schedule.scheduledate, schedule.scheduletime";
+       $sql = "SELECT appointment.appoid, schedule.scheduleid, schedule.title, student.sname, schedule.scheduledate, schedule.scheduletime, appointment.apponum, appointment.appodate FROM schedule INNER JOIN appointment ON schedule.scheduleid=appointment.scheduleid INNER JOIN student ON student.sid=appointment.pid WHERE schedule.facid=$userid AND appointment.status NOT IN ('done', 'canceled') ORDER BY schedule.scheduledate, schedule.scheduletime";
        $result = $database->query($sql);
        while($row = $result->fetch_assoc()){
            $date = $row['scheduledate'];
