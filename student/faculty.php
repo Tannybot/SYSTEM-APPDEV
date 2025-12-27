@@ -158,33 +158,12 @@
                
                 
                <?php
-                   // Get booked faculty IDs
-                   $sql_booked = "SELECT DISTINCT schedule.facid FROM appointment INNER JOIN schedule ON appointment.scheduleid = schedule.scheduleid WHERE appointment.pid = $userid";
-                   $booked_result = $database->query($sql_booked);
-                   $booked_facids = [];
-                   while($row = $booked_result->fetch_assoc()){
-                       $booked_facids[] = $row['facid'];
-                   }
-
                    if($_POST){
                            $keyword=$_POST["search"];
 
-                           $base_query = "select * from faculty where (facemail='$keyword' or facname='$keyword' or facname like '$keyword%' or facname like '%$keyword' or facname like '%$keyword%')";
-
-                           if(!empty($booked_facids)){
-                               $facid_list = implode(',', $booked_facids);
-                               $base_query .= " AND facid IN ($facid_list)";
-                           }
-
-                           $sqlmain = $base_query;
+                           $sqlmain = "select * from faculty where (facemail='$keyword' or facname='$keyword' or facname like '$keyword%' or facname like '%$keyword' or facname like '%$keyword%') order by facid desc";
                        }else{
-                           if(!empty($booked_facids)){
-                               $facid_list = implode(',', $booked_facids);
-                               $sqlmain= "select * from faculty where facid IN ($facid_list) order by facid desc";
-                           }else{
-                               $sqlmain= "select * from faculty order by facid desc";
-                           }
-
+                           $sqlmain= "select * from faculty order by facid desc";
                        }
 
                    $result= $database->query($sqlmain);
