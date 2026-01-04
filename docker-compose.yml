@@ -9,6 +9,12 @@ services:
       - .:/var/www/html
     depends_on:
       - db
+    environment:
+      MYSQLHOST: db
+      MYSQLUSER: user
+      MYSQLPASSWORD: password
+      MYSQLDATABASE: edoc
+      MYSQLPORT: 3306
 
   db:
     image: mariadb:10.5

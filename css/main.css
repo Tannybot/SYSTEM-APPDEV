@@ -19,6 +19,8 @@ body{
 }
 
 
+
+
 /*------custom-scroll-bar - from w3schools.com------------------*/
 /* width */
 ::-webkit-scrollbar {
@@ -40,6 +42,7 @@ body{
   ::-webkit-scrollbar-thumb:hover {
     background: #555; 
   }
+
 
 
 
@@ -88,6 +91,7 @@ body{
 .input-text::placeholder{
     font-family: 'Inter', sans-serif;
 }
+
 
 
 
@@ -188,6 +192,7 @@ body{
 
 
 }
+
 .table-headin{
     font-size: 16px;
     font-weight: 500;
@@ -204,8 +209,8 @@ body{
 
 
 
-
         
+
 .overlay {
     position: fixed;
     top: 0;
@@ -262,6 +267,7 @@ body{
       width: 70%;
     }
   }
+
 
 
 input[type=search] {
@@ -365,6 +371,7 @@ input[type=search]:focus {
 
 
 
+
 .menu-icon-dashbord{
   background-image: url('../img/icons/dashboard.svg');
 }
@@ -392,6 +399,7 @@ input[type=search]:focus {
 .menu-icon-home{
   background-image: url('../img/icons/home.svg');
 }
+
 
 
 
@@ -438,7 +446,6 @@ input[type=search]:focus {
   
   background-image: url('../img/icons/home-iceblue.svg');
 }
-
 
 
 
@@ -596,4 +603,68 @@ input[type=search]:focus {
   background-position: 68% 50%;
   background-repeat: no-repeat;
   transition: 0.5s;
+}
+
+/* Mobile responsiveness */
+
+@media screen and (max-width: 768px) {
+  .input-text {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+
+  .h1-dashboard {
+    font-size: 20px;
+  }
+
+  .h3-dashboard {
+    font-size: 16px;
+  }
+
+  .table-headin {
+    font-size: 14px;
+  }
+
+  .menu-text {
+    font-size: 14px;
+  }
+
+  .dashboard-icons {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .search-items {
+    padding: 15px;
+    margin: 5px;
+    width: 95%;
+  }
+
+  .h1-search {
+    font-size: 18px;
+  }
+
+  .h3-search {
+    font-size: 14px;
+  }
+
+  .h4-search {
+    font-size: 12px;
+  }
+
+  .popup {
+    width: 90%;
+    margin: 20px auto;
+  }
+
+  .overlay:target .popup {
+    margin: 20px auto;
+  }
 }

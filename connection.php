@@ -1,8 +1,6 @@
 <?php
-// Railway database configuration
+// Database configuration - supports DATABASE_URL for cloud hosting or individual env vars
 $database_url = getenv('DATABASE_URL');
-
-error_log("DATABASE_URL: " . ($database_url ?: 'NOT SET'));
 
 if ($database_url) {
     // Parse Railway DATABASE_URL (format: mysql://user:password@host:port/database)
@@ -29,10 +27,10 @@ if ($database_url) {
     }
 } else {
     // Fallback to individual environment variables or local settings
-    $host = getenv('MYSQLHOST') ?: 'localhost';
-    $username = getenv('MYSQLUSER') ?: 'root';
-    $password = getenv('MYSQLPASSWORD') ?: '';
-    $database_name = getenv('MYSQLDATABASE') ?: 'edoc';
+    $host = getenv('MYSQLHOST') ?: 'sql210.infinityfree.com';
+    $username = getenv('MYSQLUSER') ?: 'if0_40602872';
+    $password = getenv('MYSQLPASSWORD') ?: 'daddymyhero123';
+    $database_name = getenv('MYSQLDATABASE') ?: 'if0_40602872_XXX';
     $port = getenv('MYSQLPORT') ?: 3306;
 
     error_log("Using fallback DB config - Host: $host, User: $username, DB: $database_name, Port: $port");
