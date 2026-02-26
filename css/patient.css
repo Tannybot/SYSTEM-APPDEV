@@ -23,7 +23,7 @@ body{
 
     border-right: 1.5px solid rgb(235, 235, 235);
 
-    width: 24%;
+    width: 280px;
 
     height: 100%;
 
@@ -32,11 +32,11 @@ body{
 }
 
 .dash-body{
-
-    width: 76%;
-
+    width: calc(100% - 280px);
     height: 100%;
-
+    padding: 16px 28px 28px;
+    box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .menu-container{

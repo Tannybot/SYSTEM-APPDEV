@@ -33,12 +33,14 @@
     if(isset($_SESSION["user"])){
         if(($_SESSION["user"])=="" or $_SESSION['usertype']!='s'){
             header("location: ../login.php");
+            exit();
         }else{
             $useremail=$_SESSION["user"];
         }
 
     }else{
         header("location: ../login.php");
+            exit();
     }
     
 
@@ -56,7 +58,7 @@
         $username=$userfetch["sname"];
     }else{
         header("location: ../login.php");
-        exit();
+            exit();
     }
 
 
@@ -429,7 +431,7 @@
             right: 0;
         }
         .notification-header {
-            background: #007bff;
+            background: #228B22;
             color: white;
             padding: 15px;
             display: flex;
@@ -450,12 +452,12 @@
             margin: 10px 0;
             padding: 10px;
             border-radius: 5px;
-            border-left: 4px solid #007bff;
+            border-left: 4px solid #228B22;
             cursor: pointer;
             transition: background 0.3s;
         }
         .notification-item.unread {
-            background: #e3f2fd;
+            background: #e8f5e9;
         }
         .notification-item.expanded {
             background: #fff;

@@ -1,3 +1,22 @@
+<?php
+session_start();
+if(isset($_SESSION["user"])){
+    if(($_SESSION["user"])=="" or $_SESSION['usertype']!='f'){
+        header("location: ../login.php");
+        exit();
+    }else{
+        $useremail=$_SESSION["user"];
+    }
+}else{
+    header("location: ../login.php");
+    exit();
+}
+include("../connection.php");
+$userrow = $database->query("select * from faculty where facemail='$useremail'");
+$userfetch=$userrow->fetch_assoc();
+$userid= $userfetch["facid"];
+$username=$userfetch["facname"];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,60 +40,124 @@
         .sub-table{
             animation: transitionIn-Y-bottom 0.5s;
         }
-        .history-table {
-            border-collapse: collapse;
+        .history-popup .popup { max-width:1100px !important; width:92% !important; padding:40px 48px 36px !important; border-radius:16px !important; box-shadow:0 20px 60px rgba(0,0,0,0.25) !important; } .history-title { font-size:28px; font-weight:700; color:#1a1a1a; margin:0 0 28px 0; display:flex; align-items:center; gap:12px; } .history-filters { background:#f8faf8; border:1px solid #e0e8e0; border-radius:12px; padding:24px 28px; margin-bottom:24px; } .history-filters form { display:flex; flex-wrap:wrap; align-items:flex-end; gap:20px; } .filter-group { display:flex; flex-direction:column; gap:6px; } .filter-group label { font-size:12px; font-weight:600; color:#555; text-transform:uppercase; letter-spacing:0.5px; } .filter-group input[type="date"], .filter-group select { padding:10px 14px; border:1px solid #ccc; border-radius:8px; font-size:14px; background:white; min-width:160px; } .filter-group input[type="date"]:focus, .filter-group select:focus { border-color:#228B22; box-shadow:0 0 0 3px rgba(34,139,34,0.12); outline:none; } .filter-actions { display:flex; gap:10px; align-items:flex-end; } .btn-filter-history { padding:10px 24px; background:#228B22; color:white; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; } .btn-filter-history:hover { background:#1a6e1a; } .btn-download { padding:10px 20px; background:white; color:#228B22; border:2px solid #228B22; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; } .btn-download:hover { background:#228B22; color:white; } .history-table { border-collapse:separate; border-spacing:0; width:100%; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.06); } .history-table thead th { background:linear-gradient(135deg,#228B22,#2da52d); color:white; padding:16px 20px; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; border:none; cursor:pointer; white-space:nowrap; } .history-table thead th:hover { background:linear-gradient(135deg,#1a6e1a,#228B22); } .history-table thead th span { opacity:0.7; margin-left:4px; font-size:11px; } .history-table tbody td { padding:16px 20px; font-size:14px; color:#333; border-bottom:1px solid #f0f0f0; vertical-align:middle; } .history-table tbody tr { transition:background 0.15s; } .history-table tbody tr:nth-child(even) { background-color:#fafcfa; } .history-table tbody tr:hover { background-color:#eef5ee; } .history-table tbody tr:last-child td { border-bottom:none; } .status-badge { display:inline-block; padding:5px 14px; border-radius:20px; font-size:12px; font-weight:600; text-transform:capitalize; } .status-badge.done { background:#e8f5e9; color:#2e7d32; } .status-badge.canceled { background:#fce4ec; color:#c62828; } .status-badge.pending { background:#fff3e0; color:#ef6c00; } .history-empty { text-align:center; padding:60px 20px; color:#999; } .history-empty p { font-size:16px; margin:0; }
+
+        /* Availability Section */
+        .avail-popup .popup {
+            max-width: 900px !important;
+            width: 88% !important;
+            padding: 36px 44px 32px !important;
+            border-radius: 16px !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25) !important;
+        }
+        .avail-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 8px 0;
+        }
+        .avail-subtitle {
+            font-size: 14px;
+            color: #777;
+            margin: 0 0 24px 0;
+        }
+        .avail-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        .day-card {
+            background: #f8faf8;
+            border: 1px solid #e0e8e0;
+            border-radius: 10px;
+            padding: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .day-card:hover {
+            border-color: #228B22;
+            box-shadow: 0 2px 8px rgba(34,139,34,0.1);
+        }
+        .day-card .day-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #228B22;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e8e0;
+        }
+        .day-card .time-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .day-card .time-field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 4px;
+        }
+        .day-card .time-field input[type="time"] {
             width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
         }
-        .history-table th, .history-table td {
-            border: 1px solid #ddd;
-            padding: 15px;
-            text-align: left;
+        .day-card .time-field input[type="time"]:focus {
+            border-color: #228B22;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(34,139,34,0.1);
         }
-        .history-table th {
-            background-color: #f4f4f4;
-            font-weight: bold;
+        .avail-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
         }
-        .history-table tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .btn-avail-reset {
+            padding: 10px 28px;
+            background: white;
+            color: #555;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .history-table tr:hover {
-            background-color: #e9e9e9;
+        .btn-avail-reset:hover {
+            background: #f5f5f5;
+            border-color: #999;
+        }
+        .btn-avail-save {
+            padding: 10px 28px;
+            background: #228B22;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-avail-save:hover {
+            background: #1a6e1a;
         }
         </style>
     
     
 </head>
 <body>
-    <?php
-
-    //learn from w3schools.com
-
-    session_start();
-
-    if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='f'){
-            header("location: ../login.php");
-        }else{
-            $useremail=$_SESSION["user"];
-        }
-
-    }else{
-        header("location: ../login.php");
-    }
-    
-
-    //import database
-    include("../connection.php");
-    $userrow = $database->query("select * from faculty where facemail='$useremail'");
-    $userfetch=$userrow->fetch_assoc();
-    $userid= $userfetch["facid"];
-    $username=$userfetch["facname"];
-
-
-    //echo $userid;
-    //echo $username;
-    
-    ?>
     <div class="container">
         <div class="menu">
             <table class="menu-container" border="0">
@@ -421,76 +504,44 @@
             $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
             echo '
-            <div id="popup1" class="overlay">
+            <div id="popup1" class="overlay avail-popup">
                     <div class="popup">
-                    <center>
                         <a class="close" href="settings.php">&times;</a>
-                        <div style="display: flex;justify-content: center;">
-                        <div class="abc">
-                        <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                        <tr>
-                                <td class="label-td" colspan="2">'.
-                                    ""
+                        <p class="avail-title">Set Your Availability</p>
+                        <p class="avail-subtitle">Configure your available time slots for each day of the week</p>
+                        <form action="edit-fac.php" method="POST">
+                            <input type="hidden" name="action" value="update_availability">
+                            <input type="hidden" value="'.$id.'" name="facid">
+                            <div class="avail-grid">';
 
-                                .'</td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Set Your Availability</p><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                <form action="edit-fac.php" method="POST" class="add-new-form">
-                                    <input type="hidden" name="action" value="update_availability">
-                                    <input type="hidden" value="'.$id.'" name="facid">
-';
-
-            echo '<table border="0" style="width:100%">';
-            $col = 0;
             for($d=1; $d<=7; $d++){
-                if($col == 0) echo '<tr>';
                 $day_name = $days[$d-1];
                 $slots = isset($availabilities[$d]) ? $availabilities[$d] : [];
-                echo '<td style="padding:10px; vertical-align:top;">
-                    <label for="day'.$d.'" class="form-label"><b>'.$day_name.'</b></label><br>
-                    Start Time: <input type="time" name="start_time['.$d.'][]" value="'.(isset($slots[0]) ? $slots[0]['start_time'] : '').'" class="input-text"><br>
-                    End Time: <input type="time" name="end_time['.$d.'][]" value="'.(isset($slots[0]) ? $slots[0]['end_time'] : '').'" class="input-text">
-                </td>';
-                $col++;
-                if($col == 5) {
-                    echo '</tr>';
-                    $col = 0;
-                }
+                $startVal = isset($slots[0]) ? $slots[0]['start_time'] : '';
+                $endVal = isset($slots[0]) ? $slots[0]['end_time'] : '';
+                echo '<div class="day-card">
+                    <div class="day-name">'.$day_name.'</div>
+                    <div class="time-row">
+                        <div class="time-field">
+                            <label>Start</label>
+                            <input type="time" name="start_time['.$d.'][]" value="'.$startVal.'">
+                        </div>
+                        <div class="time-field">
+                            <label>End</label>
+                            <input type="time" name="end_time['.$d.'][]" value="'.$endVal.'">
+                        </div>
+                    </div>
+                </div>';
             }
-            if($col > 0) {
-
-                for($i=$col; $i<5; $i++) echo '<td style="padding:10px;"></td>';
-
-                echo '</tr>';
-
-            }
-            echo '</table>';
 
             echo '
-                            <tr>
-                                <td colspan="2">
-                                    <input type="reset" value="Reset" class="login-btn btn-primary-soft btn" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-                                    <input type="submit" value="Save Availability" class="login-btn btn-primary btn">
-                                </td>
-
-                            </tr>
-
-                            </form>
-                            </tr>
-                        </table>
-                        </div>
-                        </div>
-                    </center>
-                    <br><br>
-            </div>
+                            </div>
+                            <div class="avail-actions">
+                                <input type="reset" value="Reset" class="btn-avail-reset">
+                                <input type="submit" value="Save Availability" class="btn-avail-save">
+                            </div>
+                        </form>
+                </div>
             </div>
             ';
        }elseif($action=='history'){
@@ -511,79 +562,62 @@
                $bookings[] = $row;
            }
            echo '
-           <div id="popup1" class="overlay">
+           <div id="popup1" class="overlay history-popup">
                    <div class="popup">
-                   <center>
                        <a class="close" href="settings.php">&times;</a>
-                       <div style="display: flex;justify-content: center;">
-                       <div class="abc" style="width: 90%; max-width: 1200px;">
-                       <table width="100%" class="sub-table scrolldown add-doc-form-container" border="0">
-                       <tr>
-                               <td>
-                                   <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Booking History</p><br>
-                               </td>
-                           </tr>
-                           <tr>
-                               <td>
-                                   <form method="GET" action="settings.php">
-                                       <input type="hidden" name="action" value="history">
-                                       <input type="hidden" name="id" value="'.$id.'">
-                                       <label>Date Range: From </label>
-                                       <input type="date" name="from_date" value="'.($_GET['from_date'] ?? '').'">
-                                       <label> To </label>
-                                       <input type="date" name="to_date" value="'.($_GET['to_date'] ?? '').'">
-                                       <label> Booking Type: </label>
-                                       <select name="subject">
-                                           <option value="">All</option>';
-                                           $subjects = $database->query("SELECT id, sname FROM subject");
-                                           while($sub = $subjects->fetch_assoc()){
-                                               $selected = ($_GET['subject'] == $sub['id']) ? 'selected' : '';
-                                               echo '<option value="'.$sub['id'].'" '.$selected.'>'.$sub['sname'].'</option>';
-                                           }
-                                       echo '</select>
-                                       <input type="submit" value="Filter" class="btn-primary btn">
-                                   </form>
-                               </td>
-                           </tr>
-                           <tr>
-                               <td>
-                                   <button onclick="downloadCSV()" class="btn-primary btn">Download to Excel</button>
-                               </td>
-                           </tr>
-                           <tr>
-                               <td>
-                                   <table class="history-table">
-                                       <thead>
-                                           <tr>
-                                               <th onclick="sortTable(0)">Booking ID <span id="sort-icon-0">↕</span></th>
-                                               <th onclick="sortTable(1)">Date <span id="sort-icon-1">↕</span></th>
-                                               <th onclick="sortTable(2)">Time <span id="sort-icon-2">↕</span></th>
-                                               <th onclick="sortTable(3)">Concern <span id="sort-icon-3">↕</span></th>
-                                               <th onclick="sortTable(4)">Purpose <span id="sort-icon-4">↕</span></th>
-                                               <th onclick="sortTable(5)">Status <span id="sort-icon-5">↕</span></th>
-                                           </tr>
-                                       </thead>
-                                       <tbody id="booking-table">';
-                                       foreach($bookings as $booking){
-                                           echo '<tr>
-                                               <td>'.$booking['appoid'].'</td>
-                                               <td>'.$booking['appodate'].'</td>
-                                               <td>'.$booking['scheduletime'].'</td>
-                                               <td>'.$booking['title'].'</td>
-                                               <td>'.$booking['subject_name'].'</td>
-                                               <td>'.$booking['status'].'</td>
-                                           </tr>';
+                       <p class="history-title">Booking History</p>
+                       <div class="history-filters">
+                           <form method="GET" action="settings.php">
+                               <input type="hidden" name="action" value="history">
+                               <input type="hidden" name="id" value="'.$id.'">
+                               <div class="filter-group">
+                                   <label>From Date</label>
+                                   <input type="date" name="from_date" value="'.($_GET['from_date'] ?? '').'">
+                               </div>
+                               <div class="filter-group">
+                                   <label>To Date</label>
+                                   <input type="date" name="to_date" value="'.($_GET['to_date'] ?? '').'">
+                               </div>
+                               <div class="filter-group">
+                                   <label>Booking Type</label>
+                                   <select name="subject">
+                                       <option value="">All Types</option>';
+                                       $subjects = $database->query("SELECT id, sname FROM subject");
+                                       while($sub = $subjects->fetch_assoc()){
+                                           $selected = (isset($_GET['subject']) && $_GET['subject'] == $sub['id']) ? 'selected' : '';
+                                           echo '<option value="'.$sub['id'].'" '.$selected.'>'.$sub['sname'].'</option>';
                                        }
-                                       echo '</tbody>
-                                   </table>
-                               </td>
-                           </tr>
+                                   echo '</select>
+                               </div>
+                               <div class="filter-actions">
+                                   <button type="submit" class="btn-filter-history">Apply Filter</button>
+                                   <button type="button" class="btn-download" onclick="downloadCSV()">Export CSV</button>
+                               </div>
+                           </form>
+                       </div>
+                       <table class="history-table">
+                           <thead>
+                               <tr>
+                                   <th onclick="sortTable(0)">Booking ID <span id="sort-icon-0">&#8597;</span></th>
+                                   <th onclick="sortTable(1)">Date <span id="sort-icon-1">&#8597;</span></th>
+                                   <th onclick="sortTable(2)">Time <span id="sort-icon-2">&#8597;</span></th>
+                                   <th onclick="sortTable(3)">Session <span id="sort-icon-3">&#8597;</span></th>
+                                   <th onclick="sortTable(4)">Subject <span id="sort-icon-4">&#8597;</span></th>
+                                   <th onclick="sortTable(5)">Status <span id="sort-icon-5">&#8597;</span></th>
+                               </tr>
+                           </thead>
+                           <tbody id="booking-table">';
+                           if(count($bookings) === 0){
+                               echo '<tr><td colspan="6"><div class="history-empty"><p>No booking records found</p></div></td></tr>';
+                           } else {
+                               foreach($bookings as $booking){
+                                   $sc = strtolower($booking['status']);
+                                   echo '<tr><td><strong>#'.$booking['appoid'].'</strong></td><td>'.$booking['appodate'].'</td><td>'.$booking['scheduletime'].'</td><td>'.$booking['title'].'</td><td>'.$booking['subject_name'].'</td><td><span class="status-badge '.$sc.'">'.$booking['status'].'</span></td></tr>';
+                               }
+                           }
+                           echo '</tbody>
                        </table>
-                       </div>
-                       </div>
-                   </center>
-                   <br><br>
-           </div>
+               </div>
            </div>
            ';
        }elseif($action=='edit'){
@@ -818,11 +852,11 @@ function sortTable(n) {
 
   for (var j = 0; j < 6; j++) {
 
-    document.getElementById("sort-icon-" + j).innerHTML = "↕";
+    document.getElementById("sort-icon-" + j).innerHTML = "â†•";
 
   }
 
-  document.getElementById("sort-icon-" + n).innerHTML = (dir == "asc") ? "↑" : "↓";
+  document.getElementById("sort-icon-" + n).innerHTML = (dir == "asc") ? "â†‘" : "â†“";
 
 }
 

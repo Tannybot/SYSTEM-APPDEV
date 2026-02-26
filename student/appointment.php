@@ -78,7 +78,7 @@
             right: 0;
         }
         .notification-header {
-            background: #007bff;
+            background: #228B22;
             color: white;
             padding: 15px;
             display: flex;
@@ -99,12 +99,12 @@
             margin: 10px 0;
             padding: 10px;
             border-radius: 5px;
-            border-left: 4px solid #007bff;
+            border-left: 4px solid #228B22;
             cursor: pointer;
             transition: background 0.3s;
         }
         .notification-item.unread {
-            background: #e3f2fd;
+            background: #e8f5e9;
         }
         .notification-item.expanded {
             background: #fff;
@@ -138,12 +138,14 @@
     if(isset($_SESSION["user"])){
         if(($_SESSION["user"])=="" or $_SESSION['usertype']!='s'){
             header("location: ../login.php");
+            exit();
         }else{
             $useremail=$_SESSION["user"];
         }
 
     }else{
         header("location: ../login.php");
+            exit();
     }
     
 
@@ -471,262 +473,7 @@
             </table>
         </div>
     </div>
-    <div id="notification-panel" class="notification-panel">
-        <div class="notification-header">
-            <h3>Notifications</h3>
-            <span class="close-panel" onclick="closeNotificationPanel()">&times;</span>
-        </div>
-        <div id="notification-list" class="notification-list">
-            <!-- Notifications will be loaded here -->
-        </div>
-    </div>
-    <?php
-    
-    if($_GET){
-        $id=$_GET["id"];
-        $action=$_GET["action"];
-        if($action=='booking-added'){
-            
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                    <br><br>
-                        <h2>Booking Successfully.</h2>
-                        <a class="close" href="appointment.php">&times;</a>
-                        <div class="content">
-                        Your Appointment number is '.$id.'.<br><br>
-                            
-                        </div>
-                        <div style="display: flex;justify-content: center;">
-                        
-                        <a href="appointment.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;OK&nbsp;&nbsp;</font></button></a>
-                        <br><br><br><br>
-                        </div>
-                    </center>
-            </div>
-            </div>
-            ';
-        }elseif($action=='drop'){
-            $title=$_GET["title"];
-            $facname=$_GET["doc"];
-            
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                        <h2>Are you sure?</h2>
-                        <a class="close" href="appointment.php">&times;</a>
-                        <div class="content">
-                            You want to Cancel this Appointment?<br><br>
-                            Session Name: &nbsp;<b>'.substr($title,0,40).'</b><br>
-                            Faculty name&nbsp; : <b>'.substr($facname,0,40).'</b><br><br>
-                            
-                        </div>
-                        <div style="display: flex;justify-content: center;">
-                        <a href="delete-appointment.php?id='.$id.'" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"<font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
-                        <a href="appointment.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No&nbsp;&nbsp;</font></button></a>
-
-                        </div>
-                    </center>
-            </div>
-            </div>
-            '; 
-        }elseif($action=='view'){
-            $sqlmain= "select * from faculty where facid=?";
-            $stmt = $database->prepare($sqlmain);
-            $stmt->bind_param("i",$id);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $row=$result->fetch_assoc();
-            $name=$row["facname"];
-            $email=$row["facemail"];
-            $spe=$row["subject"];
-
-            $sqlmain= "select sname from subject where id=?";
-            $stmt = $database->prepare($sqlmain);
-            $stmt->bind_param("s",$spe);
-            $stmt->execute();
-            $spcil_res = $stmt->get_result();
-            $spcil_array= $spcil_res->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
-            $tele=$row['factel'];
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                        <h2></h2>
-                        <a class="close" href="faculty.php">&times;</a>
-                        <div class="content">
-                            eDoc Web App<br>
-                            
-                        </div>
-                        <div style="display: flex;justify-content: center;">
-                        <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                        
-                            <tr>
-                                <td>
-                                    <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">View Details.</p><br><br>
-                                </td>
-                            </tr>
-                            
-                            <tr>
-                                
-                                <td class="label-td" colspan="2">
-                                    <label for="name" class="form-label">Name: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    '.$name.'<br><br>
-                                </td>
-                                
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="Email" class="form-label">Email: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$email.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="Tele" class="form-label">Telephone: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$tele.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="spec" class="form-label">Subject: </label>
-
-                                </td>
-                            </tr>
-                            <tr>
-                            <td class="label-td" colspan="2">
-                            '.$spcil_name.'<br><br>
-                            </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <a href="faculty.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
-                                
-                                    
-                                </td>
-                
-                            </tr>
-                           
-
-                        </table>
-                        </div>
-                    </center>
-                    <br><br>
-            </div>
-            </div>
-            ';  
-    }
-}
-
-    ?>
-    </div>
-    <div id="review-modal" class="review-modal">
-        <span class="close" onclick="closeReviewModal()">&times;</span>
-        <h3>Review Faculty</h3>
-        <form id="review-form" action="submit-review.php" method="post">
-            <input type="hidden" name="appoid" id="review-appoid">
-            <label>Rating:</label>
-            <div class="stars">
-                <input type="radio" id="star5" name="rating" value="5"><label for="star5">&#9733;</label>
-                <input type="radio" id="star4" name="rating" value="4"><label for="star4">&#9733;</label>
-                <input type="radio" id="star3" name="rating" value="3"><label for="star3">&#9733;</label>
-                <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
-                <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
-            </div>
-            <label>Comments (optional):</label>
-            <textarea name="comments" placeholder="Leave your comments here..."></textarea>
-            <div class="buttons">
-                <button type="button" onclick="closeReviewModal()">Cancel</button>
-                <button type="submit">Submit Review</button>
-            </div>
-        </form>
-    </div>
-    <script>
-        function closeReviewModal() {
-            document.getElementById('review-modal').style.display = 'none';
-        }
-
-        function openNotificationPanel() {
-            document.getElementById('notification-panel').classList.add('open');
-            loadNotifications();
-        }
-
-        function closeNotificationPanel() {
-            document.getElementById('notification-panel').classList.remove('open');
-        }
-
-        function loadNotifications() {
-            fetch('../get_notifications.php')
-                .then(response => response.json())
-                .then(data => {
-                    const list = document.getElementById('notification-list');
-                    list.innerHTML = '';
-                    if (data.length === 0) {
-                        list.innerHTML = '<p>No notifications.</p>';
-                    } else {
-                        data.forEach(notification => {
-                            const item = document.createElement('div');
-                            item.className = 'notification-item' + (notification.is_read == 0 ? ' unread' : '');
-                            const summary = notification.message.length > 50 ? notification.message.substring(0, 50) + '...' : notification.message;
-                            const details = notification.type === 'review' ? `<strong>Full Review:</strong><br>${notification.message}` : notification.message;
-                            item.innerHTML = `
-                                <div class="summary">${summary}</div>
-                                <div class="details">${details}</div>
-                                <div class="time">${new Date(notification.created_at).toLocaleString()}</div>
-                            `;
-                            item.onclick = () => {
-                                item.classList.toggle('expanded');
-                                if (notification.is_read == 0) {
-                                    markAsRead(notification.id);
-                                    item.classList.remove('unread');
-                                    notification.is_read = 1; // update local
-                                }
-                            };
-                            list.appendChild(item);
-                        });
-                    }
-                })
-                .catch(error => console.error('Error loading notifications:', error));
-        }
-
-        function markAsRead(id) {
-            fetch('../mark_read.php?id=' + id, { method: 'POST' });
-        }
-
-        // Check for review action
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('action') === 'review') {
-                const appoid = urlParams.get('id');
-                document.getElementById('review-appoid').value = appoid;
-                document.getElementById('review-modal').style.display = 'block';
-            }
-            if (urlParams.get('review') === 'success') {
-                alert('Review submitted successfully!');
-            } else if (urlParams.get('review') === 'error') {
-                const msg = urlParams.get('msg') || 'Error submitting review.';
-                alert(msg);
-            }
-
-            // Add click event to notification button
-            document.getElementById('notification-btn').addEventListener('click', openNotificationPanel);
-        });
-    </script>
+    <?php include("../includes/notification_panel.php"); ?>
 
 </body>
 </html>

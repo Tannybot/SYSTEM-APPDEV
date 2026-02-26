@@ -8,93 +8,71 @@
     <link rel="stylesheet" href="css/main.css">  
     <link rel="stylesheet" href="css/signup.css">
         
-    <title>Sign Up</title>
+    <title>Sign Up - ConsultEase</title>
     
 </head>
 <body>
 <?php
 
-//learn from w3schools.com
-//Unset all the server side variables
-
 session_start();
 
-$_SESSION["user"]="";
-$_SESSION["usertype"]="";
+$_SESSION["user"] = "";
+$_SESSION["usertype"] = "";
 
-// Set the new timezone
-date_default_timezone_set('Asia/Kolkata');
+date_default_timezone_set('Asia/Manila');
 $date = date('Y-m-d');
+$_SESSION["date"] = $date;
 
-$_SESSION["date"]=$date;
-
-
-
-if($_POST){
-
+if ($_POST) {
     $role = $_POST['role'];
 
-    if($role == 'student'){
+    if ($role == 'student') {
         header("location: student-signup.php");
-    }elseif($role == 'faculty'){
+        exit();
+    }
+    elseif ($role == 'faculty') {
         header("location: faculty-signup.php");
-    }else{
+        exit();
+    }
+    else {
         $error = "Please select a role.";
     }
-
 }
 
 ?>
 
-
-    <center>
+<div class="center-wrapper">
     <div class="container">
-        <table border="0">
-            <tr>
-                <td colspan="2">
-                    <p class="header-text">Let's Get Started</p>
-                    <p class="sub-text">Select Your Role to Continue</p>
-                </td>
-            </tr>
-            <tr>
-                <form action="" method="POST" >
-                <td class="label-td" colspan="2">
-                    <label for="role" class="form-label">I am a: </label>
-                </td>
-            </tr>
-            <tr>
-                <td class="label-td" colspan="2">
-                    <input type="radio" name="role" value="student" id="student" required>
-                    <label for="student">Student</label><br>
-                    <input type="radio" name="role" value="faculty" id="faculty" required>
-                    <label for="faculty">Faculty</label>
-                </td>
-            </tr>
-            <tr>
-                <td class="label-td" colspan="2">
-                </td>
-            </tr>
+        <form action="" method="POST">
+            <div class="form-inner">
+                <p class="header-text">Let's Get Started</p>
+                <p class="sub-text">Select Your Role to Continue</p>
 
-            <tr>
-                <td colspan="2">
+                <div class="form-group">
+                    <label class="form-label">I am a:</label>
+                </div>
+                <div class="form-group role-options">
+                    <label class="role-card">
+                        <input type="radio" name="role" value="student" required>
+                        <span class="role-label">🎓 Student</span>
+                    </label>
+                    <label class="role-card">
+                        <input type="radio" name="role" value="faculty" required>
+                        <span class="role-label">👨‍🏫 Faculty</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
                     <input type="submit" value="Next" class="login-btn btn-primary btn">
-                </td>
+                </div>
 
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <br>
-                    <label for="" class="sub-text" style="font-weight: 280;">Already have an account&#63; </label>
+                <div class="form-group" style="text-align:center;">
+                    <label class="sub-text" style="font-weight: 280;">Already have an account&#63; </label>
                     <a href="login.php" class="hover-link1 non-style-link">Login</a>
-                    <br><br><br>
-                </td>
-            </tr>
-
-                    </form>
-            </tr>
-        </table>
-
+                </div>
+            </div>
+        </form>
     </div>
-</center>
+</div>
 </body>
 </html>

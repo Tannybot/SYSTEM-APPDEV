@@ -5,14 +5,14 @@ session_start();
 if(isset($_SESSION["user"])){
     if(($_SESSION["user"])=="" or $_SESSION['usertype']!='f'){
         header("location: ../login.php");
-        exit();
+            exit();
     }else{
         $useremail=$_SESSION["user"];
     }
 
 }else{
     header("location: ../login.php");
-    exit();
+            exit();
 }
     
 include("../connection.php");
@@ -123,148 +123,212 @@ function generate_calendar($month, $year, $schedules, $appointments) {
          
     <title>Appointments</title>
     <style>
-        .popup{
-            animation: transitionIn-Y-bottom 0.5s;
+        .popup{ animation: transitionIn-Y-bottom 0.5s; }
+        .sub-table{ animation: transitionIn-Y-bottom 0.5s; }
+
+        /* --- Appointment Manager Layout --- */
+        .appt-layout {
+            display: flex;
+            gap: 24px;
+            padding: 0 30px;
+            margin-top: 10px;
+            max-width: 100%;
         }
-        .sub-table{
-            animation: transitionIn-Y-bottom 0.5s;
+        .appt-calendar-panel {
+            flex: 0 0 60%;
+            min-width: 0;
         }
+        .appt-details-panel {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        /* --- Calendar --- */
         .calendar {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px auto;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border-radius: 12px;
             overflow: hidden;
         }
         .calendar caption {
-            background-color: #007bff;
+            background: linear-gradient(135deg, #228B22, #2da52d);
             color: white;
-            padding: 15px;
+            padding: 16px 20px;
             font-size: 18px;
-            font-weight: bold;
-        }
-        .calendar th, .calendar td {
-            border: 1px solid #ddd;
-            padding: 15px;
-            text-align: center;
-            transition: background-color 0.3s;
+            font-weight: 700;
+            letter-spacing: 0.3px;
         }
         .calendar th {
-            background-color: #f8f9fa;
-            color: #495057;
+            background: #f5f7f5;
+            color: #555;
             font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 14px 8px;
+            border-bottom: 1px solid #e5e5e5;
         }
-        .calendar .day {
-            cursor: pointer;
-            position: relative;
+        .calendar td {
+            border: 1px solid #f0f0f0;
+            padding: 14px 8px;
+            text-align: center;
+            font-size: 13px;
+            vertical-align: top;
+            height: 70px;
+            transition: background 0.15s;
+            cursor: default;
         }
-        .calendar .day:hover {
-            background-color: #f1f3f4;
+        .calendar .day { cursor: pointer; position: relative; }
+        .calendar .day:hover { background: #f1f3f4; }
+        .calendar .day.active-day {
+            background: #e8f5e9 !important;
+            box-shadow: inset 0 0 0 2px #228B22;
+            border-radius: 4px;
         }
         .calendar .has-session {
-            background-color: #fff3e0;
-            color: #f57c00;
-            font-weight: bold;
+            background: #fff8e1;
+            font-weight: 600;
         }
-        .calendar .has-session:hover {
-            background-color: #ffe0b2;
-        }
+        .calendar .has-session:hover { background: #fff3cd; }
         .calendar .has-appointment {
-            background-color: #e3f2fd;
-            color: #1976d2;
-            font-weight: bold;
+            background: #e3f2fd;
+            font-weight: 600;
         }
-        .calendar .has-appointment:hover {
-            background-color: #bbdefb;
-            transform: scale(1.05);
-        }
+        .calendar .has-appointment:hover { background: #bbdefb; }
         .calendar .has-session.has-appointment {
-            background: linear-gradient(45deg, #fff3e0 50%, #e3f2fd 50%);
-            color: #333;
-        }
-        .calendar .has-session.has-appointment:hover {
-            background: linear-gradient(45deg, #ffe0b2 50%, #bbdefb 50%);
+            background: linear-gradient(135deg, #fff8e1 50%, #e3f2fd 50%);
         }
         .calendar .day small {
             display: block;
-            font-size: 10px;
-            margin-top: 5px;
+            font-size: 9px;
+            margin-top: 3px;
+            font-weight: 500;
         }
-        .calendar .has-session small {
-            color: #f57c00;
-        }
-        .calendar .has-appointment small {
-            color: #42a5f5;
-        }
-        .appointment-popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .calendar .has-session small { color: #e65100; }
+        .calendar .has-appointment small { color: #1565c0; }
+
+        /* --- Details Panel --- */
+        .details-card {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            padding: 30px;
-            z-index: 1000;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+            position: sticky;
+            top: 20px;
+        }
+        .details-header {
+            background: linear-gradient(135deg, #228B22, #2da52d);
+            color: white;
+            padding: 16px 20px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .details-header .date-label {
+            font-size: 12px;
+            opacity: 0.85;
+            font-weight: 400;
+            margin-top: 4px;
+        }
+        .details-body {
+            padding: 16px 20px;
+            max-height: 520px;
             overflow-y: auto;
         }
-        .appointment-popup h3 {
-            margin-top: 0;
+        .details-empty {
+            text-align: center;
+            padding: 48px 16px;
+            color: #aaa;
+        }
+        .details-empty .icon { font-size: 40px; margin-bottom: 10px; display: block; }
+        .details-empty p { font-size: 14px; margin: 0; }
+        .details-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #888;
+            margin: 16px 0 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .details-section-title:first-child { margin-top: 0; }
+        .session-item, .booking-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            background: #fafafa;
+            border-left: 3px solid #228B22;
+        }
+        .booking-item { border-left-color: #1976d2; }
+        .session-item .sess-title {
+            font-weight: 600;
+            font-size: 14px;
             color: #333;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
         }
-        .appointment-popup .close {
-            float: right;
-            cursor: pointer;
-            font-size: 24px;
-            color: #999;
-            transition: color 0.3s;
+        .session-item .sess-time {
+            font-size: 12px;
+            color: #777;
+            margin-top: 2px;
         }
-        .appointment-popup .close:hover {
+        .booking-item .book-student {
+            font-weight: 600;
+            font-size: 14px;
             color: #333;
         }
-        .appointment-popup div {
-            margin: 10px 0;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            border-left: 4px solid #007bff;
+        .booking-item .book-meta {
+            font-size: 12px;
+            color: #777;
+            margin-top: 2px;
         }
-        .appointment-popup a {
-            color: #dc3545;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .appointment-popup a:hover {
-            text-decoration: underline;
-        }
-        .appointment-popup .buttons {
+        .booking-item .book-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-top: 10px;
         }
-        .appointment-popup .btn-done {
-            background-color: #28a745;
-            color: white;
+        .booking-item .book-actions button {
+            padding: 5px 14px;
             border: none;
-            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
-            border-radius: 3px;
+            transition: opacity 0.2s;
         }
-        .appointment-popup .btn-cancel {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 3px;
+        .booking-item .book-actions button:hover { opacity: 0.85; }
+        .booking-item .btn-done {
+            background: #e8f5e9;
+            color: #2e7d32;
         }
+        .booking-item .btn-cancel {
+            background: #fce4ec;
+            color: #c62828;
+        }
+
+        /* --- Legend --- */
+        .cal-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            font-size: 11px;
+            color: #777;
+        }
+        .cal-legend span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .cal-legend .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .cal-legend .dot-session { background: #fff3e0; border: 1px solid #e65100; }
+        .cal-legend .dot-booked { background: #e3f2fd; border: 1px solid #1565c0; }
+
+        /* --- Popups for delete/view --- */
+        .appointment-popup { display: none; }
         .review-modal {
             display: none;
             position: fixed;
@@ -272,94 +336,25 @@ function generate_calendar($month, $year, $schedules, $appointments) {
             left: 50%;
             transform: translate(-50%, -50%);
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             padding: 30px;
             z-index: 1001;
             max-width: 500px;
             width: 90%;
         }
-        .review-modal h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        .stars {
-            display: flex;
-            gap: 5px;
-            margin: 10px 0;
-        }
-        .stars input {
-            display: none;
-        }
-        .stars label {
-            font-size: 30px;
-            color: #ddd;
-            cursor: pointer;
-        }
+        .review-modal h3 { margin-top: 0; color: #333; }
+        .stars { display: flex; gap: 5px; margin: 10px 0; }
+        .stars input { display: none; }
+        .stars label { font-size: 30px; color: #ddd; cursor: pointer; }
         .stars input:checked ~ label,
         .stars label:hover,
-        .stars label:hover ~ label {
-            color: #ffc107;
-        }
-        .review-modal textarea {
-            width: 100%;
-            height: 80px;
-            margin: 10px 0;
-        }
-        .review-modal .buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
+        .stars label:hover ~ label { color: #ffc107; }
+        .review-modal textarea { width: 100%; height: 80px; margin: 10px 0; }
+        .review-modal .buttons { display: flex; justify-content: flex-end; gap: 10px; }
     </style>
 </head>
 <body>
-    <?php
-
-    //learn from w3schools.com
-
-    if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='f'){
-            header("location: ../login.php");
-        }else{
-            $useremail=$_SESSION["user"];
-        }
-
-    }else{
-        header("location: ../login.php");
-    }
-    
-    
-
-       //import database
-       include("../connection.php");
-       $userrow = $database->query("select * from faculty where facemail='$useremail'");
-       $userfetch=$userrow->fetch_assoc();
-       $userid= $userfetch["facid"];
-       $username=$userfetch["facname"];
-
-       // Fetch all schedules for the faculty
-       $schedules = [];
-       $sql_sched = "SELECT scheduleid, title, scheduledate, scheduletime FROM schedule WHERE facid=$userid ORDER BY scheduledate, scheduletime";
-       $result_sched = $database->query($sql_sched);
-       while($row = $result_sched->fetch_assoc()){
-           $date = $row['scheduledate'];
-           if(!isset($schedules[$date])) $schedules[$date] = [];
-           $schedules[$date][] = $row;
-       }
-
-       // Fetch appointments grouped by date
-       $appointments = [];
-       $sql = "SELECT appointment.appoid, schedule.scheduleid, schedule.title, student.sname, schedule.scheduledate, schedule.scheduletime, appointment.apponum, appointment.appodate FROM schedule INNER JOIN appointment ON schedule.scheduleid=appointment.scheduleid INNER JOIN student ON student.sid=appointment.pid WHERE schedule.facid=$userid AND appointment.status NOT IN ('done', 'canceled') ORDER BY schedule.scheduledate, schedule.scheduletime";
-       $result = $database->query($sql);
-       while($row = $result->fetch_assoc()){
-           $date = $row['scheduledate'];
-           if(!isset($appointments[$date])) $appointments[$date] = [];
-           $appointments[$date][] = $row;
-       }
-
-    //echo $userid;
-    ?>
     <div class="container">
         <div class="menu" id="menu">
         <table class="menu-container" border="0">
@@ -393,7 +388,6 @@ function generate_calendar($month, $year, $schedules, $appointments) {
                         <a href="appointment.php" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">My Appointments</p></a></div>
                     </td>
                 </tr>
-                
                 <tr class="menu-row" >
                     <td class="menu-btn menu-icon-session">
                         <a href="schedule.php" class="non-style-link-menu"><div><p class="menu-text">My Sessions</p></div></a>
@@ -401,113 +395,67 @@ function generate_calendar($month, $year, $schedules, $appointments) {
                 </tr>
                 <tr class="menu-row" >
                     <td class="menu-btn menu-icon-patient">
-                        <a href="student.php" class="non-style-link-menu"><div><p class="menu-text">My Students</p></a></div>
+                        <a href="student.php" class="non-style-link-menu"><div><p class="menu-text">My Students</p></div></a>
                     </td>
                 </tr>
                 <tr class="menu-row" >
                     <td class="menu-btn menu-icon-settings">
-                        <a href="settings.php" class="non-style-link-menu"><div><p class="menu-text">Settings</p></a></div>
+                        <a href="settings.php" class="non-style-link-menu"><div><p class="menu-text">Settings</p></div></a>
                     </td>
                 </tr>
-                
             </table>
         </div>
         <div class="dash-body" id="dash-body">
-            <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;margin-top:25px; ">
-                <tr >
-                    <td width="13%" >
-                    <a href="index.php" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
+            <table border="0" width="100%" style="border-spacing:0;margin:0;padding:0;margin-top:25px;">
+                <tr>
+                    <td width="13%">
+                        <a href="index.php"><button class="login-btn btn-primary-soft btn btn-icon-back" style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
                     </td>
                     <td>
-                        <p style="font-size: 23px;padding-left:12px;font-weight: 600;">Appointment Manager</p>
-                                           
+                        <p style="font-size:23px;padding-left:12px;font-weight:600;">Appointment Manager</p>
                     </td>
                     <td width="15%">
-                        <p style="font-size: 14px;color: rgb(119, 119, 119);padding: 0;margin: 0;text-align: right;">
-                            Today's Date
-                        </p>
-                        <p class="heading-sub12" style="padding: 0;margin: 0;">
-                            <?php 
-
-                        date_default_timezone_set('Asia/Kolkata');
-
-                        $today = date('Y-m-d');
-                        echo $today;
-
-                        $list110 = $database->query("select * from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid  where  faculty.facid=$userid ");
-
-                        ?>
+                        <p style="font-size:14px;color:rgb(119,119,119);padding:0;margin:0;text-align:right;">Today's Date</p>
+                        <p class="heading-sub12" style="padding:0;margin:0;">
+                            <?php
+                            date_default_timezone_set('Asia/Kolkata');
+                            $today = date('Y-m-d');
+                            echo $today;
+                            ?>
                         </p>
                     </td>
                     <td width="10%">
-                        <button  class="btn-label"  style="display: flex;justify-content: center;align-items: center;"><img src="../img/calendar.svg" width="100%"></button>
+                        <button class="btn-label" style="display:flex;justify-content:center;align-items:center;"><img src="../img/calendar.svg" width="100%"></button>
                     </td>
-
-
                 </tr>
-               
-                <!-- <tr>
-                    <td colspan="4" >
-                        <div style="display: flex;margin-top: 40px;">
-                        <div class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49);margin-top: 5px;">Schedule a Session</div>
-                        <a href="?action=add-session&id=none&error=0" class="non-style-link"><button  class="login-btn btn-primary btn button-icon"  style="margin-left:25px;background-image: url('../img/icons/add.svg');">Add a Session</font></button>
-                        </a>
-                        </div>
-                    </td>
-                </tr> -->
-                <tr>
-                    <td colspan="4" style="padding-top:10px;width: 100%;" >
-                    
-                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">My Appointments Calendar</p>
-                    </td>
-                    
-                </tr>
-                
-                <?php
-
-
-                    $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,faculty.facname,student.sname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid  where  faculty.facid=$userid ";
-
-                    if($_POST){
-                        //print_r($_POST);
-                        
-
-
-                        
-                        if(!empty($_POST["sheduledate"])){
-                            $sheduledate=$_POST["sheduledate"];
-                            $sqlmain.=" and schedule.scheduledate='$sheduledate' ";
-                        };
-
-                        
-
-                        //echo $sqlmain;
-
-                    }
-
-
-                ?>
-                  
-                <tr>
-                   <td colspan="4">
-                       <center>
-                        <div class="abc scroll">
-                        <?php echo generate_calendar(date('m'), date('Y'), $schedules, $appointments); ?>
-                        </div>
-                        </center>
-                   </td> 
-                </tr>
-                       
-                        
-                        
             </table>
+
+            <div class="appt-layout">
+                <div class="appt-calendar-panel">
+                    <?php echo generate_calendar(date('m'), date('Y'), $schedules, $appointments); ?>
+                    <div class="cal-legend">
+                        <span><span class="dot dot-session"></span> Has Sessions</span>
+                        <span><span class="dot dot-booked"></span> Has Bookings</span>
+                    </div>
+                </div>
+                <div class="appt-details-panel">
+                    <div class="details-card">
+                        <div class="details-header">
+                            <div>Booking Details</div>
+                            <div class="date-label" id="details-date-label">Click a date to view details</div>
+                        </div>
+                        <div class="details-body" id="details-body">
+                            <div class="details-empty">
+                                <span class="icon">&#128197;</span>
+                                <p>Select a date on the calendar to view sessions and bookings</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
    </div>
-   <div id="appointment-popup" class="appointment-popup">
-       <span class="close" onclick="closePopup()">&times;</span>
-       <h3 id="popup-date"></h3>
-       <div id="popup-content"></div>
-   </div>
+
    <div id="review-modal" class="review-modal">
        <span class="close" onclick="closeReviewModal()">&times;</span>
        <h3>Review Student</h3>
@@ -547,181 +495,37 @@ function generate_calendar($month, $year, $schedules, $appointments) {
                             You want to delete this record<br><br>
                             Student Name: &nbsp;<b>'.substr($nameget,0,40).'</b><br>
                             Appointment number &nbsp; : <b>'.substr($apponum,0,40).'</b><br><br>
-                            
                         </div>
                         <div style="display: flex;justify-content: center;">
-                        <a href="delete-appointment.php?id='.$id.'" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"<font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
-                        <a href="appointment.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No&nbsp;&nbsp;</font></button></a>
-
+                        <a href="delete-appointment.php?id='.$id.'" class="non-style-link"><button class="btn-primary btn" style="display:flex;justify-content:center;align-items:center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
+                        <a href="appointment.php" class="non-style-link"><button class="btn-primary btn" style="display:flex;justify-content:center;align-items:center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No&nbsp;&nbsp;</font></button></a>
                         </div>
                     </center>
             </div>
             </div>
-            '; 
-        }elseif($action=='view'){
-            $sqlmain= "select * from faculty where facid='$id'";
-            $result= $database->query($sqlmain);
-            $row=$result->fetch_assoc();
-            $name=$row["facname"];
-            $email=$row["facemail"];
-            $spe=$row["subject"];
-            $tele=$row['factel'];
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                        <h2></h2>
-                        <a class="close" href="faculty.php">&times;</a>
-                        <div class="content">
-                            eDoc Web App<br>
-                            
-                        </div>
-                        <div style="display: flex;justify-content: center;">
-                        <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                        
-                            <tr>
-                                <td>
-                                    <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">View Details.</p><br><br>
-                                </td>
-                            </tr>
-                            
-                            <tr>
-                                
-                                <td class="label-td" colspan="2">
-                                    <label for="name" class="form-label">Name: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    '.$name.'<br><br>
-                                </td>
-                                
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="Email" class="form-label">Email: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$email.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="Tele" class="form-label">Telephone: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$tele.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="spec" class="form-label">Subject: </label>
-
-                                </td>
-                            </tr>
-                            <tr>
-                            <td class="label-td" colspan="2">
-                            '.$spe.'<br><br>
-                            </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <a href="faculty.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
-                                
-                                    
-                                </td>
-                
-                            </tr>
-                           
-
-                        </table>
-                        </div>
-                    </center>
-                    <br><br>
-            </div>
-            </div>
-            ';  
+            ';
+        }
     }
-}
-
     ?>
-    </div>
 
     <script>
         var schedules = <?php echo json_encode($schedules); ?>;
         var appointments = <?php echo json_encode($appointments); ?>;
+        var activeDay = null;
 
         document.addEventListener('DOMContentLoaded', function() {
-            var days = document.querySelectorAll('.day.has-session');
+            var days = document.querySelectorAll('.day');
             days.forEach(function(day) {
                 day.addEventListener('click', function() {
                     var date = this.getAttribute('data-date');
+                    if (activeDay) activeDay.classList.remove('active-day');
+                    this.classList.add('active-day');
+                    activeDay = this;
                     showDetails(date);
                 });
             });
-        });
 
-        function showDetails(date) {
-            var popup = document.getElementById('appointment-popup');
-            var popupDate = document.getElementById('popup-date');
-            var popupContent = document.getElementById('popup-content');
-
-            popupDate.textContent = 'Details for ' + date;
-            popupContent.innerHTML = '';
-
-            if (schedules[date]) {
-                popupContent.innerHTML += '<h4>Sessions:</h4>';
-                schedules[date].forEach(function(sess) {
-                    var div = document.createElement('div');
-                    div.innerHTML = '<strong>' + sess.title + '</strong> at ' + sess.scheduletime;
-                    popupContent.appendChild(div);
-                });
-            }
-
-            if (appointments[date]) {
-                popupContent.innerHTML += '<h4>Booked Appointments:</h4>';
-                appointments[date].forEach(function(appt) {
-                    var div = document.createElement('div');
-                    var buttons = '<div class="buttons">';
-                    buttons += '<button class="btn-done" onclick="markDone(' + appt.appoid + ')">Mark as Done</button>';
-                    buttons += '<button class="btn-cancel" onclick="cancelAppointment(' + appt.appoid + ', \'' + appt.sname + '\', \'' + appt.title + '\', ' + appt.apponum + ')">Cancel</button>';
-                    buttons += '</div>';
-                    div.innerHTML = '<strong>' + appt.sname + '</strong> - ' + appt.title + ' at ' + appt.scheduletime + ' (#' + appt.apponum + ')' + buttons;
-                    popupContent.appendChild(div);
-                });
-            }
-
-            if (!schedules[date] && !appointments[date]) {
-                popupContent.textContent = 'No sessions or appointments on this date.';
-            }
-
-            popup.style.display = 'block';
-        }
-
-        function closePopup() {
-            document.getElementById('appointment-popup').style.display = 'none';
-        }
-
-        function markDone(appoid) {
-            window.location.href = 'mark-done.php?id=' + appoid;
-        }
-
-        function cancelAppointment(appoid, sname, title, apponum) {
-            if (confirm('Are you sure you want to cancel this appointment for ' + sname + '?')) {
-                window.location.href = 'cancel-appointment.php?id=' + appoid;
-            }
-        }
-
-        function closeReviewModal() {
-            document.getElementById('review-modal').style.display = 'none';
-        }
-
-        // Check for review action
-        document.addEventListener('DOMContentLoaded', function() {
+            // Check for review action
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('action') === 'review') {
                 const appoid = urlParams.get('id');
@@ -735,7 +539,66 @@ function generate_calendar($month, $year, $schedules, $appointments) {
                 alert(msg);
             }
         });
-    </script>
 
+        function showDetails(date) {
+            var dateLabel = document.getElementById('details-date-label');
+            var body = document.getElementById('details-body');
+
+            // Format date display
+            var d = new Date(date + 'T00:00:00');
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateLabel.textContent = d.toLocaleDateString('en-US', options);
+
+            var html = '';
+            var hasSessions = schedules[date] && schedules[date].length > 0;
+            var hasAppts = appointments[date] && appointments[date].length > 0;
+
+            if (!hasSessions && !hasAppts) {
+                html = '<div class="details-empty"><span class="icon">&#128196;</span><p>No sessions or bookings on this date</p></div>';
+                body.innerHTML = html;
+                return;
+            }
+
+            if (hasSessions) {
+                html += '<div class="details-section-title">Sessions (' + schedules[date].length + ')</div>';
+                schedules[date].forEach(function(sess) {
+                    html += '<div class="session-item">';
+                    html += '<div class="sess-title">' + sess.title + '</div>';
+                    html += '<div class="sess-time">&#128337; ' + sess.scheduletime + '</div>';
+                    html += '</div>';
+                });
+            }
+
+            if (hasAppts) {
+                html += '<div class="details-section-title">Bookings (' + appointments[date].length + ')</div>';
+                appointments[date].forEach(function(appt) {
+                    html += '<div class="booking-item">';
+                    html += '<div class="book-student">' + appt.sname + '</div>';
+                    html += '<div class="book-meta">' + appt.title + ' &#183; ' + appt.scheduletime + ' &#183; #' + appt.apponum + '</div>';
+                    html += '<div class="book-actions">';
+                    html += '<button class="btn-done" onclick="markDone(' + appt.appoid + ')">&#10003; Done</button>';
+                    html += '<button class="btn-cancel" onclick="cancelAppointment(' + appt.appoid + ', \'' + appt.sname.replace(/'/g, "\\'") + '\')">&#10005; Cancel</button>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+            }
+
+            body.innerHTML = html;
+        }
+
+        function markDone(appoid) {
+            window.location.href = 'mark-done.php?id=' + appoid;
+        }
+
+        function cancelAppointment(appoid, sname) {
+            if (confirm('Are you sure you want to cancel this appointment for ' + sname + '?')) {
+                window.location.href = 'cancel-appointment.php?id=' + appoid;
+            }
+        }
+
+        function closeReviewModal() {
+            document.getElementById('review-modal').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
