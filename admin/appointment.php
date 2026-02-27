@@ -21,32 +21,33 @@
 <body>
     <?php
 
-    //learn from w3schools.com
+//learn from w3schools.com
 
-    session_start();
+session_start();
 
-    if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='a'){
-            header("location: ../login.php");
-            exit();
-        }
-
-        $useremail = $_SESSION["user"];
-
-    }else{
+if (isset($_SESSION["user"])) {
+    if (($_SESSION["user"]) == "" or $_SESSION['usertype'] != 'a') {
         header("location: ../login.php");
-            exit();
+        exit();
     }
-    
-    
 
-    //import database
-    include("../connection.php");
+    $useremail = $_SESSION["user"];
 
-    $userrow = $database->query("select * from admin where aemail='$useremail'");
-    $userfetch=$userrow->fetch_assoc();
+}
+else {
+    header("location: ../login.php");
+    exit();
+}
 
-    ?>
+
+
+//import database
+include("../connection.php");
+
+$userrow = $database->query("select * from admin where aemail='$useremail'");
+$userfetch = $userrow->fetch_assoc();
+
+?>
     <div class="container">
         <div class="menu" id="menu">
             <table class="menu-container" border="0">
@@ -114,16 +115,16 @@
                             Today's Date
                         </p>
                         <p class="heading-sub12" style="padding: 0;margin: 0;">
-                            <?php 
+                            <?php
 
-                        date_default_timezone_set('Asia/Kolkata');
+date_default_timezone_set('Asia/Kolkata');
 
-                        $today = date('Y-m-d');
-                        echo $today;
+$today = date('Y-m-d');
+echo $today;
 
-                        $list110 = $database->query("select  * from  appointment;");
+$list110 = $database->query("select  * from  appointment;");
 
-                        ?>
+?>
                         </p>
                     </td>
                     <td width="10%">
@@ -166,17 +167,18 @@
                                 
                             <?php
 
-                                $list11 = $database->query("select  * from  faculty order by facname asc;");
+$list11 = $database->query("select  * from  faculty order by facname asc;");
 
-                                for ($y=0;$y<$list11->num_rows;$y++){
-                                    $row00=$list11->fetch_assoc();
-                                    $sn=$row00["facname"];
-                                    $id00=$row00["facid"];
-                                    echo "<option value=".$id00.">$sn</option><br/>";
-                                };
+for ($y = 0; $y < $list11->num_rows; $y++) {
+    $row00 = $list11->fetch_assoc();
+    $sn = $row00["facname"];
+    $id00 = $row00["facid"];
+    echo "<option value=" . $id00 . ">$sn</option><br/>";
+}
+;
 
 
-                                ?>
+?>
 
                         </select>
                     </td>
@@ -194,46 +196,49 @@
                 </tr>
                 
                 <?php
-                    if($_POST){
-                        //print_r($_POST);
-                        $sqlpt1="";
-                        if(!empty($_POST["sheduledate"])){
-                            $sheduledate=$_POST["sheduledate"];
-                            $sqlpt1=" schedule.scheduledate='$sheduledate' ";
-                        }
+if ($_POST) {
+    //print_r($_POST);
+    $sqlpt1 = "";
+    if (!empty($_POST["sheduledate"])) {
+        $sheduledate = $_POST["sheduledate"];
+        $sqlpt1 = " schedule.scheduledate='$sheduledate' ";
+    }
 
 
-                        $sqlpt2="";
-                        if(!empty($_POST["docid"])){
-                            $docid=$_POST["docid"];
-                            $sqlpt2=" faculty.facid=$docid ";
-                        }
-                        //echo $sqlpt2;
-                        //echo $sqlpt1;
-                        $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,faculty.facname,student.sname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid";
-                        $sqllist=array($sqlpt1,$sqlpt2);
-                        $sqlkeywords=array(" where "," and ");
-                        $key2=0;
-                        foreach($sqllist as $key){
+    $sqlpt2 = "";
+    if (!empty($_POST["docid"])) {
+        $docid = $_POST["docid"];
+        $sqlpt2 = " faculty.facid=$docid ";
+    }
+    //echo $sqlpt2;
+    //echo $sqlpt1;
+    $sqlmain = "select appointment.appoid,schedule.scheduleid,schedule.title,faculty.facname,student.sname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid";
+    $sqllist = array($sqlpt1, $sqlpt2);
+    $sqlkeywords = array(" where ", " and ");
+    $key2 = 0;
+    foreach ($sqllist as $key) {
 
-                            if(!empty($key)){
-                                $sqlmain.=$sqlkeywords[$key2].$key;
-                                $key2++;
-                            };
-                        };
-                        //echo $sqlmain;
-
-                        
-                        
-                        //
-                    }else{
-                        $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,faculty.facname,student.sname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid  order by schedule.scheduledate desc";
-
-                    }
+        if (!empty($key)) {
+            $sqlmain .= $sqlkeywords[$key2] . $key;
+            $key2++;
+        }
+        ;
+    }
+    ;
+//echo $sqlmain;
 
 
 
-                ?>
+//
+}
+else {
+    $sqlmain = "select appointment.appoid,schedule.scheduleid,schedule.title,faculty.facname,student.sname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join student on student.sid=appointment.pid inner join faculty on schedule.facid=faculty.facid  order by schedule.scheduledate desc";
+
+}
+
+
+
+?>
                   
                 <tr>
                    <td colspan="4">
@@ -284,11 +289,11 @@
                         
                             <?php
 
-                                
-                                $result= $database->query($sqlmain);
 
-                                if(!$result || $result->num_rows==0){
-                                    echo '<tr>
+$result = $database->query($sqlmain);
+
+if (!$result || $result->num_rows == 0) {
+    echo '<tr>
                                     <td colspan="7">
                                     <br><br><br><br>
                                     <center>
@@ -302,57 +307,57 @@
                                     <br><br><br><br>
                                     </td>
                                     </tr>';
-                                    
-                                }
-                                else{
-                                for ( $x=0; $x<$result->num_rows;$x++){
-                                    $row=$result->fetch_assoc();
-                                    $appoid=$row["appoid"];
-                                    $scheduleid=$row["scheduleid"];
-                                    $title=$row["title"];
-                                    $facname=$row["facname"];
-                                    $scheduledate=$row["scheduledate"];
-                                    $scheduletime=$row["scheduletime"];
-                                    $sname=$row["sname"];
-                                    $apponum=$row["apponum"];
-                                    $appodate=$row["appodate"];
-                                    echo '<tr >
-                                        <td style="font-weight:600;"> &nbsp;'.
-                                        
-                                        substr($sname,0,25)
-                                        .'</td >
+
+}
+else {
+    for ($x = 0; $x < $result->num_rows; $x++) {
+        $row = $result->fetch_assoc();
+        $appoid = $row["appoid"];
+        $scheduleid = $row["scheduleid"];
+        $title = $row["title"];
+        $facname = $row["facname"];
+        $scheduledate = $row["scheduledate"];
+        $scheduletime = $row["scheduletime"];
+        $sname = $row["sname"];
+        $apponum = $row["apponum"];
+        $appodate = $row["appodate"];
+        echo '<tr >
+                                        <td style="font-weight:600;"> &nbsp;' .
+
+            substr($sname, 0, 25)
+            . '</td >
                                         <td style="text-align:center;font-size:23px;font-weight:500; color: var(--btnnicetext);">
-                                        '.$apponum.'
+                                        ' . $apponum . '
                                         
                                         </td>
                                         <td>
-                                        '.substr($facname,0,25).'
+                                        ' . substr($facname, 0, 25) . '
                                         </td>
                                         <td>
-                                        '.substr($title,0,15).'
+                                        ' . substr($title, 0, 15) . '
                                         </td>
                                         <td style="text-align:center;font-size:12px;">
-                                            '.substr($scheduledate,0,10).' <br>'.substr($scheduletime,0,5).'
+                                            ' . substr($scheduledate, 0, 10) . ' <br>' . substr($scheduletime, 0, 5) . '
                                         </td>
                                         
                                         <td style="text-align:center;">
-                                            '.$appodate.'
+                                            ' . $appodate . '
                                         </td>
 
                                         <td>
                                         <div style="display:flex;justify-content: center;">
                                         
-                                        <!--<a href="?action=view&id='.$appoid.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
+                                        <!--<a href="?action=view&id=' . $appoid . '" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
                                        &nbsp;&nbsp;&nbsp;-->
-                                       <a href="?action=drop&id='.$appoid.'&name='.$sname.'&session='.$title.'&apponum='.$apponum.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-delete"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Cancel</font></button></a>
+                                       <a href="?action=drop&id=' . $appoid . '&name=' . $sname . '&session=' . $title . '&apponum=' . $apponum . '" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-delete"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Cancel</font></button></a>
                                        &nbsp;&nbsp;&nbsp;</div>
                                         </td>
                                     </tr>';
-                                    
-                                }
-                            }
-                                 
-                            ?>
+
+    }
+}
+
+?>
  
                             </tbody>
 
@@ -368,13 +373,13 @@
         </div>
     </div>
     <?php
-    
-    if($_GET){
-        $id=$_GET["id"];
-        $action=$_GET["action"];
-        if($action=='add-session'){
 
-            echo '
+if ($_GET) {
+    $id = $_GET["id"];
+    $action = $_GET["action"];
+    if ($action == 'add-session') {
+
+        echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
@@ -385,10 +390,10 @@
                         <div class="abc">
                         <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
                         <tr>
-                                <td class="label-td" colspan="2">'.
-                                   ""
-                                
-                                .'</td>
+                                <td class="label-td" colspan="2">' .
+            ""
+
+            . '</td>
                             </tr>
 
                             <tr>
@@ -417,21 +422,22 @@
                                 <td class="label-td" colspan="2">
                                     <select name="docid" id="" class="box" >
                                     <option value="" disabled selected hidden>Choose Doctor Name from the list</option><br/>';
-                                        
-        
-                                        $list11 = $database->query("select  * from  faculty;");
 
-                                        for ($y=0;$y<$list11->num_rows;$y++){
-                                            $row00=$list11->fetch_assoc();
-                                            $sn=$row00["facname"];
-                                            $id00=$row00["facid"];
-                                            echo "<option value=".$id00.">$sn</option><br/>";
-                                        };
-        
-        
-        
-                                        
-                        echo     '       </select><br><br>
+
+        $list11 = $database->query("select  * from  faculty;");
+
+        for ($y = 0; $y < $list11->num_rows; $y++) {
+            $row00 = $list11->fetch_assoc();
+            $sn = $row00["facname"];
+            $id00 = $row00["facid"];
+            echo "<option value=" . $id00 . ">$sn</option><br/>";
+        }
+        ;
+
+
+
+
+        echo '       </select><br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -451,7 +457,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    <input type="date" name="date" class="input-text" min="'.date('Y-m-d').'" required><br>
+                                    <input type="date" name="date" class="input-text" min="' . date('Y-m-d') . '" required><br>
                                 </td>
                             </tr>
                             <tr>
@@ -484,9 +490,10 @@
             </div>
             </div>
             ';
-        }elseif($action=='session-added'){
-            $titleget=$_GET["title"];
-            echo '
+    }
+    elseif ($action == 'session-added') {
+        $titleget = $_GET["title"];
+        echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
@@ -494,7 +501,7 @@
                         <h2>Session Placed.</h2>
                         <a class="close" href="schedule.php">&times;</a>
                         <div class="content">
-                        '.substr($titleget,0,40).' was scheduled.<br><br>
+                        ' . substr($titleget, 0, 40) . ' was scheduled.<br><br>
                             
                         </div>
                         <div style="display: flex;justify-content: center;">
@@ -506,11 +513,12 @@
             </div>
             </div>
             ';
-        }elseif($action=='drop'){
-            $nameget=$_GET["name"];
-            $session=$_GET["session"];
-            $apponum=$_GET["apponum"];
-            echo '
+    }
+    elseif ($action == 'drop') {
+        $nameget = $_GET["name"];
+        $session = $_GET["session"];
+        $apponum = $_GET["apponum"];
+        echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
@@ -518,32 +526,33 @@
                         <a class="close" href="appointment.php">&times;</a>
                         <div class="content">
                             You want to delete this record<br><br>
-                            Patient Name: &nbsp;<b>'.substr($nameget,0,40).'</b><br>
-                            Appointment number &nbsp; : <b>'.substr($apponum,0,40).'</b><br><br>
+                            Patient Name: &nbsp;<b>' . substr($nameget, 0, 40) . '</b><br>
+                            Appointment number &nbsp; : <b>' . substr($apponum, 0, 40) . '</b><br><br>
                             
                         </div>
                         <div style="display: flex;justify-content: center;">
-                        <a href="delete-appointment.php?id='.$id.'" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"<font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
+                        <a href="delete-appointment.php?id=' . $id . '" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"<font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
                         <a href="appointment.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No&nbsp;&nbsp;</font></button></a>
 
                         </div>
                     </center>
             </div>
             </div>
-            '; 
-        }elseif($action=='view'){
-            $sqlmain= "select * from faculty where facid='$id'";
-            $result= $database->query($sqlmain);
-            $row=$result->fetch_assoc();
-            $name=$row["facname"];
-            $email=$row["facemail"];
-            $spe=$row["subject"];
+            ';
+    }
+    elseif ($action == 'view') {
+        $sqlmain = "select * from faculty where facid='$id'";
+        $result = $database->query($sqlmain);
+        $row = $result->fetch_assoc();
+        $name = $row["facname"];
+        $email = $row["facemail"];
+        $spe = $row["subject"];
 
-            $spcil_res= $database->query("select sname from subject where id='$spe'");
-            $spcil_array= $spcil_res->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
-            $tele=$row['factel'];
-            echo '
+        $spcil_res = $database->query("select sname from subject where id='$spe'");
+        $spcil_array = $spcil_res->fetch_assoc();
+        $spcil_name = $spcil_array["sname"];
+        $tele = $row['factel'];
+        echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
@@ -570,7 +579,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    '.$name.'<br><br>
+                                    ' . $name . '<br><br>
                                 </td>
                                 
                             </tr>
@@ -581,7 +590,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                '.$email.'<br><br>
+                                ' . $email . '<br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -591,7 +600,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                '.$tele.'<br><br>
+                                ' . $tele . '<br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -602,7 +611,7 @@
                             </tr>
                             <tr>
                             <td class="label-td" colspan="2">
-                            '.$spcil_name.'<br><br>
+                            ' . $spcil_name . '<br><br>
                             </td>
                             </tr>
                             <tr>
@@ -621,11 +630,11 @@
                     <br><br>
             </div>
             </div>
-            ';  
+            ';
     }
 }
 
-    ?>
+?>
     </div>
 
 

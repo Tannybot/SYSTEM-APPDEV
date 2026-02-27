@@ -104,6 +104,7 @@ if($_POST){
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/livewallpaper.css">
 
     <title>Login</title>
 
@@ -112,6 +113,7 @@ if($_POST){
 
 </head>
 <body>
+<?php include("includes/livewallpaper.php"); ?>
 
 
     <center>

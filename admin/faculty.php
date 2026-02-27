@@ -21,32 +21,33 @@
 <body>
     <?php
 
-    //learn from w3schools.com
+//learn from w3schools.com
 
-    session_start();
+session_start();
 
-    if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='a'){
-            header("location: ../login.php");
-            exit();
-        }
-
-        $useremail = $_SESSION["user"];
-
-    }else{
+if (isset($_SESSION["user"])) {
+    if (($_SESSION["user"]) == "" or $_SESSION['usertype'] != 'a') {
         header("location: ../login.php");
-            exit();
+        exit();
     }
-    
-    
 
-    //import database
-    include("../connection.php");
+    $useremail = $_SESSION["user"];
 
-    $userrow = $database->query("select * from admin where aemail='$useremail'");
-    $userfetch=$userrow->fetch_assoc();
+}
+else {
+    header("location: ../login.php");
+    exit();
+}
 
-    ?>
+
+
+//import database
+include("../connection.php");
+
+$userrow = $database->query("select * from admin where aemail='$useremail'");
+$userfetch = $userrow->fetch_assoc();
+
+?>
     <div class="container">
         <div class="menu">
             <table class="menu-container" border="0">
@@ -117,18 +118,19 @@
                             <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Faculty name or Email" list="faculty">&nbsp;&nbsp;
 
                             <?php
-                                echo '<datalist id="faculty">';
-                                $list11 = $database->query("select  facname,facemail from  faculty;");
+echo '<datalist id="faculty">';
+$list11 = $database->query("select  facname,facemail from  faculty;");
 
-                                for ($y=0;$y<$list11->num_rows;$y++){
-                                    $row00=$list11->fetch_assoc();
-                                    $d=$row00["facname"];
-                                    $c=$row00["facemail"];
-                                    echo "<option value='$d'><br/>";
-                                    echo "<option value='$c'><br/>";
-                                };
+for ($y = 0; $y < $list11->num_rows; $y++) {
+    $row00 = $list11->fetch_assoc();
+    $d = $row00["facname"];
+    $c = $row00["facemail"];
+    echo "<option value='$d'><br/>";
+    echo "<option value='$c'><br/>";
+}
+;
 
-                            echo ' </datalist>';
+echo ' </datalist>';
 ?>
                             
                        
@@ -142,12 +144,12 @@
                             Today's Date
                         </p>
                         <p class="heading-sub12" style="padding: 0;margin: 0;">
-                            <?php 
-                        date_default_timezone_set('Asia/Kolkata');
+                            <?php
+date_default_timezone_set('Asia/Kolkata');
 
-                        $date = date('Y-m-d');
-                        echo $date;
-                        ?>
+$date = date('Y-m-d');
+echo $date;
+?>
                         </p>
                     </td>
                     <td width="10%">
@@ -172,18 +174,19 @@
                     
                 </tr>
                 <?php
-                    if($_POST){
-                        $keyword=$_POST["search"];
-                        
-                        $sqlmain= "select * from faculty where facemail='$keyword' or facname='$keyword' or facname like '$keyword%' or facname like '%$keyword' or facname like '%$keyword%'";
-                    }else{
-                        $sqlmain= "select * from faculty order by facid desc";
+if ($_POST) {
+    $keyword = $_POST["search"];
 
-                    }
+    $sqlmain = "select * from faculty where facemail='$keyword' or facname='$keyword' or facname like '$keyword%' or facname like '%$keyword' or facname like '%$keyword%'";
+}
+else {
+    $sqlmain = "select * from faculty order by facid desc";
+
+}
 
 
 
-                ?>
+?>
                   
                 <tr>
                    <td colspan="4">
@@ -216,11 +219,11 @@
                         
                             <?php
 
-                                
-                                $result= $database->query($sqlmain);
 
-                                if($result->num_rows==0){
-                                    echo '<tr>
+$result = $database->query($sqlmain);
+
+if ($result->num_rows == 0) {
+    echo '<tr>
                                     <td colspan="4">
                                     <br><br><br><br>
                                     <center>
@@ -234,42 +237,42 @@
                                     <br><br><br><br>
                                     </td>
                                     </tr>';
-                                    
-                                }
-                                else{
-                                for ( $x=0; $x<$result->num_rows;$x++){
-                                    $row=$result->fetch_assoc();
-                                    $facid=$row["facid"];
-                                    $name=$row["facname"];
-                                    $email=$row["facemail"];
-                                    $spe=$row["subject"];
-                                    $spcil_name=$spe;
-                                    echo '<tr>
-                                        <td> &nbsp;'.
-                                        substr($name,0,30)
-                                        .'</td>
+
+}
+else {
+    for ($x = 0; $x < $result->num_rows; $x++) {
+        $row = $result->fetch_assoc();
+        $facid = $row["facid"];
+        $name = $row["facname"];
+        $email = $row["facemail"];
+        $spe = $row["subject"];
+        $spcil_name = $spe;
+        echo '<tr>
+                                        <td> &nbsp;' .
+            substr($name, 0, 30)
+            . '</td>
                                         <td>
-                                        '.substr($email,0,20).'
+                                        ' . substr($email, 0, 20) . '
                                         </td>
                                         <td>
-                                            '.substr($spcil_name,0,20).'
+                                            ' . substr($spcil_name, 0, 20) . '
                                         </td>
 
                                         <td>
                                         <div style="display:flex;justify-content: center;">
-                                        <a href="?action=edit&id='.$facid.'&error=0" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-edit"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Edit</font></button></a>
+                                        <a href="?action=edit&id=' . $facid . '&error=0" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-edit"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Edit</font></button></a>
                                         &nbsp;&nbsp;&nbsp;
-                                        <a href="?action=view&id='.$facid.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
+                                        <a href="?action=view&id=' . $facid . '" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
                                        &nbsp;&nbsp;&nbsp;
-                                        <a href="?action=drop&id='.$facid.'&name='.$name.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-delete"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Remove</font></button></a>
+                                        <a href="?action=drop&id=' . $facid . '&name=' . $name . '" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-delete"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Remove</font></button></a>
                                         </div>
                                         </td>
                                     </tr>';
-                                    
-                                }
-                            }
-                                 
-                            ?>
+
+    }
+}
+
+?>
  
                             </tbody>
 
@@ -284,25 +287,25 @@
             </table>
         </div>
     </div>
-    <?php 
-    if($_GET){
-        
-        $id=$_GET["id"];
-        $action=$_GET["action"];
-        if($action=='drop'){
-            $nameget=$_GET["name"];
-            echo '
+    <?php
+if ($_GET) {
+
+    $id = $_GET["id"];
+    $action = $_GET["action"];
+    if ($action == 'drop') {
+        $nameget = $_GET["name"];
+        echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
                         <h2>Are you sure?</h2>
                         <a class="close" href="faculty.php">&times;</a>
                         <div class="content">
-                            You want to delete this record<br>('.substr($nameget,0,40).').
+                            You want to delete this record<br>(' . substr($nameget, 0, 40) . ').
 
                         </div>
                         <div style="display: flex;justify-content: center;">
-                        <a href="delete-faculty.php?id='.$id.'" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"<font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
+                        <a href="delete-faculty.php?id=' . $id . '" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"<font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
                         <a href="faculty.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No&nbsp;&nbsp;</font></button></a>
 
                         </div>
@@ -310,17 +313,18 @@
             </div>
             </div>
             ';
-        }elseif($action=='view'){
-            $sqlmain= "select * from faculty where facid='$id'";
-            $result= $database->query($sqlmain);
-            $row=$result->fetch_assoc();
-            $name=$row["facname"];
-            $email=$row["facemail"];
-            $spe=$row["subject"];
+    }
+    elseif ($action == 'view') {
+        $sqlmain = "select * from faculty where facid='$id'";
+        $result = $database->query($sqlmain);
+        $row = $result->fetch_assoc();
+        $name = $row["facname"];
+        $email = $row["facemail"];
+        $spe = $row["subject"];
 
-            $spcil_name=$spe;
-            $tele=$row['factel'];
-            echo '
+        $spcil_name = $spe;
+        $tele = $row['factel'];
+        echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
@@ -347,7 +351,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    '.$name.'<br><br>
+                                    ' . $name . '<br><br>
                                 </td>
                                 
                             </tr>
@@ -358,7 +362,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                '.$email.'<br><br>
+                                ' . $email . '<br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -368,7 +372,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                '.$tele.'<br><br>
+                                ' . $tele . '<br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -379,7 +383,7 @@
                             </tr>
                             <tr>
                             <td class="label-td" colspan="2">
-                            '.$spcil_name.'<br><br>
+                            ' . $spcil_name . '<br><br>
                             </td>
                             </tr>
                             <tr>
@@ -399,18 +403,19 @@
             </div>
             </div>
             ';
-        }elseif($action=='add'){
-                $error_1=$_GET["error"];
-                $errorlist= array(
-                    '1'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>',
-                    '2'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Password Conformation Error! Reconform Password</label>',
-                    '3'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>',
-                    '4'=>"",
-                    '0'=>'',
+    }
+    elseif ($action == 'add') {
+        $error_1 = $_GET["error"];
+        $errorlist = array(
+            '1' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>',
+            '2' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Password Conformation Error! Reconform Password</label>',
+            '3' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>',
+            '4' => "",
+            '0' => '',
 
-                );
-                if($error_1!='4'){
-                echo '
+        );
+        if ($error_1 != '4') {
+            echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
@@ -420,9 +425,9 @@
                         <div class="abc">
                         <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
                         <tr>
-                                <td class="label-td" colspan="2">'.
-                                    $errorlist[$error_1]
-                                .'</td>
+                                <td class="label-td" colspan="2">' .
+                $errorlist[$error_1]
+                . '</td>
                             </tr>
                             <tr>
                                 <td>
@@ -514,8 +519,9 @@
             </div>
             ';
 
-            }else{
-                echo '
+        }
+        else {
+            echo '
                     <div id="popup1" class="overlay">
                             <div class="popup">
                             <center>
@@ -536,32 +542,33 @@
                     </div>
                     </div>
         ';
-            }
-        }elseif($action=='edit'){
-            $sqlmain= "select * from faculty where facid='$id'";
-            $result= $database->query($sqlmain);
-            $row=$result->fetch_assoc();
-            $name=$row["facname"];
-            $email=$row["facemail"];
-            $spe=$row["subject"];
+        }
+    }
+    elseif ($action == 'edit') {
+        $sqlmain = "select * from faculty where facid='$id'";
+        $result = $database->query($sqlmain);
+        $row = $result->fetch_assoc();
+        $name = $row["facname"];
+        $email = $row["facemail"];
+        $spe = $row["subject"];
 
-            $spcil_res= $database->query("select sname from subject where id='$spe'");
-            $spcil_array= $spcil_res->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
-            $tele=$row['factel'];
+        $spcil_res = $database->query("select sname from subject where id='$spe'");
+        $spcil_array = $spcil_res->fetch_assoc();
+        $spcil_name = $spcil_array["sname"];
+        $tele = $row['factel'];
 
-            $error_1=$_GET["error"];
-                $errorlist= array(
-                    '1'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>',
-                    '2'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Password Conformation Error! Reconform Password</label>',
-                    '3'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>',
-                    '4'=>"",
-                    '0'=>'',
+        $error_1 = $_GET["error"];
+        $errorlist = array(
+            '1' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>',
+            '2' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Password Conformation Error! Reconform Password</label>',
+            '3' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>',
+            '4' => "",
+            '0' => '',
 
-                );
+        );
 
-            if($error_1!='4'){
-                    echo '
+        if ($error_1 != '4') {
+            echo '
                     <div id="popup1" class="overlay">
                             <div class="popup">
                             <center>
@@ -571,27 +578,27 @@
                                 <div class="abc">
                                 <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
                                 <tr>
-                                        <td class="label-td" colspan="2">'.
-                                            $errorlist[$error_1]
-                                        .'</td>
+                                        <td class="label-td" colspan="2">' .
+                $errorlist[$error_1]
+                . '</td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Edit Faculty Details.</p>
-                                        Faculty ID : '.$id.' (Auto Generated)<br><br>
+                                        Faculty ID : ' . $id . ' (Auto Generated)<br><br>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
                                             <form action="edit-fac.php" method="POST" class="add-new-form">
                                             <label for="Email" class="form-label">Email: </label>
-                                            <input type="hidden" value="'.$id.'" name="id00">
-                                            <input type="hidden" name="oldemail" value="'.$email.'" >
+                                            <input type="hidden" value="' . $id . '" name="id00">
+                                            <input type="hidden" name="oldemail" value="' . $email . '" >
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                        <input type="email" name="email" class="input-text" placeholder="Email Address" value="'.$email.'" required><br>
+                                        <input type="email" name="email" class="input-text" placeholder="Email Address" value="' . $email . '" required><br>
                                         </td>
                                     </tr>
                                     <tr>
@@ -602,7 +609,7 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <input type="text" name="name" class="input-text" placeholder="Faculty Name" value="'.$name.'" required><br>
+                                            <input type="text" name="name" class="input-text" placeholder="Faculty Name" value="' . $name . '" required><br>
                                         </td>
                                         
                                     </tr>
@@ -614,7 +621,7 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <input type="tel" name="Tele" class="input-text" placeholder="Telephone Number" value="'.$tele.'" required><br>
+                                            <input type="tel" name="Tele" class="input-text" placeholder="Telephone Number" value="' . $tele . '" required><br>
                                         </td>
                                     </tr>
                                     <tr>
@@ -625,7 +632,7 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <input type="text" name="spec" class="input-text" placeholder="Subject" value="'.$spcil_name.'" required><br>
+                                            <input type="text" name="spec" class="input-text" placeholder="Subject" value="' . $spcil_name . '" required><br>
                                         </td>
                                     </tr>
                                     <tr>
@@ -668,7 +675,8 @@
                     </div>
                     </div>
                     ';
-        }else{
+        }
+        else {
             echo '
                 <div id="popup1" class="overlay">
                         <div class="popup">
@@ -693,8 +701,12 @@
 
 
 
-        }; };
-    };
+        }
+        ;
+    }
+    ;
+}
+;
 
 ?>
 </div>

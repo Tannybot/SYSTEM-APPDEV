@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/signup.css">
+    <link rel="stylesheet" href="css/livewallpaper.css">
 
     <title>Faculty Sign Up</title>
     <style>
@@ -16,6 +17,7 @@
     </style>
 </head>
 <body>
+<?php include("includes/livewallpaper.php"); ?>
 <?php
 
 //learn from w3schools.com

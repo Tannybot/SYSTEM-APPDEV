@@ -7,11 +7,13 @@
     <link rel="stylesheet" href="css/animations.css">  
     <link rel="stylesheet" href="css/main.css">  
     <link rel="stylesheet" href="css/signup.css">
+    <link rel="stylesheet" href="css/livewallpaper.css">
         
     <title>Sign Up - ConsultEase</title>
     
 </head>
 <body>
+<?php include("includes/livewallpaper.php"); ?>
 <?php
 
 session_start();

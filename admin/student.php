@@ -21,32 +21,33 @@
 <body>
     <?php
 
-    //learn from w3schools.com
+//learn from w3schools.com
 
-    session_start();
+session_start();
 
-    if(isset($_SESSION["user"])){
-        if(($_SESSION["user"])=="" or $_SESSION['usertype']!='a'){
-            header("location: ../login.php");
-            exit();
-        }
-
-        $useremail = $_SESSION["user"];
-
-    }else{
+if (isset($_SESSION["user"])) {
+    if (($_SESSION["user"]) == "" or $_SESSION['usertype'] != 'a') {
         header("location: ../login.php");
-            exit();
+        exit();
     }
-    
-    
 
-    //import database
-    include("../connection.php");
+    $useremail = $_SESSION["user"];
 
-    $userrow = $database->query("select * from admin where aemail='$useremail'");
-    $userfetch=$userrow->fetch_assoc();
+}
+else {
+    header("location: ../login.php");
+    exit();
+}
 
-    ?>
+
+
+//import database
+include("../connection.php");
+
+$userrow = $database->query("select * from admin where aemail='$useremail'");
+$userfetch = $userrow->fetch_assoc();
+
+?>
     <div class="container">
         <div class="menu">
             <table class="menu-container" border="0">
@@ -118,18 +119,19 @@
                             <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Student name or Email" list="student">&nbsp;&nbsp;
                             
                             <?php
-                                echo '<datalist id="student">';
-                                $list11 = $database->query("select  sname,semail from student;");
+echo '<datalist id="student">';
+$list11 = $database->query("select  sname,semail from student;");
 
-                                for ($y=0;$y<$list11->num_rows;$y++){
-                                    $row00=$list11->fetch_assoc();
-                                    $d=$row00["sname"];
-                                    $c=$row00["semail"];
-                                    echo "<option value='$d'><br/>";
-                                    echo "<option value='$c'><br/>";
-                                };
+for ($y = 0; $y < $list11->num_rows; $y++) {
+    $row00 = $list11->fetch_assoc();
+    $d = $row00["sname"];
+    $c = $row00["semail"];
+    echo "<option value='$d'><br/>";
+    echo "<option value='$c'><br/>";
+}
+;
 
-                            echo ' </datalist>';
+echo ' </datalist>';
 ?>
                             
                        
@@ -143,12 +145,12 @@
                             Today's Date
                         </p>
                         <p class="heading-sub12" style="padding: 0;margin: 0;">
-                            <?php 
-                        date_default_timezone_set('Asia/Kolkata');
+                            <?php
+date_default_timezone_set('Asia/Kolkata');
 
-                        $date = date('Y-m-d');
-                        echo $date;
-                        ?>
+$date = date('Y-m-d');
+echo $date;
+?>
                         </p>
                     </td>
                     <td width="10%">
@@ -166,18 +168,19 @@
                     
                 </tr>
                 <?php
-                    if($_POST){
-                        $keyword=$_POST["search"];
-                        
-                        $sqlmain= "select * from student where semail='$keyword' or sname='$keyword' or sname like '$keyword%' or sname like '%$keyword' or sname like '%$keyword%' ";
-                    }else{
-                        $sqlmain= "select * from student order by sid desc";
+if ($_POST) {
+    $keyword = $_POST["search"];
 
-                    }
+    $sqlmain = "select * from student where semail='$keyword' or sname='$keyword' or sname like '$keyword%' or sname like '%$keyword' or sname like '%$keyword%' ";
+}
+else {
+    $sqlmain = "select * from student order by sid desc";
+
+}
 
 
 
-                ?>
+?>
                   
                 <tr>
                    <td colspan="4">
@@ -216,11 +219,11 @@
                         
                             <?php
 
-                                
-                                $result= $database->query($sqlmain);
 
-                                if($result->num_rows==0){
-                                    echo '<tr>
+$result = $database->query($sqlmain);
+
+if ($result->num_rows == 0) {
+    echo '<tr>
                                     <td colspan="4">
                                     <br><br><br><br>
                                     <center>
@@ -234,43 +237,43 @@
                                     <br><br><br><br>
                                     </td>
                                     </tr>';
-                                    
-                                }
-                                else{
-                                for ( $x=0; $x<$result->num_rows;$x++){
-                                    $row=$result->fetch_assoc();
-                                    $sid=$row["sid"];
-                                    $name=$row["sname"];
-                                    $email=$row["semail"];
-                                    $dob=$row["sdob"];
-                                    $tel=$row["stel"];
-                                    
-                                    echo '<tr>
-                                        <td> &nbsp;'.
-                                        substr($name,0,35)
-                                        .'</td>
+
+}
+else {
+    for ($x = 0; $x < $result->num_rows; $x++) {
+        $row = $result->fetch_assoc();
+        $sid = $row["sid"];
+        $name = $row["sname"];
+        $email = $row["semail"];
+        $dob = $row["sdob"];
+        $tel = $row["stel"];
+
+        echo '<tr>
+                                        <td> &nbsp;' .
+            substr($name, 0, 35)
+            . '</td>
                                         <td>
-                                            '.substr($tel,0,10).'
+                                            ' . substr($tel, 0, 10) . '
                                         </td>
                                         <td>
-                                        '.substr($email,0,20).'
+                                        ' . substr($email, 0, 20) . '
                                          </td>
                                         <td>
-                                        '.substr($dob,0,10).'
+                                        ' . substr($dob, 0, 10) . '
                                         </td>
                                         <td >
                                         <div style="display:flex;justify-content: center;">
                                         
-                                        <a href="?action=view&id='.$sid.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
+                                        <a href="?action=view&id=' . $sid . '" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
                                        
                                         </div>
                                         </td>
                                     </tr>';
-                                    
-                                }
-                            }
-                                 
-                            ?>
+
+    }
+}
+
+?>
  
                             </tbody>
 
@@ -285,20 +288,20 @@
             </table>
         </div>
     </div>
-    <?php 
-    if($_GET){
-        
-        $id=$_GET["id"];
-        $action=$_GET["action"];
-            $sqlmain= "select * from student where sid='$id'";
-            $result= $database->query($sqlmain);
-            $row=$result->fetch_assoc();
-            $name=$row["sname"];
-            $email=$row["semail"];
-            $dob=$row["sdob"];
-            $tele=$row["stel"];
-            $address=$row["saddress"];
-            echo '
+    <?php
+if ($_GET) {
+
+    $id = $_GET["id"];
+    $action = $_GET["action"];
+    $sqlmain = "select * from student where sid='$id'";
+    $result = $database->query($sqlmain);
+    $row = $result->fetch_assoc();
+    $name = $row["sname"];
+    $email = $row["semail"];
+    $dob = $row["sdob"];
+    $tele = $row["stel"];
+    $address = $row["saddress"];
+    echo '
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
@@ -322,7 +325,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    P-'.$id.'<br><br>
+                                    P-' . $id . '<br><br>
                                 </td>
                                 
                             </tr>
@@ -335,7 +338,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    '.$name.'<br><br>
+                                    ' . $name . '<br><br>
                                 </td>
                                 
                             </tr>
@@ -346,7 +349,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                '.$email.'<br><br>
+                                ' . $email . '<br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -356,7 +359,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                '.$tele.'<br><br>
+                                ' . $tele . '<br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -367,7 +370,7 @@
                             </tr>
                             <tr>
                             <td class="label-td" colspan="2">
-                            '.$address.'<br><br>
+                            ' . $address . '<br><br>
                             </td>
                             </tr>
                             <tr>
@@ -378,7 +381,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    '.$dob.'<br><br>
+                                    ' . $dob . '<br><br>
                                 </td>
                                 
                             </tr>
@@ -399,8 +402,9 @@
             </div>
             </div>
             ';
-        
-    };
+
+}
+;
 
 ?>
 </div>
